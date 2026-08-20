@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eternal SMP | Store</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+    </div>
+    <div class="ip-widget" onclick="copyIP('play.yourserver.net')">
+      <span class="status-dot" id="headerDot"></span>
+      <span id="ipText">play.yourserver.net</span>
+      <i class="fa-regular fa-copy"></i>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Navigation</h3>
+      <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="shop.html" class="nav-link active"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
+      <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+    </ul>
+  </nav>
+
+  <main class="content-container">
+    <div class="page-header">
+      <h2>Server Store</h2>
+      <p>Support Eternal SMP and unlock in-game cosmetic perks and keys.</p>
+    </div>
+
+    <div class="shop-tabs">
+      <button class="shop-tab active" onclick="filterShop('all')">All Items</button>
+      <button class="shop-tab" onclick="filterShop('ranks')">Ranks</button>
+      <button class="shop-tab" onclick="filterShop('keys')">Crate Keys</button>
+    </div>
+
+    <div class="product-grid" id="shopContainer">
+      <!-- Ranks -->
+      <div class="product-card" data-category="ranks">
+        <div class="badge-tag">Popular</div>
+        <div class="product-icon"><i class="fa-solid fa-crown" style="color: #f1c40f;"></i></div>
+        <h3>VIP Rank</h3>
+        <p class="product-desc">Access to /fly in claims, 3 extra homes, and exclusive yellow chat color.</p>
+        <div class="product-price">$4.99</div>
+        <button class="btn btn-primary" onclick="buyItem('VIP Rank')">Purchase</button>
+      </div>
+
+      <div class="product-card" data-category="ranks">
+        <div class="badge-tag best">Elite</div>
+        <div class="product-icon"><i class="fa-solid fa-shield-cat" style="color: #e67e22;"></i></div>
+        <h3>Officer Rank</h3>
+        <p class="product-desc">Animated pink/white prefix tag, 5 homes, access to /hat and /workbench.</p>
+        <div class="product-price">$9.99</div>
+        <button class="btn btn-primary" onclick="buyItem('Officer Rank')">Purchase</button>
+      </div>
+
+      <div class="product-card" data-category="ranks">
+        <div class="badge-tag best">Ultimate</div>
+        <div class="product-icon"><i class="fa-solid fa-star" style="color: #9b59b6;"></i></div>
+        <h3>Eternal Rank</h3>
+        <p class="product-desc">All cosmetic permissions, priority queue, 10 set homes, and monthly crate keys.</p>
+        <div class="product-price">$19.99</div>
+        <button class="btn btn-primary" onclick="buyItem('Eternal Rank')">Purchase</button>
+      </div>
+
+      <!-- Keys -->
+      <div class="product-card" data-category="keys">
+        <div class="product-icon"><i class="fa-solid fa-key" style="color: #3498db;"></i></div>
+        <h3>3x Rare Crate Keys</h3>
+        <p class="product-desc">Roll for rare gear, spawners, economy money notes, and diamond tools.</p>
+        <div class="product-price">$2.50</div>
+        <button class="btn btn-primary" onclick="buyItem('3x Rare Keys')">Purchase</button>
+      </div>
+
+      <div class="product-card" data-category="keys">
+        <div class="product-icon"><i class="fa-solid fa-key" style="color: #e74c3c;"></i></div>
+        <h3>5x Legendary Crate Keys</h3>
+        <p class="product-desc">Guaranteed high-tier loot: netherite, spawner vouchers, and cash boosters.</p>
+        <div class="product-price">$5.00</div>
+        <button class="btn btn-primary" onclick="buyItem('5x Legendary Keys')">Purchase</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Copied IP to clipboard!</div>
+  <script src="app.js"></script>
+</body>
+</html>
