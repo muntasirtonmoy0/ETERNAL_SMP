@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eternal SMP | Leaderboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+    </div>
+    <div class="ip-widget" onclick="copyIP('play.yourserver.net')">
+      <span class="status-dot" id="headerDot"></span>
+      <span id="ipText">play.yourserver.net</span>
+      <i class="fa-regular fa-copy"></i>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Navigation</h3>
+      <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="leaderboard.html" class="nav-link active"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
+      <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+    </ul>
+  </nav>
+
+  <main class="content-container">
+    <div class="page-header">
+      <h2>Top Players</h2>
+      <p>Live rankings updated continuously from the server database.</p>
+    </div>
+
+    <div class="leaderboard-nav">
+      <button class="lb-btn active" onclick="loadLeaderboard('balance')"><i class="fa-solid fa-coins"></i> Balance</button>
+      <button class="lb-btn" onclick="loadLeaderboard('playtime')"><i class="fa-solid fa-stopwatch"></i> Playtime</button>
+      <button class="lb-btn" onclick="loadLeaderboard('kills')"><i class="fa-solid fa-skull"></i> Kills</button>
+      <button class="lb-btn" onclick="loadLeaderboard('deaths')"><i class="fa-solid fa-heart-crack"></i> Deaths</button>
+    </div>
+
+    <div class="leaderboard-table-wrap">
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Primary Role</th>
+            <th id="lbValueHeader">Balance</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Copied IP to clipboard!</div>
+  <script src="app.js"></script>
+</body>
+</html>
