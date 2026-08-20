@@ -1,6 +1,6 @@
 // --- CONFIGURATION ---
-const SERVER_IP = "play.yourserver.net"; // Replace with your domain or IP
-const SERVER_PORT = "25565";
+const SERVER_IP = "ETERNAL.ozima.bond"; // Replace with your domain or IP
+const SERVER_PORT = "25993";
 
 let currentOnlinePlayers = [];
 
