@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eternal SMP | Staff Team</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+    </div>
+    <div class="ip-widget" onclick="copyIP('play.yourserver.net')">
+      <span class="status-dot" id="headerDot"></span>
+      <span id="ipText">play.yourserver.net</span>
+      <i class="fa-regular fa-copy"></i>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Navigation</h3>
+      <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="staff.html" class="nav-link active"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
+      <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+    </ul>
+  </nav>
+
+  <main class="content-container">
+    <div class="page-header">
+      <h2>Staff Team</h2>
+      <p>Meet the administrators and moderators keeping Eternal SMP fair and fun.</p>
+    </div>
+
+    <div class="staff-grid">
+      <!-- Staff Member 1 -->
+      <div class="staff-card">
+        <div class="avatar-holder">
+          <img src="https://visage.surgeplay.com/bust/512/MHF_Steve" alt="Owner Avatar" class="mc-avatar">
+        </div>
+        <div class="staff-role role-owner">Owner</div>
+        <h3 class="staff-name">Twilight_Owner</h3>
+        <p class="staff-bio">Server founder and lead developer. In charge of configurations, plugins, and hosting optimization.</p>
+        <div class="staff-links">
+          <a href="#" target="_blank" title="Discord"><i class="fa-brands fa-discord"></i></a>
+          <a href="#" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Staff Member 2 -->
+      <div class="staff-card">
+        <div class="avatar-holder">
+          <img src="https://visage.surgeplay.com/bust/512/MHF_Alex" alt="Admin Avatar" class="mc-avatar">
+        </div>
+        <div class="staff-role role-admin">Administrator</div>
+        <h3 class="staff-name">Alex_Admin</h3>
+        <p class="staff-bio">Handles community tickets, in-game disputes, event schedules, and rollback checks.</p>
+        <div class="staff-links">
+          <a href="#" target="_blank" title="Discord"><i class="fa-brands fa-discord"></i></a>
+          <a href="#" target="_blank" title="X/Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+
+      <!-- Staff Member 3 -->
+      <div class="staff-card">
+        <div class="avatar-holder">
+          <img src="https://visage.surgeplay.com/bust/512/Notch" alt="Mod Avatar" class="mc-avatar">
+        </div>
+        <div class="staff-role role-mod">Moderator</div>
+        <h3 class="staff-name">Guard_Mod</h3>
+        <p class="staff-bio">Keeps global chat clean, enforces fair gameplay rules, and assists new players.</p>
+        <div class="staff-links">
+          <a href="#" target="_blank" title="Discord"><i class="fa-brands fa-discord"></i></a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Copied IP to clipboard!</div>
+  <script src="app.js"></script>
+</body>
+</html>
