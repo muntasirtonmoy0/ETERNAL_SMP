@@ -164,8 +164,16 @@ async function loadLeaderboard(type) {
       let displayValue = "--";
       const num = Number(player.value) || 0;
 
-      if (type === "balance") {
-        displayValue = "$" + num.toLocaleString();
+     if (type === "balance") {
+        if (num >= 1e9) {
+          displayValue = "$" + (num / 1e9).toFixed(2) + "B";
+        } else if (num >= 1e6) {
+          displayValue = "$" + (num / 1e6).toFixed(2) + "M";
+        } else if (num >= 1e3) {
+          displayValue = "$" + (num / 1e3).toFixed(2) + "K";
+        } else {
+          displayValue = "$" + num.toLocaleString();
+        }
       } else if (type === "playtime") {
         const hours = Math.floor(num / 3600);
         const mins = Math.floor((num % 3600) / 60);
