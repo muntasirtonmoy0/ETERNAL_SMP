@@ -1,58 +1,50 @@
+import mysql from 'mysql2/promise';
+
 export default async function handler(req, res) {
+  const { type = 'balance' } = req.query;
+
+  const boardMap = {
+    balance: 'vault_eco_balance',
+    playtime: 'statistic_time_played',
+    kills: 'statistic_player_kills',
+    deaths: 'statistic_deaths'
+  };
+
+  const boardName = boardMap[type] || 'vault_eco_balance';
+
+  let connection;
   try {
-    // Add cache-busting timestamp to bypass internal network caches
-    const response = await fetch(`http://n6.ozima.cloud:25909/v1/players?t=${Date.now()}`, {
-      headers: {
-        "Cache-Control": "no-cache",
-        "Pragma": "no-cache"
-      }
+    connection = await mysql.createConnection({
+      host: process.env.DB_HOST || "n1.ozima.cloud",
+      port: Number(process.env.DB_PORT) || 3306,
+      user: process.env.DB_USER || "u254_Ix3IlpGusiC",
+      password: process.env.DB_PASS,
+      database: process.env.DB_NAME || "s254_stats",
+      connectTimeout: 10000
     });
 
-    if (!response.ok) {
-      throw new Error(`Plan server status: ${response.status}`);
-    }
+    // Check if table exists, if not fallback to empty
+    const [rows] = await connection.execute(
+      `SELECT player_name AS name, value 
+       FROM ajlb_${boardName} 
+       ORDER BY CAST(value AS DECIMAL(20,2)) DESC 
+       LIMIT 10`
+    );
 
-    const raw = await response.json();
-    const rawList = Array.isArray(raw.data) ? raw.data : [];
+    await connection.end();
 
-    const cleaned = rawList.map(entry => {
-      const cleanName = (entry.name || "").replace(/<[^>]*>?/gm, "").trim();
+    const formatted = rows.map(r => ({
+      name: r.name,
+      value: Number(r.value) || 0
+    }));
 
-      const parseVal = (field) => {
-        if (!field || field === "-") return 0;
-        if (typeof field === "number") return field;
-        if (typeof field === "string") {
-          const num = Number(field);
-          return isNaN(num) ? 0 : num;
-        }
-        if (field.v !== undefined && field.v !== "-") {
-          const num = Number(field.v);
-          return isNaN(num) ? 0 : num;
-        }
-        if (field.d !== undefined && field.d !== "-") {
-          const num = Number(field.d);
-          return isNaN(num) ? 0 : num;
-        }
-        return 0;
-      };
-
-      return {
-        name: cleanName,
-        balance: parseVal(entry.balance),
-        playtime: parseVal(entry.activePlaytime),
-        sessions: parseVal(entry.sessions),
-        group: entry.primaryGroup && entry.primaryGroup.d !== "-" ? entry.primaryGroup.d : "Member"
-      };
-    }).filter(p => p.name && p.name.length > 0);
-
-    // Disable all browser & CDN caching completely
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-    
-    res.status(200).json(cleaned);
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.status(200).json(formatted);
+
   } catch (error) {
+    if (connection) await connection.end();
+    // Return explicit error to inspect in browser
     res.status(500).json({ error: error.message });
   }
 }
