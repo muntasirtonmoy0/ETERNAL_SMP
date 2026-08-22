@@ -2,7 +2,7 @@
 const SERVER_DOMAIN = "ETERNAL.ozima.bond"; // Primary Subdomain
 const FALLBACK_ADDRESS = "n6.ozima.cloud:25993"; // Direct Node Address
 
-// Map your server members to their specific ranks
+// Custom Rank Mappings (Matches username to custom rank)
 const PLAYER_RANKS = {
   "REAL_TWILIGHT0_0": "Owner",
   "PRIME_VENOX": "Admin",
@@ -10,7 +10,6 @@ const PLAYER_RANKS = {
   "LGalewfqUwU": "Moderator",
   "D4XTROO": "Officer",
   "GMRZ_TANJID": "Member"
-  // Add any other players here: "IGN": "RankName"
 };
 
 let currentOnlinePlayers = [];
@@ -70,11 +69,10 @@ async function fetchServerStatus() {
   const versionEl = document.getElementById("serverVersion");
 
   try {
-    // Queries via mcstatus.io standard TCP engine
     let res = await fetch(`https://api.mcstatus.io/v2/status/java/${SERVER_DOMAIN}`);
     let data = await res.json();
 
-    // Fallback if subdomain SRV isn't routed yet
+    // Fallback if subdomain SRV record hasn't fully propagated
     if (!data.online) {
       res = await fetch(`https://api.mcstatus.io/v2/status/java/${FALLBACK_ADDRESS}`);
       data = await res.json();
@@ -93,17 +91,17 @@ async function fetchServerStatus() {
         versionEl.innerText = data.version.name_clean || data.version.name_raw || "1.20 - 1.21.x";
       }
 
+      // Map player usernames to custom ranks
       if (data.players.list && data.players.list.length > 0) {
-        currentOnlinePlayers = data.players.list.map(p => ({
-          name: p.name_clean || p.name_raw,
-          rank: "Member"
-        }));
+        currentOnlinePlayers = data.players.list.map(p => {
+          const playerName = p.name_clean || p.name_raw || p.name || p;
+          return {
+            name: playerName,
+            rank: PLAYER_RANKS[playerName] || "Member"
+          };
+        });
       } else {
-        currentOnlinePlayers = [
-          { name: "Twilight_Owner", rank: "Owner" },
-          { name: "Alex_Admin", rank: "Admin" },
-          { name: "Guard_Mod", rank: "Moderator" }
-        ];
+        currentOnlinePlayers = [];
       }
     } else {
       if (dot) dot.classList.remove("online");
@@ -126,7 +124,7 @@ function openPlayerModal() {
   if (!modal || !container) return;
 
   if (currentOnlinePlayers.length === 0) {
-    container.innerHTML = `<p style="color:var(--text-muted);text-align:center;">No players currently online or player list query disabled.</p>`;
+    container.innerHTML = `<p style="color:var(--text-muted);text-align:center;">No players currently online.</p>`;
   } else {
     container.innerHTML = currentOnlinePlayers.map(p => `
       <div class="player-list-entry">
@@ -134,7 +132,7 @@ function openPlayerModal() {
           <img src="https://mc-heads.net/avatar/${p.name}/40" alt="${p.name}">
           <span>${p.name}</span>
         </div>
-        <span class="player-rank-badge">${p.rank}</span>
+        <span class="player-rank-badge" data-rank="${p.rank}">${p.rank}</span>
       </div>
     `).join('');
   }
@@ -145,7 +143,7 @@ function openPlayerModal() {
 // --- SHOP TAB FILTER ---
 function filterShop(category) {
   document.querySelectorAll(".shop-tab").forEach(tab => tab.classList.remove("active"));
-  event.target.classList.add("active");
+  if (event && event.target) event.target.classList.add("active");
 
   const cards = document.querySelectorAll(".product-card");
   cards.forEach(card => {
@@ -164,24 +162,24 @@ function buyItem(name) {
 // --- LEADERBOARD LOGIC ---
 const sampleLeaderboard = {
   balance: [
-    { rank: 1, name: "Twilight_Owner", role: "Owner", val: "$10,450,000" },
-    { rank: 2, name: "ViperKing", role: "Eternal", val: "$8,230,000" },
-    { rank: 3, name: "ShadowCrafter", role: "VIP", val: "$5,110,000" },
-    { rank: 4, name: "IronMiner", role: "Member", val: "$3,800,000" }
+    { rank: 1, name: "REAL_TWILIGHT0_0", role: "Owner", val: "$10,450,000" },
+    { rank: 2, name: "PRIME_VENOX", role: "Admin", val: "$8,230,000" },
+    { rank: 3, name: "D4XTROO", role: "Officer", val: "$5,110,000" },
+    { rank: 4, name: "GMRZ_TANJID", role: "Member", val: "$3,800,000" }
   ],
   playtime: [
-    { rank: 1, name: "IronMiner", role: "Member", val: "142 hrs" },
-    { rank: 2, name: "Twilight_Owner", role: "Owner", val: "115 hrs" },
-    { rank: 3, name: "ViperKing", role: "Eternal", val: "98 hrs" }
+    { rank: 1, name: "GMRZ_TANJID", role: "Member", val: "142 hrs" },
+    { rank: 2, name: "REAL_TWILIGHT0_0", role: "Owner", val: "115 hrs" },
+    { rank: 3, name: "PRIME_VENOX", role: "Admin", val: "98 hrs" }
   ],
   kills: [
-    { rank: 1, name: "ViperKing", role: "Eternal", val: "482 Kills" },
-    { rank: 2, name: "Guard_Mod", role: "Moderator", val: "294 Kills" },
-    { rank: 3, name: "Steve_99", role: "Member", val: "145 Kills" }
+    { rank: 1, name: "LGalewfqUwU", role: "Moderator", val: "482 Kills" },
+    { rank: 2, name: "Kitsuroo", role: "Admin", val: "294 Kills" },
+    { rank: 3, name: "D4XTROO", role: "Officer", val: "145 Kills" }
   ],
   deaths: [
-    { rank: 1, name: "Steve_99", role: "Member", val: "310 Deaths" },
-    { rank: 2, name: "IronMiner", role: "Member", val: "220 Deaths" }
+    { rank: 1, name: "GMRZ_TANJID", role: "Member", val: "310 Deaths" },
+    { rank: 2, name: "D4XTROO", role: "Officer", val: "220 Deaths" }
   ]
 };
 
@@ -205,7 +203,7 @@ function loadLeaderboard(type) {
           <span>${item.name}</span>
         </div>
       </td>
-      <td><span class="player-rank-badge">${item.role}</span></td>
+      <td><span class="player-rank-badge" data-rank="${item.role}">${item.role}</span></td>
       <td><strong>${item.val}</strong></td>
     </tr>
   `).join('');
