@@ -2,8 +2,8 @@
 const SERVER_DOMAIN = "ETERNAL.ozima.bond";
 const FALLBACK_ADDRESS = "n6.ozima.cloud:25993";
 
-// HTTPS Proxy to prevent mixed-content (SSL) errors on Vercel
-const PLAN_API_URL = "https://corsproxy.io/?" + encodeURIComponent("http://n6.ozima.cloud:25909/v1/players");
+// Native Vercel Serverless API Route
+const PLAN_API_URL = "/api/leaderboard";
 
 // Custom Rank Mappings
 const PLAYER_RANKS = {
@@ -21,12 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSidebar();
   fetchServerStatus();
 
-  // Load live leaderboard by default if on the leaderboard page
   if (document.getElementById("leaderboardBody")) {
     loadLeaderboard('balance');
   }
 
-  // Poll server status every 30 seconds
   setInterval(fetchServerStatus, 30000);
 });
 
@@ -160,7 +158,7 @@ function buyItem(name) {
   alert(`Redirecting to checkout for ${name}...`);
 }
 
-// --- LIVE LEADERBOARD LOGIC (PLAN API UUID PARSER) ---
+// --- LIVE LEADERBOARD LOGIC ---
 async function loadLeaderboard(type) {
   document.querySelectorAll(".lb-btn").forEach(b => b.classList.remove("active"));
   if (window.event && window.event.currentTarget) {
@@ -179,7 +177,6 @@ async function loadLeaderboard(type) {
     const response = await fetch(PLAN_API_URL);
     const data = await response.json();
 
-    // Flatten Plan's UUID-mapped dictionary into a flat player array
     let playerList = [];
     if (Array.isArray(data)) {
       playerList = data;
@@ -192,15 +189,14 @@ async function loadLeaderboard(type) {
       });
     }
 
-    // Filter out invalid/empty entries
-    playerList = playerList.filter(p => p.name && p.name !== "Unknown");
+    // Filter out invalid/empty entries or proxy error messages
+    playerList = playerList.filter(p => p.name && typeof p.name === "string" && !p.name.includes("http") && p.name !== "Unknown");
 
     if (playerList.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No player records found yet. Players must join the server to sync stats!</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No player records found yet. Join the server to register stats!</td></tr>`;
       return;
     }
 
-    // Sort according to category
     if (type === "balance") {
       playerList.sort((a, b) => (Number(b.vault_balance || b.money || b.balance || 0) - Number(a.vault_balance || a.money || a.balance || 0)));
     } else if (type === "playtime") {
@@ -248,44 +244,7 @@ async function loadLeaderboard(type) {
     }).join("");
 
   } catch (err) {
-    // Fallback display if Plan endpoint fails
-    const sampleData = {
-      balance: [
-        { rank: 1, name: "REAL_TWILIGHT0_0", role: "Owner", val: "$10,450,000" },
-        { rank: 2, name: "PRIME_VENOX", role: "Admin", val: "$8,230,000" },
-        { rank: 3, name: "D4XTROO", role: "Officer", val: "$5,110,000" },
-        { rank: 4, name: "GMRZ_TANJID", role: "Member", val: "$3,800,000" }
-      ],
-      playtime: [
-        { rank: 1, name: "GMRZ_TANJID", role: "Member", val: "142 hrs" },
-        { rank: 2, name: "REAL_TWILIGHT0_0", role: "Owner", val: "115 hrs" },
-        { rank: 3, name: "PRIME_VENOX", role: "Admin", val: "98 hrs" }
-      ],
-      kills: [
-        { rank: 1, name: "LGalewfqUwU", role: "Moderator", val: "482 Kills" },
-        { rank: 2, name: "Kitsuroo", role: "Admin", val: "294 Kills" },
-        { rank: 3, name: "D4XTROO", role: "Officer", val: "145 Kills" }
-      ],
-      deaths: [
-        { rank: 1, name: "GMRZ_TANJID", role: "Member", val: "310 Deaths" },
-        { rank: 2, name: "D4XTROO", role: "Officer", val: "220 Deaths" }
-      ]
-    };
-
-    const fallbackList = sampleData[type] || [];
-    tbody.innerHTML = fallbackList.map(item => `
-      <tr>
-        <td><strong>#${item.rank}</strong></td>
-        <td>
-          <div class="player-cell">
-            <img src="https://mc-heads.net/avatar/${item.name}/28" alt="${item.name}">
-            <span>${item.name}</span>
-          </div>
-        </td>
-        <td><span class="player-rank-badge" data-rank="${item.role}">${item.role}</span></td>
-        <td><strong>${item.val}</strong></td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--danger);">Error syncing live leaderboard.</td></tr>`;
   }
 }
 
