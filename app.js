@@ -1,7 +1,6 @@
 // --- CONFIGURATION ---
 const SERVER_DOMAIN = "ETERNAL.ozima.bond";
 const FALLBACK_ADDRESS = "n6.ozima.cloud:25993";
-const PLAN_API_URL = "/api/leaderboard";
 
 // Custom Rank Mappings
 const PLAYER_RANKS = {
@@ -137,25 +136,6 @@ function openPlayerModal() {
   modal.classList.add("active");
 }
 
-// --- SHOP TAB FILTER ---
-function filterShop(category) {
-  document.querySelectorAll(".shop-tab").forEach(tab => tab.classList.remove("active"));
-  if (window.event && window.event.target) window.event.target.classList.add("active");
-
-  const cards = document.querySelectorAll(".product-card");
-  cards.forEach(card => {
-    if (category === "all" || card.getAttribute("data-category") === category) {
-      card.style.display = "flex";
-    } else {
-      card.style.display = "none";
-    }
-  });
-}
-
-function buyItem(name) {
-  alert(`Redirecting to checkout for ${name}...`);
-}
-
 // --- LIVE LEADERBOARD LOGIC ---
 async function loadLeaderboard(type) {
   document.querySelectorAll(".lb-btn").forEach(b => b.classList.remove("active"));
@@ -172,41 +152,35 @@ async function loadLeaderboard(type) {
   tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Syncing live server statistics...</td></tr>`;
 
   try {
-    const response = await fetch(`${PLAN_API_URL}?_=${Date.now()}`);
-    const playerList = await response.json();
+    const response = await fetch(`/api/leaderboard?type=${type}&_=${Date.now()}`);
+    const players = await response.json();
 
-    if (!Array.isArray(playerList) || playerList.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No player records recorded yet. Join the server to register stats!</td></tr>`;
+    if (!Array.isArray(players) || players.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No records found.</td></tr>`;
       return;
     }
 
-    // Sort according to category
-    if (type === "balance") {
-      playerList.sort((a, b) => b.balance - a.balance);
-    } else if (type === "playtime") {
-      playerList.sort((a, b) => b.playtime - a.playtime);
-    } else if (type === "kills") {
-      playerList.sort((a, b) => (b.kills || 0) - (a.kills || 0));
-    } else if (type === "deaths") {
-      playerList.sort((a, b) => (b.deaths || 0) - (a.deaths || 0));
-    }
-
-    const topPlayers = playerList.slice(0, 10);
-
-    tbody.innerHTML = topPlayers.map((player, index) => {
+    tbody.innerHTML = players.map((player, index) => {
       let displayValue = "--";
+      const num = Number(player.value) || 0;
 
       if (type === "balance") {
-        displayValue = "$" + Number(player.balance).toLocaleString();
+        displayValue = "$" + num.toLocaleString();
       } else if (type === "playtime") {
-        const ms = Number(player.playtime);
-        const hours = Math.floor(ms / 3600000);
-        const mins = Math.floor((ms % 3600000) / 60000);
-        displayValue = hours > 0 ? `${hours}h ${mins}m` : `${mins} mins`;
+        const hours = Math.floor(num / 3600);
+        const mins = Math.floor((num % 3600) / 60);
+        const secs = num % 60;
+        if (hours > 0) {
+          displayValue = `${hours}h ${mins}m`;
+        } else if (mins > 0) {
+          displayValue = `${mins}m ${secs}s`;
+        } else {
+          displayValue = `${secs}s`;
+        }
       } else if (type === "kills") {
-        displayValue = `${player.kills || 0} Kills`;
+        displayValue = `${num} Kills`;
       } else if (type === "deaths") {
-        displayValue = `${player.deaths || 0} Deaths`;
+        displayValue = `${num} Deaths`;
       }
 
       const rank = PLAYER_RANKS[player.name] || "Member";
@@ -229,28 +203,4 @@ async function loadLeaderboard(type) {
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--danger);">Error syncing live leaderboard.</td></tr>`;
   }
-}
-
-// --- EVENT MODAL ---
-function openEventHistory(title, winner, reward, description) {
-  const modal = document.getElementById("eventModal");
-  if (!modal) return;
-  document.getElementById("eventModalTitle").innerText = title;
-  document.getElementById("eventModalBody").innerHTML = `
-    <p><strong><i class="fa-solid fa-trophy" style="color:#f1c40f;"></i> Champion:</strong> ${winner}</p>
-    <p><strong><i class="fa-solid fa-gift" style="color:var(--accent);"></i> Reward:</strong> ${reward}</p>
-    <hr style="border:0;border-top:1px solid var(--border);margin:12px 0;">
-    <p style="color:var(--text-muted);font-size:0.9rem;">${description}</p>
-  `;
-  modal.classList.add("active");
-}
-
-// --- CLIPBOARD COPY ---
-function copyIP(ip) {
-  navigator.clipboard.writeText(ip).then(() => {
-    const toast = document.getElementById("toast");
-    toast.innerText = `Copied ${ip} to clipboard!`;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2500);
-  });
 }
