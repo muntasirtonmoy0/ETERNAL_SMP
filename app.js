@@ -1,8 +1,7 @@
 // --- CONFIGURATION ---
-const SERVER_DOMAIN = "ETERNAL.ozima.bond"; // Primary Subdomain
-const FALLBACK_ADDRESS = "n6.ozima.cloud:25993"; // Direct Node Address
+const SERVER_DOMAIN = "ETERNAL.ozima.bond";
+const FALLBACK_ADDRESS = "n6.ozima.cloud:25993";
 
-// Custom Rank Mappings (Matches username to custom rank)
 const PLAYER_RANKS = {
   "REAL_TWILIGHT0_0": "Owner",
   "PRIME_VENOX": "Admin",
@@ -22,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadLeaderboard('balance');
   }
 
-  // Poll server status every 30 seconds
   setInterval(fetchServerStatus, 30000);
 });
 
@@ -47,7 +45,6 @@ function setupSidebar() {
   if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
   if (overlay) overlay.addEventListener("click", closeSidebar);
 
-  // Modal bindings
   const playerStatCard = document.getElementById("playerStatCard");
   const closePlayerModal = document.getElementById("closePlayerModal");
   const closeEventModal = document.getElementById("closeEventModal");
@@ -72,7 +69,6 @@ async function fetchServerStatus() {
     let res = await fetch(`https://api.mcstatus.io/v2/status/java/${SERVER_DOMAIN}`);
     let data = await res.json();
 
-    // Fallback if subdomain SRV record hasn't fully propagated
     if (!data.online) {
       res = await fetch(`https://api.mcstatus.io/v2/status/java/${FALLBACK_ADDRESS}`);
       data = await res.json();
@@ -91,7 +87,6 @@ async function fetchServerStatus() {
         versionEl.innerText = data.version.name_clean || data.version.name_raw || "1.20 - 1.21.x";
       }
 
-      // Map player usernames to custom ranks
       if (data.players.list && data.players.list.length > 0) {
         currentOnlinePlayers = data.players.list.map(p => {
           const playerName = p.name_clean || p.name_raw || p.name || p;
