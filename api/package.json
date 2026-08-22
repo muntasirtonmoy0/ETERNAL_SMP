@@ -1,0 +1,10 @@
+{
+  "name": "eternal-smp-website",
+  "version": "1.0.0",
+  "description": "Eternal SMP Web Portal",
+  "main": "app.js",
+  "type": "module",
+  "dependencies": {
+    "mysql2": "^3.9.0"
+  }
+}
