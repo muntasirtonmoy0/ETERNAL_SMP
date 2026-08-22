@@ -1,59 +1,45 @@
 export default async function handler(req, res) {
   const { type = 'balance' } = req.query;
-  const PLAN_API_URL = "http://n6.ozima.cloud:25909/v1/players";
+  const PERMANENT_DATA_URL = "https://api.npoint.io/c5722521836b38966b29";
+
+  const boardKeyMap = {
+    balance: 'vault_eco_balance',
+    playtime: 'statistic_hours_played',
+    kills: 'statistic_player_kills',
+    deaths: 'statistic_deaths'
+  };
+
+  const targetKey = boardKeyMap[type] || 'vault_eco_balance';
 
   try {
-    const response = await fetch(PLAN_API_URL, {
-      headers: { "Accept": "application/json" }
+    const response = await fetch(PERMANENT_DATA_URL, {
+      headers: {
+        "Accept": "application/json",
+        "Cache-Control": "no-cache"
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`Plan HTTP Error: ${response.status}`);
+      throw new Error(`Data fetch failed: ${response.status}`);
     }
 
-    const payload = await response.json();
-    const rawList = payload.data || [];
-
-    function parseNumericValue(val) {
-      if (val === null || val === undefined) return 0;
-      if (typeof val === 'number') return val;
-      const str = String(val).trim();
-      const num = Number(str.replace(/[^0-9.eE+-]/g, ""));
-      return isNaN(num) ? 0 : num;
-    }
+    const data = await response.json();
+    const rawList = data[targetKey] || [];
 
     const formatted = rawList.map(item => {
-      // Clean HTML tags from username
-      let cleanName = "Unknown";
-      if (typeof item.name === "string") {
-        cleanName = item.name.replace(/<[^>]*>?/gm, "").trim();
-      }
+      const cleanName = item.namecache || item.id || "Unknown";
+      let rawVal = parseFloat(item.value ?? 0) || 0;
 
-      let rawVal = 0;
-
-      if (type === 'balance') {
-        const bal = item.balance?.v ?? item.balance?.d ?? item.balance ?? 0;
-        rawVal = parseNumericValue(bal);
-
-      } else if (type === 'playtime') {
-        // Active playtime in seconds
-        const ms = item.activePlaytime?.v ?? item.playtime?.v ?? 0;
-        rawVal = Math.floor(parseNumericValue(ms) / 1000);
-
-      } else if (type === 'kills') {
-        rawVal = parseNumericValue(item.kills?.v ?? item.playerKills?.v ?? item.mobKills?.v ?? 0);
-
-      } else if (type === 'deaths') {
-        rawVal = parseNumericValue(item.deaths?.v ?? item.playerDeaths?.v ?? 0);
+      if (type === 'playtime') {
+        rawVal = rawVal * 3600;
       }
 
       return {
         name: cleanName,
         value: isNaN(rawVal) ? 0 : rawVal
       };
-    });
+    }).filter(p => p.name !== "Unknown");
 
-    // Sort descending (Rank #1 first)
     formatted.sort((a, b) => b.value - a.value);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
