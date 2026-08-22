@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   // Mapping tab types to ajLeaderboards board keys
   const boardMap = {
     balance: 'vault_eco_balance',
-    playtime: 'statistic_time_played',
+    playtime: 'statistic_hours_played',
     kills: 'statistic_player_kills',
     deaths: 'statistic_deaths'
   };
