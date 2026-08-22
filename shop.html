@@ -12,12 +12,15 @@
 
   <header class="navbar">
     <div class="nav-left">
-      <button class="menu-btn" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
-      <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+      <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+      <a href="index.html" class="logo-link">
+        <img src="logo.png" alt="Eternal SMP Logo" class="nav-logo-img">
+        <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+      </a>
     </div>
-    <div class="ip-widget" onclick="copyIP('play.yourserver.net')">
+    <div class="ip-widget" onclick="copyIP('ETERNAL.ozima.bond')">
       <span class="status-dot" id="headerDot"></span>
-      <span id="ipText">play.yourserver.net</span>
+      <span id="ipText">ETERNAL.ozima.bond</span>
       <i class="fa-regular fa-copy"></i>
     </div>
   </header>
@@ -51,7 +54,6 @@
     </div>
 
     <div class="product-grid" id="shopContainer">
-      <!-- Ranks -->
       <div class="product-card" data-category="ranks">
         <div class="badge-tag">Popular</div>
         <div class="product-icon"><i class="fa-solid fa-crown" style="color: #f1c40f;"></i></div>
@@ -79,7 +81,6 @@
         <button class="btn btn-primary" onclick="buyItem('Eternal Rank')">Purchase</button>
       </div>
 
-      <!-- Keys -->
       <div class="product-card" data-category="keys">
         <div class="product-icon"><i class="fa-solid fa-key" style="color: #3498db;"></i></div>
         <h3>3x Rare Crate Keys</h3>
