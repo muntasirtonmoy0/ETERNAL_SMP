@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eternal SMP | Events</title>
+  <title>Eternal SMP | Leaderboard</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -34,8 +34,8 @@
     <ul class="nav-links">
       <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
       <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
-      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
-      <li><a href="events.html" class="nav-link active"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="leaderboard.html" class="nav-link active"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
       <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
     </ul>
@@ -43,47 +43,31 @@
 
   <main class="content-container">
     <div class="page-header">
-      <h2>Community Events</h2>
-      <p>Participate in active tournaments and check past event champions.</p>
+      <h2>Top Players</h2>
+      <p>Live rankings updated continuously from the server database.</p>
     </div>
 
-    <div class="events-section">
-      <h3 class="event-subtitle"><i class="fa-solid fa-bolt"></i> Active & Upcoming Events</h3>
-      <div class="events-grid">
-        <div class="event-card active-border">
-          <div class="event-status live">LIVE NOW</div>
-          <h4>Netherite PvP Championship</h4>
-          <p>1v1 kit battles at the central arena. Winner takes 500,000 in-game balance and the Champion tag!</p>
-          <div class="event-meta">
-            <span><i class="fa-regular fa-clock"></i> Ends in 2 Days</span>
-            <span><i class="fa-solid fa-trophy"></i> $500K Pool</span>
-          </div>
-        </div>
-      </div>
+    <div class="leaderboard-nav">
+      <button class="lb-btn active" onclick="loadLeaderboard('balance')"><i class="fa-solid fa-coins"></i> Balance</button>
+      <button class="lb-btn" onclick="loadLeaderboard('playtime')"><i class="fa-solid fa-stopwatch"></i> Playtime</button>
+      <button class="lb-btn" onclick="loadLeaderboard('kills')"><i class="fa-solid fa-skull"></i> Kills</button>
+      <button class="lb-btn" onclick="loadLeaderboard('deaths')"><i class="fa-solid fa-heart-crack"></i> Deaths</button>
+    </div>
 
-      <h3 class="event-subtitle" style="margin-top: 40px;"><i class="fa-solid fa-clock-rotate-left"></i> Event History</h3>
-      <div class="events-grid">
-        <div class="event-card clickable" onclick="openEventHistory('Build Battle Season 1', 'Steve_99', '$250k + VIP Rank', '15 players participated in a 60-minute theme build showdown in the creative event plot.')">
-          <div class="event-status ended">COMPLETED</div>
-          <h4>Build Battle Season 1</h4>
-          <p>Theme: Medieval Castles. Click to view victory details and prize payouts.</p>
-          <div class="event-meta">
-            <span><i class="fa-solid fa-medal"></i> Winner: Steve_99</span>
-          </div>
-        </div>
-      </div>
+    <div class="leaderboard-table-wrap">
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Primary Role</th>
+            <th id="lbValueHeader">Balance</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody"></tbody>
+      </table>
     </div>
   </main>
-
-  <div class="modal-backdrop" id="eventModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 id="eventModalTitle">Event Details</h3>
-        <button class="modal-close" id="closeEventModal"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body" id="eventModalBody"></div>
-    </div>
-  </div>
 
   <div class="toast" id="toast">Copied IP to clipboard!</div>
   <script src="app.js"></script>
