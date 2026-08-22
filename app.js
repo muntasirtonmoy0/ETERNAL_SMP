@@ -8,6 +8,7 @@ const PLAYER_RANKS = {
   "PRIME_VENOX": "Admin",
   "Kitsuroo": "Admin",
   "LGalewfqUwU": "Moderator",
+  "HopeUltimate": "Moderator",
   "D4XTROO": "Officer",
   "GMRZ_TANJID": "Member"
 };
