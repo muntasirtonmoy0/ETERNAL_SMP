@@ -5,21 +5,17 @@ export default async function handler(req, res) {
       throw new Error(`Plan server status: ${response.status}`);
     }
     const raw = await response.json();
-
-    // Extract the player array from Plan's "data" key
     const rawList = raw.data && Array.isArray(raw.data) ? raw.data : [];
 
-    // Parse HTML-wrapped names and nested value objects
     const cleaned = rawList.map(entry => {
-      // Strips <a ...>USERNAME</a> HTML tags
       const cleanName = (entry.name || "").replace(/<[^>]*>?/gm, "").trim();
 
       const parseNum = (obj) => {
         if (!obj) return 0;
         if (typeof obj === "number") return obj;
         if (typeof obj === "string") return isNaN(Number(obj)) ? 0 : Number(obj);
-        if (obj.v && !isNaN(Number(obj.v))) return Number(obj.v);
-        if (obj.d && !isNaN(Number(obj.d))) return Number(obj.d);
+        if (obj.v !== undefined && !isNaN(Number(obj.v))) return Number(obj.v);
+        if (obj.d !== undefined && !isNaN(Number(obj.d))) return Number(obj.d);
         return 0;
       };
 
@@ -27,6 +23,8 @@ export default async function handler(req, res) {
         name: cleanName,
         balance: parseNum(entry.balance),
         playtime: parseNum(entry.activePlaytime),
+        kills: parseNum(entry.player_kills) || parseNum(entry.mob_kills) || parseNum(entry.kills),
+        deaths: parseNum(entry.deaths) || parseNum(entry.player_deaths),
         sessions: parseNum(entry.sessions),
         group: (entry.group && entry.group.d) ? entry.group.d : "Member"
       };
