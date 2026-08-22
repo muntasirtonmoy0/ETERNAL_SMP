@@ -3,7 +3,7 @@ export default async function handler(req, res) {
   const PLAN_BASE_URL = "http://n6.ozima.cloud:25909";
 
   try {
-    // 1. Fetch main player list
+    // 1. Fetch the master players list
     const response = await fetch(`${PLAN_BASE_URL}/v1/players`, {
       headers: { "Accept": "application/json" }
     });
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       return isNaN(num) ? 0 : num;
     }
 
-    // Extract player name & clean UUID from Plan's HTML anchor tag
+    // Extract cleaned name and UUID from the player anchor tag
     const players = rawList.map(item => {
       let cleanName = "Unknown";
       let uuid = null;
@@ -44,31 +44,35 @@ export default async function handler(req, res) {
 
     let formatted = [];
 
-    // 2. Handle Balance and Playtime directly from table data (super fast)
+    // Fast resolution for Balance and Playtime from table data
     if (type === 'balance') {
       formatted = players.map(p => ({ name: p.name, value: p.balance }));
     } else if (type === 'playtime') {
       formatted = players.map(p => ({ name: p.name, value: p.playtime }));
     } 
-    // 3. For Kills and Deaths, fetch player-specific combat data in parallel
-    else if (type === 'kills' || type === 'deaths') {
+    // Fetch deaths / kills via Plan's /v1/datapoint API
+    else if (type === 'deaths' || type === 'kills') {
+      const metricKey = type === 'deaths' ? 'player_deaths' : 'player_kills';
+
       formatted = await Promise.all(
         players.map(async (p) => {
           if (!p.uuid) return { name: p.name, value: 0 };
 
           try {
-            const pRes = await fetch(`${PLAN_BASE_URL}/v1/player/${p.uuid}`, {
+            const dataUrl = `${PLAN_BASE_URL}/v1/datapoint?type=${metricKey}&player=${p.uuid}`;
+            const pRes = await fetch(dataUrl, {
               headers: { "Accept": "application/json" }
             });
 
             if (!pRes.ok) return { name: p.name, value: 0 };
-            const pData = await pRes.json();
+            const json = await pRes.json();
 
+            // Value can be direct number, nested object, or an array entry
             let val = 0;
-            if (type === 'kills') {
-              val = pData.player_kills ?? pData.playerKills ?? pData.kills ?? pData.mob_kills ?? 0;
-            } else if (type === 'deaths') {
-              val = pData.deaths ?? pData.player_deaths ?? pData.playerDeaths ?? 0;
+            if (typeof json === 'number') {
+              val = json;
+            } else if (json && typeof json === 'object') {
+              val = json.value ?? json.v ?? json[metricKey] ?? json.result ?? 0;
             }
 
             return {
@@ -82,7 +86,7 @@ export default async function handler(req, res) {
       );
     }
 
-    // Sort descending (highest first)
+    // Sort descending (highest rank first)
     formatted.sort((a, b) => b.value - a.value);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
