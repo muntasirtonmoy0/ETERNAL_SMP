@@ -59,7 +59,7 @@ async function fetchServerStatus() {
   const versionEl = document.getElementById("serverVersion");
 
   try {
-    const res = await fetch(`https://api.mcsrvstat.us/3/${SERVER_IP}:${SERVER_PORT}`);
+    const res = await fetch(`https://api.mcsrvstat.us/3/${n6.ozima.cloud:25993}:${25993}`);
     const data = await res.json();
 
     if (data.online) {
