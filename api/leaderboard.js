@@ -1,74 +1,58 @@
-import mysql from 'mysql2/promise';
-
 export default async function handler(req, res) {
   const { type = 'balance' } = req.query;
+  const BYTEBIN_URL = "https://bytebin.ajg0702.us/3n0NyosCX8mezlji";
 
+  // Mapping tab types to ajLeaderboards board keys
   const boardMap = {
     balance: 'vault_eco_balance',
-    playtime: 'statistic_hours_played',
+    playtime: 'statistic_time_played',
     kills: 'statistic_player_kills',
     deaths: 'statistic_deaths'
   };
 
-  const boardName = boardMap[type] || 'vault_eco_balance';
+  const targetBoard = boardMap[type] || 'vault_eco_balance';
 
-  let connection;
   try {
-    connection = await mysql.createConnection({
-      host: process.env.DB_HOST || "gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
-      port: Number(process.env.DB_PORT) || 4000,
-      user: process.env.DB_USER || "vh7WBZD3LEcMtqg.root",
-      password: process.env.DB_PASS || "P827Agx3pRx1QKxV",
-      database: process.env.DB_NAME || "test",
-      ssl: {
-        minVersion: 'TLSv1.2',
-        rejectUnauthorized: true
-      },
-      connectTimeout: 10000
+    const response = await fetch(BYTEBIN_URL, {
+      headers: { "Accept": "application/json" }
     });
 
-    // Universal query fallback for ajLeaderboards tables
-    let rows = [];
-    try {
-      const [dataRows] = await connection.execute(
-        `SELECT player_name AS name, score AS value 
-         FROM ajlb_cache 
-         WHERE board = ? 
-         ORDER BY CAST(score AS DECIMAL(20,2)) DESC 
-         LIMIT 10`,
-        [boardName]
-      );
-      rows = dataRows;
-    } catch (fallbackErr) {
-      const [dataRows] = await connection.execute(
-        `SELECT player_name AS name, value 
-         FROM ajlb_${boardName} 
-         ORDER BY CAST(value AS DECIMAL(20,2)) DESC 
-         LIMIT 10`
-      );
-      rows = dataRows;
+    if (!response.ok) {
+      throw new Error(`Bytebin fetch failed: ${response.status}`);
     }
 
-    await connection.end();
+    const data = await response.json();
+    const boards = data.boards || {};
+    const selectedBoard = boards[targetBoard] || {};
+    const entries = selectedBoard.alltime || selectedBoard.entries || [];
 
-    const formatted = rows.map(r => {
-      let raw = Number(r.value) || 0;
-      if (type === 'playtime') {
-        // Convert hours directly to seconds for the website display formatter
-        raw = raw * 3600;
+    const formatted = entries.map(item => {
+      let rawVal = 0;
+
+      if (type === 'balance') {
+        rawVal = parseFloat(item.value || item.score || 0) || 0;
+      } else if (type === 'playtime') {
+        // statistic_time_played is in Minecraft game ticks (20 ticks = 1 second)
+        const ticks = Number(item.value || item.score || 0);
+        rawVal = Math.floor(ticks / 20);
+      } else {
+        rawVal = Number(item.value || item.score || 0) || 0;
       }
+
       return {
-        name: r.name,
-        value: raw
+        name: item.player_name || item.name || item.player || "Unknown",
+        value: isNaN(rawVal) ? 0 : rawVal
       };
     });
 
+    // Sort descending and keep top 10
+    formatted.sort((a, b) => b.value - a.value);
+
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-    return res.status(200).json(formatted);
+    return res.status(200).json(formatted.slice(0, 10));
 
   } catch (error) {
-    if (connection) await connection.end();
     return res.status(500).json({ error: error.message });
   }
 }
