@@ -1,8 +1,6 @@
 // --- CONFIGURATION ---
 const SERVER_DOMAIN = "ETERNAL.ozima.bond";
 const FALLBACK_ADDRESS = "n6.ozima.cloud:25993";
-
-// Native Vercel Serverless API Route
 const PLAN_API_URL = "/api/leaderboard";
 
 // Custom Rank Mappings
@@ -175,67 +173,51 @@ async function loadLeaderboard(type) {
 
   try {
     const response = await fetch(PLAN_API_URL);
-    const data = await response.json();
+    const playerList = await response.json();
 
-    let playerList = Array.isArray(data) ? data : [];
-
-    // Filter out invalid names, timestamps, and placeholder strings
-    playerList = playerList.filter(p => {
-      const name = p.name || p.player_name;
-      return (
-        typeof name === "string" &&
-        name.trim().length > 0 &&
-        name !== "Unknown" &&
-        !name.includes("Today") &&
-        !name.includes("Server") &&
-        !name.includes(":")
-      );
-    });
-
-    if (playerList.length === 0) {
+    if (!Array.isArray(playerList) || playerList.length === 0) {
       tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No player records recorded yet. Join the server to register stats!</td></tr>`;
       return;
     }
 
-    // Sort according to category
+    // Sort by selected metric
     if (type === "balance") {
-      playerList.sort((a, b) => Number(b.vault_balance || b.money || b.balance || 0) - Number(a.vault_balance || a.money || a.balance || 0));
+      playerList.sort((a, b) => b.balance - a.balance);
     } else if (type === "playtime") {
-      playerList.sort((a, b) => Number(b.active_playtime || b.playtime || 0) - Number(a.active_playtime || a.playtime || 0));
+      playerList.sort((a, b) => b.playtime - a.playtime);
     } else if (type === "kills") {
-      playerList.sort((a, b) => Number(b.player_kills || b.kills || 0) - Number(a.player_kills || a.kills || 0));
+      playerList.sort((a, b) => (b.kills || 0) - (a.kills || 0));
     } else if (type === "deaths") {
-      playerList.sort((a, b) => Number(b.deaths || 0) - Number(a.deaths || 0));
+      playerList.sort((a, b) => (b.deaths || 0) - (a.deaths || 0));
     }
 
     const topPlayers = playerList.slice(0, 10);
 
     tbody.innerHTML = topPlayers.map((player, index) => {
-      const playerName = player.name || player.player_name;
       let displayValue = "--";
 
       if (type === "balance") {
-        const val = Number(player.vault_balance || player.money || player.balance || 0);
-        displayValue = "$" + val.toLocaleString();
+        displayValue = "$" + Number(player.balance).toLocaleString();
       } else if (type === "playtime") {
-        const ms = Number(player.active_playtime || player.playtime || 0);
+        const ms = Number(player.playtime);
         const hours = Math.floor(ms / 3600000);
-        displayValue = hours > 0 ? `${hours} hrs` : `${Math.floor(ms / 60000)} mins`;
+        const mins = Math.floor((ms % 3600000) / 60000);
+        displayValue = hours > 0 ? `${hours}h ${mins}m` : `${mins} mins`;
       } else if (type === "kills") {
-        displayValue = `${player.player_kills || player.kills || 0} Kills`;
+        displayValue = `${player.kills || 0} Kills`;
       } else if (type === "deaths") {
         displayValue = `${player.deaths || 0} Deaths`;
       }
 
-      const rank = PLAYER_RANKS[playerName] || "Member";
+      const rank = PLAYER_RANKS[player.name] || "Member";
 
       return `
         <tr>
           <td><strong>#${index + 1}</strong></td>
           <td>
             <div class="player-cell">
-              <img src="https://mc-heads.net/avatar/${playerName}/28" alt="${playerName}">
-              <span>${playerName}</span>
+              <img src="https://mc-heads.net/avatar/${player.name}/28" alt="${player.name}">
+              <span>${player.name}</span>
             </div>
           </td>
           <td><span class="player-rank-badge" data-rank="${rank}">${rank}</span></td>
@@ -245,7 +227,7 @@ async function loadLeaderboard(type) {
     }).join("");
 
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--danger);">Error parsing live stats data.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--danger);">Error syncing live leaderboard.</td></tr>`;
   }
 }
 
