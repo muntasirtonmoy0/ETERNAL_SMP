@@ -15,15 +15,14 @@ export default async function handler(req, res) {
   let connection;
   try {
     connection = await mysql.createConnection({
-      host: process.env.DB_HOST || "n1.ozima.cloud",
-      port: Number(process.env.DB_PORT) || 3306,
-      user: process.env.DB_USER || "u254_Ix3IlpGusiC",
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME || "s254_stats",
+      host: "n1.ozima.cloud",
+      port: 3306,
+      user: "u254_Ix3IlpGusiC",
+      password: "PASTE_YOUR_EXACT_DATABASE_PASSWORD_HERE",
+      database: "s254_stats",
       connectTimeout: 10000
     });
 
-    // Check if table exists, if not fallback to empty
     const [rows] = await connection.execute(
       `SELECT player_name AS name, value 
        FROM ajlb_${boardName} 
@@ -44,7 +43,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     if (connection) await connection.end();
-    // Return explicit error to inspect in browser
     res.status(500).json({ error: error.message });
   }
 }
