@@ -1,51 +1,51 @@
 export default async function handler(req, res) {
   const { type = 'balance' } = req.query;
-  const PLAN_API_URL = "http://n6.ozima.cloud:25909/v1/players";
+  const BYTEBIN_URL = "https://bytebin.ajg0702.us/3n0NyosCX8mezlji";
+
+  // Mapping tab types to ajLeaderboards board keys
+  const boardMap = {
+    balance: 'vault_eco_balance',
+    playtime: 'statistic_time_played',
+    kills: 'statistic_player_kills',
+    deaths: 'statistic_deaths'
+  };
+
+  const targetBoard = boardMap[type] || 'vault_eco_balance';
 
   try {
-    const response = await fetch(PLAN_API_URL, {
+    const response = await fetch(BYTEBIN_URL, {
       headers: { "Accept": "application/json" }
     });
 
     if (!response.ok) {
-      throw new Error(`Plan HTTP Error: ${response.status}`);
+      throw new Error(`Bytebin fetch failed: ${response.status}`);
     }
 
-    const payload = await response.json();
-    const rawList = payload.data || [];
+    const data = await response.json();
+    const boards = data.boards || {};
+    const selectedBoard = boards[targetBoard] || {};
+    const entries = selectedBoard.alltime || selectedBoard.entries || [];
 
-    const formatted = rawList.map(item => {
-      // 1. Strip HTML tags to get the pure username
-      let cleanName = "Unknown";
-      if (typeof item.name === "string") {
-        cleanName = item.name.replace(/<[^>]*>?/gm, "").trim();
-      }
-
-      // 2. Extract values safely
+    const formatted = entries.map(item => {
       let rawVal = 0;
 
       if (type === 'balance') {
-        const bal = item.balance?.d ?? item.balance?.v ?? "0";
-        rawVal = parseFloat(String(bal).replace(/[^0-9.-]+/g, "")) || 0;
+        rawVal = parseFloat(item.value || item.score || 0) || 0;
       } else if (type === 'playtime') {
-        // Active playtime: item.activePlaytime.v is milliseconds
-        const ms = item.activePlaytime?.v ?? "0";
-        rawVal = Math.floor((Number(ms) || 0) / 1000); // return in seconds
-      } else if (type === 'kills') {
-        const kills = item.kills?.v ?? item.kills?.d ?? 0;
-        rawVal = Number(kills) || 0;
-      } else if (type === 'deaths') {
-        const deaths = item.deaths?.v ?? item.deaths?.d ?? 0;
-        rawVal = Number(deaths) || 0;
+        // statistic_time_played is in Minecraft game ticks (20 ticks = 1 second)
+        const ticks = Number(item.value || item.score || 0);
+        rawVal = Math.floor(ticks / 20);
+      } else {
+        rawVal = Number(item.value || item.score || 0) || 0;
       }
 
       return {
-        name: cleanName,
+        name: item.player_name || item.name || item.player || "Unknown",
         value: isNaN(rawVal) ? 0 : rawVal
       };
     });
 
-    // Sort highest to lowest
+    // Sort descending and keep top 10
     formatted.sort((a, b) => b.value - a.value);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
