@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const { type = 'balance', debug = 'false' } = req.query;
+  const { type = 'balance' } = req.query;
   const PLAN_API_URL = "http://n6.ozima.cloud:25909/v1/players";
 
   try {
@@ -11,47 +11,45 @@ export default async function handler(req, res) {
       throw new Error(`Plan HTTP Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const payload = await response.json();
+    const rawList = payload.data || [];
 
-    // If &debug=true is in the URL, return raw Plan data to inspect keys
-    if (debug === 'true') {
-      return res.status(200).json(data);
-    }
+    const formatted = rawList.map(item => {
+      // 1. Strip HTML tags from Plan's anchor string to extract pure Minecraft name
+      let cleanName = "Unknown";
+      if (typeof item.name === "string") {
+        cleanName = item.name.replace(/<[^>]*>?/gm, "").trim();
+      }
 
-    // Handle array directly or any nested object array (players, data, rows, etc.)
-    let list = [];
-    if (Array.isArray(data)) {
-      list = data;
-    } else if (typeof data === 'object' && data !== null) {
-      list = data.players || data.data || data.rows || Object.values(data).find(v => Array.isArray(v)) || [];
-    }
-
-    const formatted = list.map(p => {
+      // 2. Extract nested numeric values
       let rawVal = 0;
 
       if (type === 'balance') {
-        const balString = String(p.Balance || p.balance || "0").replace(/[^0-9.-]+/g, "");
-        rawVal = parseFloat(balString) || 0;
+        if (item.balance && item.balance.v !== undefined && item.balance.v !== "-") {
+          rawVal = parseFloat(item.balance.v) || 0;
+        }
       } else if (type === 'playtime') {
-        // Fallback checks for milliseconds or ticks
-        const ticks = p["%statistic_time_played%"] || p.TotalTicks || p.time_played;
-        if (ticks) {
-          rawVal = Math.floor(Number(ticks) / 20);
-        } else {
-          rawVal = Math.floor((Number(p["Active Playtime"] || p["Active playtime"] || p.active_playtime || p.playtime) || 0) / 1000);
+        // Active playtime stored in milliseconds; convert to seconds
+        if (item.activePlaytime && item.activePlaytime.v !== undefined && item.activePlaytime.v !== "-") {
+          rawVal = Math.floor(Number(item.activePlaytime.v) / 1000);
         }
       } else if (type === 'kills') {
-        rawVal = Number(p["%statistic_player_kills%"] || p.Kills || p.kills || 0);
+        if (item.kills && item.kills.v !== undefined && item.kills.v !== "-") {
+          rawVal = Number(item.kills.v) || 0;
+        }
       } else if (type === 'deaths') {
-        rawVal = Number(p["%statistic_deaths%"] || p.Deaths || p.deaths || 0);
+        if (item.deaths && item.deaths.v !== undefined && item.deaths.v !== "-") {
+          rawVal = Number(item.deaths.v) || 0;
+        }
       }
 
       return {
-        name: p.Name || p.name || p.player_name || "Unknown",
+        name: cleanName,
         value: isNaN(rawVal) ? 0 : rawVal
       };
     });
 
+    // Sort highest to lowest
     formatted.sort((a, b) => b.value - a.value);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
