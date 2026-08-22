@@ -1,92 +1,47 @@
 export default async function handler(req, res) {
   const { type = 'balance' } = req.query;
-  const PLAN_BASE_URL = "http://n6.ozima.cloud:25909";
+  const BYTEBIN_ID = "p2qTjzlsFmhykiEk";
+  const BYTEBIN_URL = `https://bytebin.ajg0702.us/${BYTEBIN_ID}`;
+
+  // Mapping tab query types to ajLeaderboards board keys
+  const boardMap = {
+    balance: 'vault_eco_balance',
+    playtime: 'statistic_hours_played',
+    kills: 'statistic_player_kills',
+    deaths: 'statistic_deaths'
+  };
+
+  const targetBoard = boardMap[type] || 'vault_eco_balance';
 
   try {
-    // 1. Fetch the master players list
-    const response = await fetch(`${PLAN_BASE_URL}/v1/players`, {
+    const response = await fetch(BYTEBIN_URL, {
       headers: { "Accept": "application/json" }
     });
 
     if (!response.ok) {
-      throw new Error(`Plan HTTP Error: ${response.status}`);
+      throw new Error(`Viewer fetch failed: ${response.status}`);
     }
 
-    const payload = await response.json();
-    const rawList = payload.data || [];
+    const data = await response.json();
+    const boards = data.boards || {};
+    const selectedBoard = boards[targetBoard] || {};
+    const entries = selectedBoard.alltime || selectedBoard.entries || [];
 
-    function parseNumericValue(val) {
-      if (val === null || val === undefined) return 0;
-      if (typeof val === 'number') return val;
-      const str = String(val).trim();
-      const num = Number(str.replace(/[^0-9.eE+-]/g, ""));
-      return isNaN(num) ? 0 : num;
-    }
+    const formatted = entries.map(item => {
+      let rawVal = parseFloat(item.value || item.score || 0) || 0;
 
-    // Extract cleaned name and UUID from the player anchor tag
-    const players = rawList.map(item => {
-      let cleanName = "Unknown";
-      let uuid = null;
-
-      if (typeof item.name === "string") {
-        cleanName = item.name.replace(/<[^>]*>?/gm, "").trim();
-        const match = item.name.match(/player\/([a-zA-Z0-9-]+)/);
-        if (match) uuid = match[1];
+      if (type === 'playtime') {
+        // Convert hours to seconds so app.js formats it cleanly (e.g. 3h 0m)
+        rawVal = rawVal * 3600;
       }
 
       return {
-        name: cleanName,
-        uuid: uuid,
-        balance: parseNumericValue(item.balance?.v ?? item.balance?.d ?? 0),
-        playtime: Math.floor(parseNumericValue(item.activePlaytime?.v ?? item.playtime?.v ?? 0) / 1000)
+        name: item.player_name || item.name || item.player || "Unknown",
+        value: isNaN(rawVal) ? 0 : rawVal
       };
     });
 
-    let formatted = [];
-
-    // Fast resolution for Balance and Playtime from table data
-    if (type === 'balance') {
-      formatted = players.map(p => ({ name: p.name, value: p.balance }));
-    } else if (type === 'playtime') {
-      formatted = players.map(p => ({ name: p.name, value: p.playtime }));
-    } 
-    // Fetch deaths / kills via Plan's /v1/datapoint API
-    else if (type === 'deaths' || type === 'kills') {
-      const metricKey = type === 'deaths' ? 'player_deaths' : 'player_kills';
-
-      formatted = await Promise.all(
-        players.map(async (p) => {
-          if (!p.uuid) return { name: p.name, value: 0 };
-
-          try {
-            const dataUrl = `${PLAN_BASE_URL}/v1/datapoint?type=${metricKey}&player=${p.uuid}`;
-            const pRes = await fetch(dataUrl, {
-              headers: { "Accept": "application/json" }
-            });
-
-            if (!pRes.ok) return { name: p.name, value: 0 };
-            const json = await pRes.json();
-
-            // Value can be direct number, nested object, or an array entry
-            let val = 0;
-            if (typeof json === 'number') {
-              val = json;
-            } else if (json && typeof json === 'object') {
-              val = json.value ?? json.v ?? json[metricKey] ?? json.result ?? 0;
-            }
-
-            return {
-              name: p.name,
-              value: parseNumericValue(val)
-            };
-          } catch {
-            return { name: p.name, value: 0 };
-          }
-        })
-      );
-    }
-
-    // Sort descending (highest rank first)
+    // Sort descending (highest first)
     formatted.sort((a, b) => b.value - a.value);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
