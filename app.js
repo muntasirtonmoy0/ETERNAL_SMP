@@ -1,7 +1,7 @@
 // --- CONFIGURATION ---
 const SERVER_DOMAIN = "ETERNAL.ozima.bond";
 const FALLBACK_ADDRESS = "n6.ozima.cloud:25993";
-const PLAN_API_URL = "http://n6.ozima.cloud:25909"; // Live Plan Webserver Port
+const PLAN_API_URL = "https://corsproxy.io/?" + encodeURIComponent("http://n6.ozima.cloud:25909");
 
 // Custom Rank Mappings
 const PLAYER_RANKS = {
