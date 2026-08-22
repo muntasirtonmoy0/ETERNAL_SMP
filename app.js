@@ -1,6 +1,6 @@
 // --- CONFIGURATION ---
-const SERVER_IP = "n6.ozima.cloud:25993"; // Replace with your domain or IP
-const SERVER_PORT = "25993";
+const SERVER_DOMAIN = "ETERNAL.ozima.bond"; // Primary Subdomain
+const FALLBACK_ADDRESS = "n6.ozima.cloud:25993"; // Direct Node Address
 
 let currentOnlinePlayers = [];
 
@@ -37,7 +37,7 @@ function setupSidebar() {
   if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
   if (overlay) overlay.addEventListener("click", closeSidebar);
 
-  // Modal setup
+  // Modal bindings
   const playerStatCard = document.getElementById("playerStatCard");
   const closePlayerModal = document.getElementById("closePlayerModal");
   const closeEventModal = document.getElementById("closeEventModal");
@@ -59,8 +59,15 @@ async function fetchServerStatus() {
   const versionEl = document.getElementById("serverVersion");
 
   try {
-    const res = await fetch(`https://api.mcsrvstat.us/3/${n6.ozima.cloud:25993}:${25993}`);
-    const data = await res.json();
+    // Queries via mcstatus.io standard TCP engine
+    let res = await fetch(`https://api.mcstatus.io/v2/status/java/${SERVER_DOMAIN}`);
+    let data = await res.json();
+
+    // Fallback if subdomain SRV isn't routed yet
+    if (!data.online) {
+      res = await fetch(`https://api.mcstatus.io/v2/status/java/${FALLBACK_ADDRESS}`);
+      data = await res.json();
+    }
 
     if (data.online) {
       if (dot) dot.classList.add("online");
@@ -68,12 +75,16 @@ async function fetchServerStatus() {
         statusEl.innerText = "Online & Running";
         statusEl.style.color = "var(--success)";
       }
-      if (countEl) countEl.innerText = `${data.players.online} / ${data.players.max}`;
-      if (versionEl && data.version) versionEl.innerText = data.version;
+      if (countEl) {
+        countEl.innerText = `${data.players.online} / ${data.players.max}`;
+      }
+      if (versionEl && data.version) {
+        versionEl.innerText = data.version.name_clean || data.version.name_raw || "1.20 - 1.21.x";
+      }
 
       if (data.players.list && data.players.list.length > 0) {
         currentOnlinePlayers = data.players.list.map(p => ({
-          name: p.name || p,
+          name: p.name_clean || p.name_raw,
           rank: "Member"
         }));
       } else {
