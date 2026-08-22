@@ -15,33 +15,31 @@ export default async function handler(req, res) {
     const rawList = payload.data || [];
 
     const formatted = rawList.map(item => {
-      // 1. Strip HTML tags to get the pure username
+      // 1. Clean player name
       let cleanName = "Unknown";
       if (typeof item.name === "string") {
         cleanName = item.name.replace(/<[^>]*>?/gm, "").trim();
       }
 
-      // 2. Extract values safely
+      // 2. Extract metrics safely using your server's exact statistic keys
       let rawVal = 0;
 
       if (type === 'balance') {
-        const bal = item.balance?.d ?? item.balance?.v ?? "0";
+        const bal = item.vault_eco_balance?.v ?? item.balance?.d ?? item.balance?.v ?? "0";
         rawVal = parseFloat(String(bal).replace(/[^0-9.-]+/g, "")) || 0;
       } else if (type === 'playtime') {
-        // Look for hours played first, then fallback to total/active playtime milliseconds
-        const hours = item.statistic_hours_played?.v ?? item.hours_played?.v ?? null;
-
+        const hours = item.statistic_hours_played?.v ?? item.statistic_time_played?.v ?? item.hours_played?.v ?? null;
         if (hours !== null) {
-          rawVal = (Number(hours) || 0) * 3600; // Convert hours directly to seconds
+          rawVal = (Number(hours) || 0) * 3600; // Convert hours to seconds
         } else {
           const ms = item.playtime?.v ?? item.activePlaytime?.v ?? "0";
-          rawVal = Math.floor((Number(ms) || 0) / 1000); // Milliseconds to seconds
+          rawVal = Math.floor((Number(ms) || 0) / 1000); // Convert ms to seconds
         }
       } else if (type === 'kills') {
-        const kills = item.kills?.v ?? item.kills?.d ?? 0;
+        const kills = item.statistic_player_kills?.v ?? item.kills?.v ?? item.kills?.d ?? 0;
         rawVal = Number(kills) || 0;
       } else if (type === 'deaths') {
-        const deaths = item.deaths?.v ?? item.deaths?.d ?? 0;
+        const deaths = item.statistic_deaths?.v ?? item.deaths?.v ?? item.deaths?.d ?? 0;
         rawVal = Number(deaths) || 0;
       }
 
