@@ -1,7 +1,9 @@
 // --- CONFIGURATION ---
 const SERVER_DOMAIN = "ETERNAL.ozima.bond";
 const FALLBACK_ADDRESS = "n6.ozima.cloud:25993";
-const PLAN_API_URL = "https://corsproxy.io/?" + encodeURIComponent("http://n6.ozima.cloud:25909");
+
+// HTTPS Proxy to prevent mixed-content (SSL) errors on Vercel
+const PLAN_API_URL = "https://corsproxy.io/?" + encodeURIComponent("http://n6.ozima.cloud:25909/v1/players");
 
 // Custom Rank Mappings
 const PLAYER_RANKS = {
@@ -19,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSidebar();
   fetchServerStatus();
 
-  // Load live balance leaderboard by default if on leaderboard page
+  // Load live leaderboard by default if on the leaderboard page
   if (document.getElementById("leaderboardBody")) {
     loadLeaderboard('balance');
   }
@@ -158,7 +160,7 @@ function buyItem(name) {
   alert(`Redirecting to checkout for ${name}...`);
 }
 
-// --- LIVE LEADERBOARD LOGIC (PLAN API WITH SAFE FALLBACK) ---
+// --- LIVE LEADERBOARD LOGIC (PLAN API UUID PARSER) ---
 async function loadLeaderboard(type) {
   document.querySelectorAll(".lb-btn").forEach(b => b.classList.remove("active"));
   if (window.event && window.event.currentTarget) {
@@ -174,37 +176,52 @@ async function loadLeaderboard(type) {
   tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Syncing live server statistics...</td></tr>`;
 
   try {
-    const response = await fetch(`${PLAN_API_URL}/v1/players`);
-    const playersData = await response.json();
-    let players = Array.isArray(playersData) ? playersData : Object.values(playersData);
+    const response = await fetch(PLAN_API_URL);
+    const data = await response.json();
 
-    if (!players || players.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No player records recorded yet. Join the server to register stats!</td></tr>`;
+    // Flatten Plan's UUID-mapped dictionary into a flat player array
+    let playerList = [];
+    if (Array.isArray(data)) {
+      playerList = data;
+    } else if (typeof data === "object" && data !== null) {
+      playerList = Object.entries(data).map(([uuid, info]) => {
+        if (typeof info === "object" && info !== null) {
+          return { uuid, ...info };
+        }
+        return { uuid, name: info };
+      });
+    }
+
+    // Filter out invalid/empty entries
+    playerList = playerList.filter(p => p.name && p.name !== "Unknown");
+
+    if (playerList.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No player records found yet. Players must join the server to sync stats!</td></tr>`;
       return;
     }
 
-    let sorted = [];
+    // Sort according to category
     if (type === "balance") {
-      sorted = players.sort((a, b) => (b.vault_balance || b.money || 0) - (a.vault_balance || a.money || 0));
+      playerList.sort((a, b) => (Number(b.vault_balance || b.money || b.balance || 0) - Number(a.vault_balance || a.money || a.balance || 0)));
     } else if (type === "playtime") {
-      sorted = players.sort((a, b) => (b.active_playtime || b.playtime || 0) - (a.active_playtime || a.playtime || 0));
+      playerList.sort((a, b) => (Number(b.active_playtime || b.playtime || 0) - Number(a.active_playtime || a.playtime || 0)));
     } else if (type === "kills") {
-      sorted = players.sort((a, b) => (b.player_kills || b.kills || 0) - (a.player_kills || a.kills || 0));
+      playerList.sort((a, b) => (Number(b.player_kills || b.kills || 0) - Number(a.player_kills || a.kills || 0)));
     } else if (type === "deaths") {
-      sorted = players.sort((a, b) => (b.deaths || 0) - (a.deaths || 0));
+      playerList.sort((a, b) => (Number(b.deaths || 0) - Number(a.deaths || 0)));
     }
 
-    const topPlayers = sorted.slice(0, 10);
+    const topPlayers = playerList.slice(0, 10);
 
     tbody.innerHTML = topPlayers.map((player, index) => {
-      const playerName = player.name || player.player_name || "Unknown";
+      const playerName = player.name;
       let displayValue = "--";
 
       if (type === "balance") {
-        const val = player.vault_balance || player.money || 0;
-        displayValue = "$" + Number(val).toLocaleString();
+        const val = Number(player.vault_balance || player.money || player.balance || 0);
+        displayValue = "$" + val.toLocaleString();
       } else if (type === "playtime") {
-        const ms = player.active_playtime || player.playtime || 0;
+        const ms = Number(player.active_playtime || player.playtime || 0);
         const hours = Math.floor(ms / 3600000);
         displayValue = hours > 0 ? `${hours} hrs` : `${Math.floor(ms / 60000)} mins`;
       } else if (type === "kills") {
@@ -229,8 +246,9 @@ async function loadLeaderboard(type) {
         </tr>
       `;
     }).join("");
+
   } catch (err) {
-    // Fallback display if Plan endpoint is blocked by browser mixed-content policy
+    // Fallback display if Plan endpoint fails
     const sampleData = {
       balance: [
         { rank: 1, name: "REAL_TWILIGHT0_0", role: "Owner", val: "$10,450,000" },
