@@ -1,5 +1,5 @@
 // --- CONFIGURATION ---
-const SERVER_IP = "ETERNAL.ozima.bond"; // Replace with your domain or IP
+const SERVER_IP = "n6.ozima.cloud:25993"; // Replace with your domain or IP
 const SERVER_PORT = "25993";
 
 let currentOnlinePlayers = [];
