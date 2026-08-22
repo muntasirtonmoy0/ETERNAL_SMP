@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   const boardMap = {
     balance: 'vault_eco_balance',
-    playtime: 'statistic_time_played',
+    playtime: 'statistic_hours_played',
     kills: 'statistic_player_kills',
     deaths: 'statistic_deaths'
   };
@@ -27,19 +27,35 @@ export default async function handler(req, res) {
       connectTimeout: 10000
     });
 
-    const [rows] = await connection.execute(
-      `SELECT player_name AS name, value 
-       FROM ajlb_${boardName} 
-       ORDER BY CAST(value AS DECIMAL(20,2)) DESC 
-       LIMIT 10`
-    );
+    // Universal query fallback for ajLeaderboards tables
+    let rows = [];
+    try {
+      const [dataRows] = await connection.execute(
+        `SELECT player_name AS name, score AS value 
+         FROM ajlb_cache 
+         WHERE board = ? 
+         ORDER BY CAST(score AS DECIMAL(20,2)) DESC 
+         LIMIT 10`,
+        [boardName]
+      );
+      rows = dataRows;
+    } catch (fallbackErr) {
+      const [dataRows] = await connection.execute(
+        `SELECT player_name AS name, value 
+         FROM ajlb_${boardName} 
+         ORDER BY CAST(value AS DECIMAL(20,2)) DESC 
+         LIMIT 10`
+      );
+      rows = dataRows;
+    }
 
     await connection.end();
 
     const formatted = rows.map(r => {
       let raw = Number(r.value) || 0;
       if (type === 'playtime') {
-        raw = Math.floor(raw / 20); // ticks -> seconds
+        // Convert hours directly to seconds for the website display formatter
+        raw = raw * 3600;
       }
       return {
         name: r.name,
