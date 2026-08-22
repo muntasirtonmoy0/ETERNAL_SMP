@@ -177,40 +177,41 @@ async function loadLeaderboard(type) {
     const response = await fetch(PLAN_API_URL);
     const data = await response.json();
 
-    let playerList = [];
-    if (Array.isArray(data)) {
-      playerList = data;
-    } else if (typeof data === "object" && data !== null) {
-      playerList = Object.entries(data).map(([uuid, info]) => {
-        if (typeof info === "object" && info !== null) {
-          return { uuid, ...info };
-        }
-        return { uuid, name: info };
-      });
-    }
+    let playerList = Array.isArray(data) ? data : [];
 
-    // Filter out invalid/empty entries or proxy error messages
-    playerList = playerList.filter(p => p.name && typeof p.name === "string" && !p.name.includes("http") && p.name !== "Unknown");
+    // Filter out invalid names, timestamps, and placeholder strings
+    playerList = playerList.filter(p => {
+      const name = p.name || p.player_name;
+      return (
+        typeof name === "string" &&
+        name.trim().length > 0 &&
+        name !== "Unknown" &&
+        !name.includes("Today") &&
+        !name.includes("Server") &&
+        !name.includes(":")
+      );
+    });
 
     if (playerList.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No player records found yet. Join the server to register stats!</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No player records recorded yet. Join the server to register stats!</td></tr>`;
       return;
     }
 
+    // Sort according to category
     if (type === "balance") {
-      playerList.sort((a, b) => (Number(b.vault_balance || b.money || b.balance || 0) - Number(a.vault_balance || a.money || a.balance || 0)));
+      playerList.sort((a, b) => Number(b.vault_balance || b.money || b.balance || 0) - Number(a.vault_balance || a.money || a.balance || 0));
     } else if (type === "playtime") {
-      playerList.sort((a, b) => (Number(b.active_playtime || b.playtime || 0) - Number(a.active_playtime || a.playtime || 0)));
+      playerList.sort((a, b) => Number(b.active_playtime || b.playtime || 0) - Number(a.active_playtime || a.playtime || 0));
     } else if (type === "kills") {
-      playerList.sort((a, b) => (Number(b.player_kills || b.kills || 0) - Number(a.player_kills || a.kills || 0)));
+      playerList.sort((a, b) => Number(b.player_kills || b.kills || 0) - Number(a.player_kills || a.kills || 0));
     } else if (type === "deaths") {
-      playerList.sort((a, b) => (Number(b.deaths || 0) - Number(a.deaths || 0)));
+      playerList.sort((a, b) => Number(b.deaths || 0) - Number(a.deaths || 0));
     }
 
     const topPlayers = playerList.slice(0, 10);
 
     tbody.innerHTML = topPlayers.map((player, index) => {
-      const playerName = player.name;
+      const playerName = player.name || player.player_name;
       let displayValue = "--";
 
       if (type === "balance") {
@@ -244,7 +245,7 @@ async function loadLeaderboard(type) {
     }).join("");
 
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--danger);">Error syncing live leaderboard.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--danger);">Error parsing live stats data.</td></tr>`;
   }
 }
 
