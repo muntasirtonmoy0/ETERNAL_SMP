@@ -15,32 +15,28 @@ export default async function handler(req, res) {
     const rawList = payload.data || [];
 
     const formatted = rawList.map(item => {
-      // 1. Strip HTML tags from Plan's anchor string to extract pure Minecraft name
+      // 1. Strip HTML tags to get the pure username
       let cleanName = "Unknown";
       if (typeof item.name === "string") {
         cleanName = item.name.replace(/<[^>]*>?/gm, "").trim();
       }
 
-      // 2. Extract nested numeric values
+      // 2. Extract values safely
       let rawVal = 0;
 
       if (type === 'balance') {
-        if (item.balance && item.balance.v !== undefined && item.balance.v !== "-") {
-          rawVal = parseFloat(item.balance.v) || 0;
-        }
+        const bal = item.balance?.d ?? item.balance?.v ?? "0";
+        rawVal = parseFloat(String(bal).replace(/[^0-9.-]+/g, "")) || 0;
       } else if (type === 'playtime') {
-        // Active playtime stored in milliseconds; convert to seconds
-        if (item.activePlaytime && item.activePlaytime.v !== undefined && item.activePlaytime.v !== "-") {
-          rawVal = Math.floor(Number(item.activePlaytime.v) / 1000);
-        }
+        // Active playtime: item.activePlaytime.v is milliseconds
+        const ms = item.activePlaytime?.v ?? "0";
+        rawVal = Math.floor((Number(ms) || 0) / 1000); // return in seconds
       } else if (type === 'kills') {
-        if (item.kills && item.kills.v !== undefined && item.kills.v !== "-") {
-          rawVal = Number(item.kills.v) || 0;
-        }
+        const kills = item.kills?.v ?? item.kills?.d ?? 0;
+        rawVal = Number(kills) || 0;
       } else if (type === 'deaths') {
-        if (item.deaths && item.deaths.v !== undefined && item.deaths.v !== "-") {
-          rawVal = Number(item.deaths.v) || 0;
-        }
+        const deaths = item.deaths?.v ?? item.deaths?.d ?? 0;
+        rawVal = Number(deaths) || 0;
       }
 
       return {
