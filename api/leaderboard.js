@@ -14,42 +14,25 @@ export default async function handler(req, res) {
     const payload = await response.json();
     const rawList = payload.data || [];
 
-    // Search top-level fields and Plan's PlaceholderAPI table
-    const extractVal = (item, keys) => {
-      if (!item) return null;
+    // Helper to parse strings like "9.9B", "150M", "$2.5K", or raw numbers
+    function parseFormattedNumber(val) {
+      if (val === null || val === undefined) return 0;
+      if (typeof val === 'number') return val;
 
-      // 1. Direct item keys
-      for (const k of keys) {
-        if (item[k] !== undefined && item[k] !== null) {
-          if (typeof item[k] === 'object') {
-            return item[k].v ?? item[k].d ?? item[k].value ?? null;
-          }
-          return item[k];
-        }
-      }
+      const str = String(val).trim().toUpperCase();
+      const numMatch = str.match(/[-+]?[0-9]*\.?[0-9]+/);
+      if (!numMatch) return 0;
 
-      // 2. Plan placeholder dictionary
-      const phMap = item.placeholders || item.placeholder_values || item.extensions?.PlaceholderAPI || {};
-      for (const k of keys) {
-        const cleanK = k.replace(/%/g, "");
-        const withPercent = `%${cleanK}%`;
+      let num = parseFloat(numMatch[0]);
+      if (str.includes('B')) num *= 1e9;
+      else if (str.includes('M')) num *= 1e6;
+      else if (str.includes('K')) num *= 1e3;
 
-        if (phMap[withPercent] !== undefined && phMap[withPercent] !== null) {
-          return typeof phMap[withPercent] === 'object' 
-            ? (phMap[withPercent].v ?? phMap[withPercent].d ?? phMap[withPercent].value) 
-            : phMap[withPercent];
-        }
-        if (phMap[cleanK] !== undefined && phMap[cleanK] !== null) {
-          return typeof phMap[cleanK] === 'object' 
-            ? (phMap[cleanK].v ?? phMap[cleanK].d ?? phMap[cleanK].value) 
-            : phMap[cleanK];
-        }
-      }
-
-      return null;
-    };
+      return isNaN(num) ? 0 : num;
+    }
 
     const formatted = rawList.map(item => {
+      // 1. Strip HTML tags from username
       let cleanName = "Unknown";
       if (typeof item.name === "string") {
         cleanName = item.name.replace(/<[^>]*>?/gm, "").trim();
@@ -58,38 +41,22 @@ export default async function handler(req, res) {
       let rawVal = 0;
 
       if (type === 'balance') {
-        const bal = extractVal(item, ['vault_eco_balance', 'balance', 'money', '%vault_eco_balance%']) || "0";
-        rawVal = parseFloat(String(bal).replace(/[^0-9.-]+/g, "")) || 0;
+        const bal = item.balance?.d ?? item.balance?.v ?? item.balance ?? 0;
+        rawVal = parseFormattedNumber(bal);
 
       } else if (type === 'playtime') {
-        // Look directly for hours played
-        const hours = extractVal(item, ['%statistic_hours_played%', 'statistic_hours_played', 'hours_played']);
-        
-        if (hours !== null && !isNaN(Number(hours))) {
-          rawVal = Number(hours) * 3600; // Convert hours to seconds for app.js
-        } else {
-          const ms = extractVal(item, ['playtime', 'activePlaytime', 'active_playtime']) || "0";
-          rawVal = Math.floor((Number(ms) || 0) / 1000);
-        }
+        // Active playtime: item.activePlaytime.v is milliseconds
+        const ms = item.activePlaytime?.v ?? item.playtime?.v ?? 0;
+        rawVal = Math.floor((Number(ms) || 0) / 1000); // Return in seconds
 
       } else if (type === 'kills') {
-        const kills = extractVal(item, [
-          '%statistic_player_kills%',
-          'statistic_player_kills',
-          'player_kills',
-          'playerKills',
-          'kills'
-        ]);
+        // Plan's native kills structure
+        const kills = item.kills?.v ?? item.kills?.d ?? item.playerKills?.v ?? item.kills ?? 0;
         rawVal = Number(kills) || 0;
 
       } else if (type === 'deaths') {
-        const deaths = extractVal(item, [
-          '%statistic_deaths%',
-          'statistic_deaths',
-          'player_deaths',
-          'playerDeaths',
-          'deaths'
-        ]);
+        // Plan's native deaths structure
+        const deaths = item.deaths?.v ?? item.deaths?.d ?? item.playerDeaths?.v ?? item.deaths ?? 0;
         rawVal = Number(deaths) || 0;
       }
 
@@ -99,7 +66,7 @@ export default async function handler(req, res) {
       };
     });
 
-    // Sort descending
+    // Sort descending (highest rank first)
     formatted.sort((a, b) => b.value - a.value);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
