@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eternal SMP | Server Ranks</title>
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+      <a href="index.html" class="logo-link">
+        <img src="logo.png" alt="Eternal SMP Logo" class="nav-logo-img">
+        <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+      </a>
+    </div>
+    <div class="ip-widget" onclick="copyIP('ETERNAL.ozima.bond')">
+      <span class="status-dot" id="headerDot"></span>
+      <span id="ipText">ETERNAL.ozima.bond</span>
+      <i class="fa-regular fa-copy"></i>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Navigation</h3>
+      <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="ranks.html" class="nav-link active"><i class="fa-solid fa-crown"></i> Server Ranks</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
+      <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+    </ul>
+  </nav>
+
+  <main class="content-container">
+    <div class="page-header">
+      <h2>Server Ranks</h2>
+      <p>Select your tier below to view details and proceed to checkout.</p>
+    </div>
+
+    <div class="ranks-showcase-grid">
+
+      <!-- Knight -->
+      <div class="rank-card-box rank-knight">
+        <div class="rank-card-header">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>KNIGHT</h3>
+          <div class="rank-card-price">৳120 <span>BDT</span></div>
+        </div>
+        <ul class="rank-perk-list">
+          <li><i class="fa-solid fa-circle-check"></i> <strong>4 Set Homes</strong></li>
+          <li><i class="fa-solid fa-circle-check"></i> <strong>250k – 500k</strong> Server Cash</li>
+          <li><i class="fa-solid fa-circle-check"></i> Armor & Tools (Enchanted Pickaxe)</li>
+          <li><i class="fa-solid fa-circle-check"></i> 3x Shulker Boxes</li>
+          <li><i class="fa-solid fa-circle-check"></i> 64 Golden Apples + 6 God Apples</li>
+          <li><i class="fa-solid fa-circle-check"></i> 10,000 Claim Blocks</li>
+          <li><i class="fa-solid fa-circle-check"></i> Common Armor Trim</li>
+          <li><i class="fa-solid fa-circle-check"></i> 2 Common Spawners / 4 Common Keys</li>
+          <li><i class="fa-solid fa-terminal"></i> <code>/ptime</code>, <code>/near</code>, <code>/hat</code></li>
+        </ul>
+        <a href="payment.html?rank=Knight&price=120" class="rank-buy-btn">Buy Now</a>
+      </div>
+
+      <!-- Hydra -->
+      <div class="rank-card-box rank-hydra">
+        <div class="rank-card-header">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-dragon"></i></div>
+          <h3>HYDRA</h3>
+          <div class="rank-card-price">৳220 <span>BDT</span></div>
+        </div>
+        <ul class="rank-perk-list">
+          <li><i class="fa-solid fa-circle-check"></i> <strong>5 Set Homes</strong></li>
+          <li><i class="fa-solid fa-circle-check"></i> <strong>500k – 750k</strong> Server Cash</li>
+          <li><i class="fa-solid fa-circle-check"></i> Limited Enchanted Armor & Tools</li>
+          <li><i class="fa-solid fa-circle-check"></i> 4–5x Shulker Boxes</li>
+          <li><i class="fa-solid fa-circle-check"></i> 96 Golden Apples + 10 God Apples</li>
+          <li><i class="fa-solid fa-circle-check"></i> 15,000 Claim Blocks</li>
+          <li><i class="fa-solid fa-circle-check"></i> Uncommon Armor Trim</li>
+          <li><i class="fa-solid fa-circle-check"></i> 2 Uncommon Spawners / 6 Common Keys</li>
+          <li><i class="fa-solid fa-terminal"></i> Knight Commands + <code>/back</code>, <code>/workbench</code>, <code>/echest</code>, <code>/nick</code></li>
+        </ul>
+        <a href="payment.html?rank=Hydra&price=220" class="rank-buy-btn">Buy Now</a>
+      </div>
+
+      <!-- Emperor -->
+      <div class="rank-card-box rank-emperor">
+        <div class="rank-card-header">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-chess-king"></i></div>
+          <h3>EMPEROR</h3>
+          <div class="rank-card-price">৳320 <span>BDT</span></div>
+        </div>
+        <ul class="rank-perk-list">
+          <li><i class="fa-solid fa-circle-check"></i> <strong>6 Set Homes</strong></li>
+          <li><i class="fa-solid fa-circle-check"></i> <strong>750k – 850k</strong> Server Cash</li>
+          <li><i class="fa-solid fa-circle-check"></i> Fully Enchanted Gear + <strong>1x Wind Burst Mace</strong></li>
+          <li><i class="fa-solid fa-circle-check"></i> 6x Shulker Boxes</li>
+          <li><i class="fa-solid fa-circle-check"></i> 128 Golden Apples + 16 God Apples</li>
+          <li><i class="fa-solid fa-circle-check"></i> 20,000 Claim Blocks</li>
+          <li><i class="fa-solid fa-circle-check"></i> Rare Armor Trim</li>
+          <li><i class="fa-solid fa-circle-check"></i> 2 Rare Spawners / 1 Advance Key</li>
+          <li><i class="fa-solid fa-terminal"></i> Hydra Commands + <code>/disposal</code>, <code>/smithingtable</code>, <code>/loom</code>, <code>/repair hand</code></li>
+        </ul>
+        <a href="payment.html?rank=Emperor&price=320" class="rank-buy-btn">Buy Now</a>
+      </div>
+
+      <!-- Phoenix -->
+      <div class="rank-card-box rank-phoenix">
+        <div class="rank-card-header">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-fire"></i></div>
+          <h3>PHOENIX</h3>
+          <div class="rank-card-price">৳420 <span>BDT</span></div>
+        </div>
+        <ul class="rank-perk-list">
+          <li><i class="fa-solid fa-circle-check"></i> <strong>8 Set Homes</strong></li>
+          <li><i class="fa-solid fa-circle-check"></i> <strong>1,000,000+</strong> Server Cash</li>
+          <li><i class="fa-solid fa-circle-check"></i> Max Soulbound Gear + Wind Burst III Mace</li>
+          <li><i class="fa-solid fa-circle-check"></i> <strong>1x Elytra</strong> + 8x Shulker Boxes</li>
+          <li><i class="fa-solid fa-circle-check"></i> 192 Golden Apples</li>
+          <li><i class="fa-solid fa-circle-check"></i> 30,000 Claim Blocks</li>
+          <li><i class="fa-solid fa-circle-check"></i> Legendary Armor Trim</li>
+          <li><i class="fa-solid fa-circle-check"></i> 2 High Tier Spawners / 1 High Tier Key</li>
+          <li><i class="fa-solid fa-terminal"></i> Emperor Commands + <code>/heal</code>, <code>/night</code>, <code>/anvil</code></li>
+        </ul>
+        <a href="payment.html?rank=Phoenix&price=420" class="rank-buy-btn">Buy Now</a>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Copied IP to clipboard!</div>
+  <script src="app.js"></script>
+</body>
+</html>
