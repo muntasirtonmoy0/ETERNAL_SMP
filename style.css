@@ -69,14 +69,14 @@ body {
   color: var(--text-main);
 }
 
-.nav-logo-gif {
-  width: 40px;
-  height: 40px;
+.nav-logo-img {
+  width: 42px;
+  height: 42px;
   border-radius: 8px;
   object-fit: cover;
 }
 
-.logo-text {
+.logo {
   font-weight: 800;
   font-size: 1.3rem;
   letter-spacing: 0.5px;
@@ -199,13 +199,13 @@ body {
   padding: 30px 20px 80px;
 }
 
-/* HERO SECTION & ANIMATED BANNER */
+/* HERO SECTION & BANNER IMAGE */
 .hero-banner-container {
   position: relative;
-  background: url('banner.gif') center center / cover no-repeat;
+  background: url('banner.png') center center / cover no-repeat;
   border-radius: 20px;
   overflow: hidden;
-  padding: 60px 20px;
+  padding: 70px 20px;
   border: 1px solid var(--border);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
@@ -689,6 +689,7 @@ body {
 .role-owner { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
 .role-admin { background: rgba(52, 152, 219, 0.15); color: #3498db; }
 .role-mod { background: rgba(149, 165, 166, 0.2); color: #bdc3c7; }
+.role-officer { background: rgba(255, 182, 193, 0.2); color: #ffb6c1; }
 
 .staff-name {
   font-size: 1.2rem;
@@ -809,7 +810,7 @@ body {
   border-radius: 6px;
 }
 
-/* RANK BADGES (Color coded) */
+/* RANK BADGES */
 .player-rank-badge {
   font-size: 0.7rem;
   font-weight: 700;
