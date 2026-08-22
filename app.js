@@ -180,7 +180,7 @@ async function loadLeaderboard(type) {
       return;
     }
 
-    // Sort by selected metric
+    // Sort according to category
     if (type === "balance") {
       playerList.sort((a, b) => b.balance - a.balance);
     } else if (type === "playtime") {
