@@ -172,7 +172,7 @@ async function loadLeaderboard(type) {
   tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Syncing live server statistics...</td></tr>`;
 
   try {
-    const response = await fetch(PLAN_API_URL);
+    const response = await fetch(`${PLAN_API_URL}?_=${Date.now()}`);
     const playerList = await response.json();
 
     if (!Array.isArray(playerList) || playerList.length === 0) {
