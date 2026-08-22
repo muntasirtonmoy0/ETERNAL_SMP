@@ -61,7 +61,22 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.logo {
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-main);
+}
+
+.nav-logo-gif {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.logo-text {
   font-weight: 800;
   font-size: 1.3rem;
   letter-spacing: 0.5px;
@@ -184,7 +199,30 @@ body {
   padding: 30px 20px 80px;
 }
 
-/* HERO SECTION */
+/* HERO SECTION & ANIMATED BANNER */
+.hero-banner-container {
+  position: relative;
+  background: url('banner.gif') center center / cover no-repeat;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 60px 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(15, 17, 23, 0.75) 0%, rgba(15, 17, 23, 0.95) 100%);
+  z-index: 1;
+}
+
+.hero-banner-container .hero {
+  position: relative;
+  z-index: 2;
+  padding: 0;
+}
+
 .hero {
   text-align: center;
   padding: 40px 0 20px;
@@ -771,12 +809,49 @@ body {
   border-radius: 6px;
 }
 
+/* RANK BADGES (Color coded) */
 .player-rank-badge {
   font-size: 0.7rem;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+.player-rank-badge[data-rank="Owner"] {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.4);
+}
+
+.player-rank-badge[data-rank="Admin"] {
+  background: rgba(52, 152, 219, 0.2);
+  color: #3498db;
+  border: 1px solid rgba(52, 152, 219, 0.4);
+}
+
+.player-rank-badge[data-rank="Moderator"] {
+  background: rgba(189, 195, 199, 0.2);
+  color: #ecf0f1;
+  border: 1px solid rgba(189, 195, 199, 0.4);
+}
+
+.player-rank-badge[data-rank="Officer"] {
+  background: rgba(255, 182, 193, 0.2);
+  color: #ffb6c1;
+  border: 1px solid rgba(255, 182, 193, 0.4);
+}
+
+.player-rank-badge[data-rank="VIP"] {
+  background: rgba(241, 196, 15, 0.2);
+  color: #f1c40f;
+  border: 1px solid rgba(241, 196, 15, 0.4);
+}
+
+.player-rank-badge[data-rank="Member"] {
+  background: rgba(255, 255, 255, 0.08);
+  color: #9ca3af;
 }
 
 /* TOAST */
