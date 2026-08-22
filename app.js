@@ -4,7 +4,7 @@ const FALLBACK_ADDRESS = "n6.ozima.cloud:25993"; // Direct Node Address
 
 // Map your server members to their specific ranks
 const PLAYER_RANKS = {
-  "REAL_TWILIGHT0_0": "Owner"
+  "REAL_TWILIGHT0_0": "Owner",
   "PRIME_VENOX": "Admin",
   "Kitsuroo": "Admin",
   "LGalewfqUwU": "Moderator",
