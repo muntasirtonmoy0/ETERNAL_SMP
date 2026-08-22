@@ -5,28 +5,36 @@ export default async function handler(req, res) {
       throw new Error(`Plan server status: ${response.status}`);
     }
     const raw = await response.json();
-    const rawList = raw.data && Array.isArray(raw.data) ? raw.data : [];
+    const rawList = Array.isArray(raw.data) ? raw.data : [];
 
     const cleaned = rawList.map(entry => {
+      // Strip HTML anchor wrapper: <a ...>USERNAME</a> -> USERNAME
       const cleanName = (entry.name || "").replace(/<[^>]*>?/gm, "").trim();
 
-      const parseNum = (obj) => {
-        if (!obj) return 0;
-        if (typeof obj === "number") return obj;
-        if (typeof obj === "string") return isNaN(Number(obj)) ? 0 : Number(obj);
-        if (obj.v !== undefined && !isNaN(Number(obj.v))) return Number(obj.v);
-        if (obj.d !== undefined && !isNaN(Number(obj.d))) return Number(obj.d);
+      const parseVal = (field) => {
+        if (!field || field === "-") return 0;
+        if (typeof field === "number") return field;
+        if (typeof field === "string") {
+          const num = Number(field);
+          return isNaN(num) ? 0 : num;
+        }
+        if (field.v !== undefined && field.v !== "-") {
+          const num = Number(field.v);
+          return isNaN(num) ? 0 : num;
+        }
+        if (field.d !== undefined && field.d !== "-") {
+          const num = Number(field.d);
+          return isNaN(num) ? 0 : num;
+        }
         return 0;
       };
 
       return {
         name: cleanName,
-        balance: parseNum(entry.balance),
-        playtime: parseNum(entry.activePlaytime),
-        kills: parseNum(entry.player_kills) || parseNum(entry.mob_kills) || parseNum(entry.kills),
-        deaths: parseNum(entry.deaths) || parseNum(entry.player_deaths),
-        sessions: parseNum(entry.sessions),
-        group: (entry.group && entry.group.d) ? entry.group.d : "Member"
+        balance: parseVal(entry.balance),
+        playtime: parseVal(entry.activePlaytime), // Playtime in milliseconds
+        sessions: parseVal(entry.sessions),
+        group: entry.primaryGroup && entry.primaryGroup.d !== "-" ? entry.primaryGroup.d : "Member"
       };
     }).filter(p => p.name && p.name.length > 0);
 
