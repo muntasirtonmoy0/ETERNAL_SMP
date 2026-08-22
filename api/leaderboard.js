@@ -1,51 +1,57 @@
 export default async function handler(req, res) {
   const { type = 'balance' } = req.query;
-  const BYTEBIN_URL = "https://bytebin.ajg0702.us/3n0NyosCX8mezlji";
-
-  // Mapping tab types to ajLeaderboards board keys
-  const boardMap = {
-    balance: 'vault_eco_balance',
-    playtime: 'statistic_hours_played',
-    kills: 'statistic_player_kills',
-    deaths: 'statistic_deaths'
-  };
-
-  const targetBoard = boardMap[type] || 'vault_eco_balance';
+  const PLAN_API_URL = "http://n6.ozima.cloud:25909/v1/players";
 
   try {
-    const response = await fetch(BYTEBIN_URL, {
+    const response = await fetch(PLAN_API_URL, {
       headers: { "Accept": "application/json" }
     });
 
     if (!response.ok) {
-      throw new Error(`Bytebin fetch failed: ${response.status}`);
+      throw new Error(`Plan HTTP Error: ${response.status}`);
     }
 
-    const data = await response.json();
-    const boards = data.boards || {};
-    const selectedBoard = boards[targetBoard] || {};
-    const entries = selectedBoard.alltime || selectedBoard.entries || [];
+    const payload = await response.json();
+    const rawList = payload.data || [];
 
-    const formatted = entries.map(item => {
+    const formatted = rawList.map(item => {
+      // 1. Strip HTML tags to get the pure username
+      let cleanName = "Unknown";
+      if (typeof item.name === "string") {
+        cleanName = item.name.replace(/<[^>]*>?/gm, "").trim();
+      }
+
+      // 2. Extract values safely
       let rawVal = 0;
 
       if (type === 'balance') {
-        rawVal = parseFloat(item.value || item.score || 0) || 0;
+        const bal = item.balance?.d ?? item.balance?.v ?? "0";
+        rawVal = parseFloat(String(bal).replace(/[^0-9.-]+/g, "")) || 0;
       } else if (type === 'playtime') {
-        // statistic_time_played is in Minecraft game ticks (20 ticks = 1 second)
-        const ticks = Number(item.value || item.score || 0);
-        rawVal = Math.floor(ticks / 20);
-      } else {
-        rawVal = Number(item.value || item.score || 0) || 0;
+        // Look for hours played first, then fallback to total/active playtime milliseconds
+        const hours = item.statistic_hours_played?.v ?? item.hours_played?.v ?? null;
+
+        if (hours !== null) {
+          rawVal = (Number(hours) || 0) * 3600; // Convert hours directly to seconds
+        } else {
+          const ms = item.playtime?.v ?? item.activePlaytime?.v ?? "0";
+          rawVal = Math.floor((Number(ms) || 0) / 1000); // Milliseconds to seconds
+        }
+      } else if (type === 'kills') {
+        const kills = item.kills?.v ?? item.kills?.d ?? 0;
+        rawVal = Number(kills) || 0;
+      } else if (type === 'deaths') {
+        const deaths = item.deaths?.v ?? item.deaths?.d ?? 0;
+        rawVal = Number(deaths) || 0;
       }
 
       return {
-        name: item.player_name || item.name || item.player || "Unknown",
+        name: cleanName,
         value: isNaN(rawVal) ? 0 : rawVal
       };
     });
 
-    // Sort descending and keep top 10
+    // Sort highest to lowest
     formatted.sort((a, b) => b.value - a.value);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
