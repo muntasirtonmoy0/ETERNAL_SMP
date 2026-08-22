@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eternal SMP</title>
+  <title>Eternal SMP | Server Ranks</title>
   <link rel="icon" type="image/png" href="/logo.png">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -34,7 +34,8 @@
     </div>
     <ul class="nav-links">
       <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
-      <li><a href="shop.html" class="nav-link active"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="ranks.html" class="nav-link active"><i class="fa-solid fa-crown"></i> Server Ranks</a></li>
       <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
       <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
@@ -44,63 +45,201 @@
 
   <main class="content-container">
     <div class="page-header">
-      <h2>Server Store</h2>
-      <p>Support Eternal SMP and unlock in-game cosmetic perks and keys.</p>
+      <h2>Server Ranks</h2>
+      <p>Upgrade your rank to gain exclusive perks, commands, claim blocks, and in-game economy rewards.</p>
     </div>
 
-    <div class="shop-tabs">
-      <button class="shop-tab active" onclick="filterShop('all')">All Items</button>
-      <button class="shop-tab" onclick="filterShop('ranks')">Ranks</button>
-      <button class="shop-tab" onclick="filterShop('keys')">Crate Keys</button>
-    </div>
-
-    <div class="product-grid" id="shopContainer">
-      <div class="product-card" data-category="ranks">
-        <div class="badge-tag">Popular</div>
-        <div class="product-icon"><i class="fa-solid fa-crown" style="color: #f1c40f;"></i></div>
-        <h3>VIP Rank</h3>
-        <p class="product-desc">Access to /fly in claims, 3 extra homes, and exclusive yellow chat color.</p>
-        <div class="product-price">$4.99</div>
-        <button class="btn btn-primary" onclick="buyItem('VIP Rank')">Purchase</button>
+    <div class="ranks-grid">
+      <!-- Knight Rank -->
+      <div class="rank-card tier-knight">
+        <div class="rank-badge"><i class="fa-solid fa-shield"></i> KNIGHT</div>
+        <div class="rank-price">৳120 <span>BDT</span></div>
+        <ul class="rank-features">
+          <li><i class="fa-solid fa-check"></i> <strong>4 Set Homes</strong></li>
+          <li><i class="fa-solid fa-check"></i> <strong>250k – 500k</strong> In-game Cash</li>
+          <li><i class="fa-solid fa-check"></i> Armor & Tools (Enchanted Pickaxe)</li>
+          <li><i class="fa-solid fa-check"></i> 3x Shulker Boxes</li>
+          <li><i class="fa-solid fa-check"></i> 64 Golden Apples + 6 God Apples</li>
+          <li><i class="fa-solid fa-check"></i> 10,000 Claim Blocks</li>
+          <li><i class="fa-solid fa-check"></i> Common Armor Trim</li>
+          <li><i class="fa-solid fa-check"></i> 2x Common Spawner / 4x Common Keys</li>
+          <li><i class="fa-solid fa-terminal"></i> <code>/ptime</code>, <code>/near</code>, <code>/hat</code></li>
+        </ul>
+        <button class="buy-rank-btn" onclick="openPaymentModal('Knight Rank', 120)">Purchase Rank</button>
       </div>
 
-      <div class="product-card" data-category="ranks">
-        <div class="badge-tag best">Elite</div>
-        <div class="product-icon"><i class="fa-solid fa-shield-cat" style="color: #e67e22;"></i></div>
-        <h3>Officer Rank</h3>
-        <p class="product-desc">Animated pink/white prefix tag, 5 homes, access to /hat and /workbench.</p>
-        <div class="product-price">$9.99</div>
-        <button class="btn btn-primary" onclick="buyItem('Officer Rank')">Purchase</button>
+      <!-- Hydra Rank -->
+      <div class="rank-card tier-hydra">
+        <div class="rank-badge"><i class="fa-solid fa-dragon"></i> HYDRA</div>
+        <div class="rank-price">৳220 <span>BDT</span></div>
+        <ul class="rank-features">
+          <li><i class="fa-solid fa-check"></i> <strong>5 Set Homes</strong></li>
+          <li><i class="fa-solid fa-check"></i> <strong>500k – 750k</strong> In-game Cash</li>
+          <li><i class="fa-solid fa-check"></i> Limited Enchanted Armor & Tools</li>
+          <li><i class="fa-solid fa-check"></i> 4–5x Shulker Boxes</li>
+          <li><i class="fa-solid fa-check"></i> 96 Golden Apples + 10 God Apples</li>
+          <li><i class="fa-solid fa-check"></i> 15,000 Claim Blocks</li>
+          <li><i class="fa-solid fa-check"></i> Uncommon Armor Trim</li>
+          <li><i class="fa-solid fa-check"></i> 2x Uncommon Spawner / 6x Common Keys</li>
+          <li><i class="fa-solid fa-terminal"></i> Knight Commands + <code>/back</code>, <code>/workbench</code>, <code>/echest</code>, <code>/nick</code></li>
+        </ul>
+        <button class="buy-rank-btn" onclick="openPaymentModal('Hydra Rank', 220)">Purchase Rank</button>
       </div>
 
-      <div class="product-card" data-category="ranks">
-        <div class="badge-tag best">Ultimate</div>
-        <div class="product-icon"><i class="fa-solid fa-star" style="color: #9b59b6;"></i></div>
-        <h3>Eternal Rank</h3>
-        <p class="product-desc">All cosmetic permissions, priority queue, 10 set homes, and monthly crate keys.</p>
-        <div class="product-price">$19.99</div>
-        <button class="btn btn-primary" onclick="buyItem('Eternal Rank')">Purchase</button>
+      <!-- Emperor Rank -->
+      <div class="rank-card tier-emperor">
+        <div class="rank-badge"><i class="fa-solid fa-chess-king"></i> EMPEROR</div>
+        <div class="rank-price">৳320 <span>BDT</span></div>
+        <ul class="rank-features">
+          <li><i class="fa-solid fa-check"></i> <strong>6 Set Homes</strong></li>
+          <li><i class="fa-solid fa-check"></i> <strong>750k – 850k</strong> In-game Cash</li>
+          <li><i class="fa-solid fa-check"></i> Fully Enchanted Armor & Tools</li>
+          <li><i class="fa-solid fa-check"></i> <strong>1x Wind Burst I Mace</strong></li>
+          <li><i class="fa-solid fa-check"></i> 6x Shulker Boxes</li>
+          <li><i class="fa-solid fa-check"></i> 128 Golden Apples + 16 God Apples</li>
+          <li><i class="fa-solid fa-check"></i> 20,000 Claim Blocks</li>
+          <li><i class="fa-solid fa-check"></i> Rare Armor Trim</li>
+          <li><i class="fa-solid fa-check"></i> 2x Rare Spawner / 1x Advance Key</li>
+          <li><i class="fa-solid fa-terminal"></i> Hydra Commands + <code>/disposal</code>, <code>/smithingtable</code>, <code>/loom</code>, <code>/repair hand</code></li>
+        </ul>
+        <button class="buy-rank-btn" onclick="openPaymentModal('Emperor Rank', 320)">Purchase Rank</button>
       </div>
 
-      <div class="product-card" data-category="keys">
-        <div class="product-icon"><i class="fa-solid fa-key" style="color: #3498db;"></i></div>
-        <h3>3x Rare Crate Keys</h3>
-        <p class="product-desc">Roll for rare gear, spawners, economy money notes, and diamond tools.</p>
-        <div class="product-price">$2.50</div>
-        <button class="btn btn-primary" onclick="buyItem('3x Rare Keys')">Purchase</button>
-      </div>
-
-      <div class="product-card" data-category="keys">
-        <div class="product-icon"><i class="fa-solid fa-key" style="color: #e74c3c;"></i></div>
-        <h3>5x Legendary Crate Keys</h3>
-        <p class="product-desc">Guaranteed high-tier loot: netherite, spawner vouchers, and cash boosters.</p>
-        <div class="product-price">$5.00</div>
-        <button class="btn btn-primary" onclick="buyItem('5x Legendary Keys')">Purchase</button>
+      <!-- Phoenix Rank -->
+      <div class="rank-card tier-phoenix">
+        <div class="rank-badge"><i class="fa-solid fa-fire-flame-curved"></i> PHOENIX</div>
+        <div class="rank-price">৳420 <span>BDT</span></div>
+        <ul class="rank-features">
+          <li><i class="fa-solid fa-check"></i> <strong>8 Set Homes</strong></li>
+          <li><i class="fa-solid fa-check"></i> <strong>1,000,000+</strong> In-game Cash</li>
+          <li><i class="fa-solid fa-check"></i> Max Armor & Soulbound Gear (Wind Burst III Mace)</li>
+          <li><i class="fa-solid fa-check"></i> <strong>1x Elytra</strong> + 8x Shulker Boxes</li>
+          <li><i class="fa-solid fa-check"></i> 192 Golden Apples</li>
+          <li><i class="fa-solid fa-check"></i> 30,000 Claim Blocks</li>
+          <li><i class="fa-solid fa-check"></i> Legendary Armor Trim</li>
+          <li><i class="fa-solid fa-check"></i> 2x High Tier Spawner / 1x High Tier Key</li>
+          <li><i class="fa-solid fa-terminal"></i> Emperor Commands + <code>/heal</code>, <code>/night</code>, <code>/anvil</code></li>
+        </ul>
+        <button class="buy-rank-btn" onclick="openPaymentModal('Phoenix Rank', 420)">Purchase Rank</button>
       </div>
     </div>
   </main>
 
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closePaymentModal()"><i class="fa-solid fa-xmark"></i></button>
+
+      <!-- Step 1: Customer Info & Payment Details -->
+      <div id="modalStep1">
+        <h3 id="modalRankTitle">Rank Checkout</h3>
+        <p class="modal-sub">Step 1: Enter your details & send payment via bKash Personal.</p>
+
+        <div class="payment-instructions">
+          <div class="bkash-badge"><i class="fa-solid fa-wallet"></i> bKash Personal (Send Money)</div>
+          <div class="bkash-number">01XXXXXXXXX</div>
+          <p class="amount-tag">Amount to Send: <strong id="modalAmount">৳0 BDT</strong></p>
+        </div>
+
+        <form id="paymentForm" onsubmit="handleProceedToStep2(event)">
+          <div class="input-group">
+            <label>Minecraft In-Game Name *</label>
+            <input type="text" id="ignInput" required placeholder="e.g. REAL_TWILIGHT0_0">
+          </div>
+          <div class="input-group">
+            <label>Your Full Name *</label>
+            <input type="text" id="nameInput" required placeholder="e.g. Sadman Sakib">
+          </div>
+          <div class="input-group">
+            <label>Email Address *</label>
+            <input type="email" id="emailInput" required placeholder="e.g. yourname@mail.com">
+          </div>
+          <div class="input-group">
+            <label>Contact Phone / WhatsApp *</label>
+            <input type="tel" id="phoneInput" required placeholder="e.g. 017XXXXXXXX">
+          </div>
+          <button type="submit" class="modal-submit-btn">I Have Sent The Money <i class="fa-solid fa-arrow-right"></i></button>
+        </form>
+      </div>
+
+      <!-- Step 2: Transaction ID Verification -->
+      <div id="modalStep2" style="display: none;">
+        <h3>Transaction Verification</h3>
+        <p class="modal-sub">Step 2: Enter transaction credentials for admin verification.</p>
+
+        <form id="trxForm" onsubmit="handleFinalSubmit(event)">
+          <div class="input-group">
+            <label>bKash Sender Number *</label>
+            <input type="text" id="senderPhoneInput" required placeholder="01XXXXXXXXX">
+          </div>
+          <div class="input-group">
+            <label>bKash Transaction ID (TrxID) *</label>
+            <input type="text" id="trxIdInput" required placeholder="e.g. BKT9832KA9" style="text-transform:uppercase;">
+          </div>
+          <button type="submit" class="modal-submit-btn">Submit Purchase Verification</button>
+        </form>
+      </div>
+
+      <!-- Step 3: Discord Ticket Instructions -->
+      <div id="modalStep3" style="display: none;">
+        <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <h3>Purchase Submitted!</h3>
+        <p class="ticket-note">
+          To receive your rank in under <strong>5 minutes</strong>, please open a ticket in our official Discord server and share your Transaction ID.
+        </p>
+        <div class="ticket-summary">
+          <p><strong>Rank:</strong> <span id="summaryRank"></span></p>
+          <p><strong>IGN:</strong> <span id="summaryIGN"></span></p>
+          <p><strong>TrxID:</strong> <span id="summaryTrxID"></span></p>
+        </div>
+        <a href="https://discord.gg/" target="_blank" class="discord-ticket-btn">
+          <i class="fa-brands fa-discord"></i> Open Discord Ticket
+        </a>
+      </div>
+
+    </div>
+  </div>
+
   <div class="toast" id="toast">Copied IP to clipboard!</div>
+
   <script src="app.js"></script>
+  <script>
+    let selectedRank = "";
+    let selectedPrice = 0;
+
+    function openPaymentModal(rankName, price) {
+      selectedRank = rankName;
+      selectedPrice = price;
+      document.getElementById('modalRankTitle').textContent = rankName + " Checkout";
+      document.getElementById('modalAmount').textContent = `৳${price} BDT`;
+      document.getElementById('modalStep1').style.display = 'block';
+      document.getElementById('modalStep2').style.display = 'none';
+      document.getElementById('modalStep3').style.display = 'none';
+      document.getElementById('checkoutModal').classList.add('active');
+    }
+
+    function closePaymentModal() {
+      document.getElementById('checkoutModal').classList.remove('active');
+    }
+
+    function handleProceedToStep2(e) {
+      e.preventDefault();
+      document.getElementById('modalStep1').style.display = 'none';
+      document.getElementById('modalStep2').style.display = 'block';
+    }
+
+    function handleFinalSubmit(e) {
+      e.preventDefault();
+      const ign = document.getElementById('ignInput').value;
+      const trx = document.getElementById('trxIdInput').value;
+
+      document.getElementById('summaryRank').textContent = selectedRank;
+      document.getElementById('summaryIGN').textContent = ign;
+      document.getElementById('summaryTrxID').textContent = trx;
+
+      document.getElementById('modalStep2').style.display = 'none';
+      document.getElementById('modalStep3').style.display = 'block';
+    }
+  </script>
 </body>
 </html>
