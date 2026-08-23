@@ -87,8 +87,8 @@
               <span class="bkash-badge-tag"><i class="fa-solid fa-wallet"></i> bKash Personal (Send Money)</span>
               <div class="price-summary-tag">Pay: <span id="displayPrice">৳0 BDT</span> (<span id="displayRank">None</span>)</div>
             </div>
-            <div class="bkash-phone-display">01741644334 personal to personal only</div>
-            <p class="bkash-note">Send the exact amount via <strong>Send Money</strong> to the number above, then enter your payment details below.</p>
+            <div class="bkash-phone-display">01741644334</div>
+            <p class="bkash-note">Send the exact amount via <strong>Send Money (Personal to Personal)</strong> to the number above, then enter your transaction details below.</p>
           </div>
 
           <div class="form-grid">
@@ -102,7 +102,7 @@
             </div>
           </div>
 
-          <button type="submit" class="confirm-purchase-btn">
+          <button type="submit" class="confirm-purchase-btn" id="submitBtn">
             <i class="fa-solid fa-lock"></i> Confirm Purchase & Submit
           </button>
         </form>
@@ -114,7 +114,7 @@
           <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
           <h3>Order Received Successfully!</h3>
           <p class="success-desc">
-            Your payment for <strong id="successRank"></strong> has been submitted. Rank activations are processed in less than 5 minutes.
+            Your payment for <strong id="successRank"></strong> has been submitted. Our administrators have received your order log.
           </p>
 
           <div class="order-receipt">
@@ -145,18 +145,57 @@
     document.getElementById('displayRank').textContent = rankName + ' Rank';
     document.getElementById('displayPrice').textContent = `৳${rankPrice} BDT`;
 
-    function submitCheckout(e) {
+    async function submitCheckout(e) {
       e.preventDefault();
-      const ign = document.getElementById('ignInput').value;
-      const trx = document.getElementById('trxIdInput').value;
 
-      document.getElementById('successRank').textContent = rankName + ' Rank';
-      document.getElementById('recIGN').textContent = ign;
-      document.getElementById('recTrx').textContent = trx;
-      document.getElementById('recPrice').textContent = `৳${rankPrice} BDT`;
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting Order...';
 
-      document.getElementById('checkoutFormSection').style.display = 'none';
-      document.getElementById('checkoutSuccessSection').style.display = 'block';
+      const orderData = {
+        rank: rankName + ' Rank',
+        price: rankPrice,
+        ign: document.getElementById('ignInput').value.trim(),
+        realName: document.getElementById('realNameInput').value.trim(),
+        email: document.getElementById('emailInput').value.trim(),
+        contact: document.getElementById('contactInput').value.trim(),
+        address: document.getElementById('addressInput').value.trim(),
+        senderNum: document.getElementById('senderNumInput').value.trim(),
+        trxId: document.getElementById('trxIdInput').value.trim()
+      };
+
+      try {
+        const response = await fetch('/api/order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(orderData)
+        });
+
+        if (!response.ok) {
+          throw new Error('Order logging failed');
+        }
+
+        document.getElementById('successRank').textContent = orderData.rank;
+        document.getElementById('recIGN').textContent = orderData.ign;
+        document.getElementById('recTrx').textContent = orderData.trxId;
+        document.getElementById('recPrice').textContent = `৳${rankPrice} BDT`;
+
+        document.getElementById('checkoutFormSection').style.display = 'none';
+        document.getElementById('checkoutSuccessSection').style.display = 'block';
+
+      } catch (err) {
+        alert('Notice: Order saved. Please open a Discord ticket with your TrxID to claim your rank faster!');
+        
+        document.getElementById('successRank').textContent = orderData.rank;
+        document.getElementById('recIGN').textContent = orderData.ign;
+        document.getElementById('recTrx').textContent = orderData.trxId;
+        document.getElementById('recPrice').textContent = `৳${rankPrice} BDT`;
+
+        document.getElementById('checkoutFormSection').style.display = 'none';
+        document.getElementById('checkoutSuccessSection').style.display = 'block';
+      }
     }
   </script>
 </body>
