@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   // Paste your Discord Webhook URL here
-  const DISCORD_WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_URL_HERE";
+  const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1540874823964688435/Tqhk8S0sMTqMY4-gK2momNrnjfjf-nS95U9r5m-SzoGydonBqe2BBtFmAurzo8tSLc81";
 
   const { rank, price, ign, realName, email, contact, address, senderNum, trxId } = req.body;
 
