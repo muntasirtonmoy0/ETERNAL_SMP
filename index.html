@@ -94,26 +94,26 @@
       </div>
     </div>
 
-    <!-- Screenshots Showcase Using Server Assets -->
+    <!-- Screenshots Showcase Powered Dynamically by gallery-data.json -->
     <div class="section-block">
       <h2 class="section-title">Server Highlights</h2>
-      <div class="gallery-grid">
+      <div class="gallery-grid" id="homeHighlightsGrid">
         <div class="gallery-item">
-          <img src="ETERNAL_SMP_SPAWN1.jpg" alt="Spawn Citadel" loading="lazy">
+          <img src="https://res.cloudinary.com/retvp8pw/image/upload/v1787541814/ETERNAL_SMP_SPAWN1.png" alt="Custom Spawn Citadel" loading="lazy">
           <div class="gallery-label">
-            <span><i class="fa-solid fa-landmark"></i> Custom Spawn Citadel</span>
+            <span><i class="fa-solid fa-moon"></i> Custom Spawn Citadel</span>
           </div>
         </div>
         <div class="gallery-item">
-          <img src="ETERNAL_SMP_ARENA1.jpg" alt="Cosmic Duel Arena" loading="lazy">
+          <img src="https://res.cloudinary.com/retvp8pw/image/upload/v1787541782/ETERNAL_SMP_ARENA1.png" alt="Cosmic Duel Arena" loading="lazy">
           <div class="gallery-label">
-            <span><i class="fa-solid fa-crosshairs"></i> Cosmic Duel Arena</span>
+            <span><i class="fa-solid fa-meteor"></i> Cosmic Duel Arena</span>
           </div>
         </div>
         <div class="gallery-item">
-          <img src="ETERNAL_SMP_BEGIN.jpg" alt="Founding Community" loading="lazy">
+          <img src="https://res.cloudinary.com/retvp8pw/image/upload/v1787541781/ETERNAL_SMP_BEGIN.png" alt="Server Genesis: Founding Squad" loading="lazy">
           <div class="gallery-label">
-            <span><i class="fa-solid fa-users"></i> Founding Community</span>
+            <span><i class="fa-solid fa-users"></i> Server Genesis: Founding Squad</span>
           </div>
         </div>
       </div>
@@ -133,5 +133,29 @@
 
   <div class="toast" id="toast">Copied IP to clipboard!</div>
   <script src="app.js"></script>
+  <script>
+    async function syncHomeFeaturedGallery() {
+      try {
+        const res = await fetch('gallery-data.json');
+        if (!res.ok) return;
+        const items = await res.json();
+        const featured = items.filter(img => img.featured);
+        const container = document.getElementById('homeHighlightsGrid');
+        if (container && featured.length > 0) {
+          container.innerHTML = featured.map(item => `
+            <div class="gallery-item" onclick="window.location.href='gallery.html'">
+              <img src="${item.url}" alt="${item.title}" loading="lazy">
+              <div class="gallery-label">
+                <span><i class="fa-solid ${item.icon}"></i> ${item.title}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.warn('Using fallback featured gallery items');
+      }
+    }
+    syncHomeFeaturedGallery();
+  </script>
 </body>
 </html>
