@@ -37,6 +37,7 @@
       <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
       <li><a href="ranks.html" class="nav-link"><i class="fa-solid fa-crown"></i> Server Ranks</a></li>
       <li><a href="leaderboard.html" class="nav-link active"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
       <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
       <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
@@ -54,7 +55,7 @@
       <div class="champ-card" id="champ-playtime" onclick="openProfileByName(this.dataset.player)">
         <div class="champ-icon icon-playtime"><i class="fa-solid fa-clock"></i></div>
         <span class="champ-category">TOP PLAYTIME</span>
-        <img src="https://visage.surgeplay.com/head/128/steve" alt="Top Playtime" class="champ-avatar" id="champImgPlaytime">
+        <img src="https://minotar.net/helm/steve/128.png" alt="Top Playtime" class="champ-avatar" id="champImgPlaytime">
         <h4 class="champ-name" id="champNamePlaytime">Loading...</h4>
         <div class="champ-val val-blue" id="champValPlaytime">--</div>
       </div>
@@ -62,7 +63,7 @@
       <div class="champ-card" id="champ-balance" onclick="openProfileByName(this.dataset.player)">
         <div class="champ-icon icon-money"><i class="fa-solid fa-coins"></i></div>
         <span class="champ-category">TOP MONEY</span>
-        <img src="https://visage.surgeplay.com/head/128/steve" alt="Top Money" class="champ-avatar" id="champImgBalance">
+        <img src="https://minotar.net/helm/steve/128.png" alt="Top Money" class="champ-avatar" id="champImgBalance">
         <h4 class="champ-name" id="champNameBalance">Loading...</h4>
         <div class="champ-val val-green" id="champValBalance">--</div>
       </div>
@@ -70,7 +71,7 @@
       <div class="champ-card" id="champ-kills" onclick="openProfileByName(this.dataset.player)">
         <div class="champ-icon icon-kills"><i class="fa-solid fa-skull-crossbones"></i></div>
         <span class="champ-category">TOP KILLS</span>
-        <img src="https://visage.surgeplay.com/head/128/steve" alt="Top Kills" class="champ-avatar" id="champImgKills">
+        <img src="https://minotar.net/helm/steve/128.png" alt="Top Kills" class="champ-avatar" id="champImgKills">
         <h4 class="champ-name" id="champNameKills">Loading...</h4>
         <div class="champ-val val-red" id="champValKills">--</div>
       </div>
@@ -78,7 +79,7 @@
       <div class="champ-card" id="champ-deaths" onclick="openProfileByName(this.dataset.player)">
         <div class="champ-icon icon-deaths"><i class="fa-solid fa-heart-crack"></i></div>
         <span class="champ-category">TOP DEATHS</span>
-        <img src="https://visage.surgeplay.com/head/128/steve" alt="Top Deaths" class="champ-avatar" id="champImgDeaths">
+        <img src="https://minotar.net/helm/steve/128.png" alt="Top Deaths" class="champ-avatar" id="champImgDeaths">
         <h4 class="champ-name" id="champNameDeaths">Loading...</h4>
         <div class="champ-val val-purple" id="champValDeaths">--</div>
       </div>
@@ -179,7 +180,6 @@
     let currentType = 'balance';
     let cachedData = { balance: [], playtime: [], kills: [], deaths: [] };
 
-    // Formatters
     function formatScore(val, type) {
       if (type === 'balance') {
         if (val >= 1e6) return '$' + (val / 1e6).toFixed(2) + 'M';
@@ -216,7 +216,6 @@
       cachedData.kills = kil;
       cachedData.deaths = dth;
 
-      // Populate #1 Champion Boxes
       setChampion('Playtime', play[0], 'playtime');
       setChampion('Balance', bal[0], 'balance');
       setChampion('Kills', kil[0], 'kills');
@@ -229,7 +228,11 @@
       if (!topPlayer) return;
       document.getElementById(`champName${idKey}`).textContent = topPlayer.name;
       document.getElementById(`champVal${idKey}`).textContent = formatScore(topPlayer.value, type);
-      document.getElementById(`champImg${idKey}`).src = `https://visage.surgeplay.com/head/128/${topPlayer.name}`;
+
+      const avatarImg = document.getElementById(`champImg${idKey}`);
+      avatarImg.src = `https://minotar.net/helm/${topPlayer.name}/128.png`;
+      avatarImg.onerror = () => { avatarImg.src = 'https://minotar.net/helm/steve/128.png'; };
+
       document.getElementById(`champ-${type}`).dataset.player = topPlayer.name;
     }
 
@@ -262,7 +265,7 @@
             <td>${rankBadge}</td>
             <td>
               <div class="player-cell">
-                <img src="https://visage.surgeplay.com/head/64/${item.name}" alt="${item.name}">
+                <img src="https://minotar.net/helm/${item.name}/64.png" onerror="this.onerror=null;this.src='https://minotar.net/helm/steve/64.png';" alt="${item.name}">
                 <span class="player-title">${item.name}</span>
               </div>
             </td>
@@ -283,7 +286,11 @@
       const pDeaths = cachedData.deaths.find(p => p.name === name)?.value || 0;
 
       document.getElementById('modalPlayerName').textContent = name;
-      document.getElementById('modalSkin').src = `https://visage.surgeplay.com/full/384/${name}`;
+
+      const modalSkin = document.getElementById('modalSkin');
+      modalSkin.src = `https://visage.surgeplay.com/full/384/${name}`;
+      modalSkin.onerror = () => { modalSkin.src = 'https://visage.surgeplay.com/full/384/steve'; };
+
       document.getElementById('modalStatMoney').textContent = formatScore(pMoney, 'balance');
       document.getElementById('modalStatPlaytime').textContent = formatScore(pPlay, 'playtime');
       document.getElementById('modalStatKills').textContent = Number(pKills).toLocaleString();
