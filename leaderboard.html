@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eternal SMP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Eternal SMP | Leaderboard</title>
   <link rel="icon" type="image/png" href="/logo.png">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -35,6 +35,7 @@
     <ul class="nav-links">
       <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
       <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="ranks.html" class="nav-link"><i class="fa-solid fa-crown"></i> Server Ranks</a></li>
       <li><a href="leaderboard.html" class="nav-link active"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
       <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
@@ -44,33 +45,261 @@
 
   <main class="content-container">
     <div class="page-header">
-      <h2>Top Players</h2>
-      <p>Live rankings updated continuously from the server database.</p>
+      <h2>Server Leaderboard</h2>
+      <p>Top server champions and live real-time player rankings.</p>
     </div>
 
+    <!-- Champions Top #1 Cards Grid -->
+    <div class="top-champions-grid">
+      <div class="champ-card" id="champ-playtime" onclick="openProfileByName(this.dataset.player)">
+        <div class="champ-icon icon-playtime"><i class="fa-solid fa-clock"></i></div>
+        <span class="champ-category">TOP PLAYTIME</span>
+        <img src="https://visage.surgeplay.com/head/128/steve" alt="Top Playtime" class="champ-avatar" id="champImgPlaytime">
+        <h4 class="champ-name" id="champNamePlaytime">Loading...</h4>
+        <div class="champ-val val-blue" id="champValPlaytime">--</div>
+      </div>
+
+      <div class="champ-card" id="champ-balance" onclick="openProfileByName(this.dataset.player)">
+        <div class="champ-icon icon-money"><i class="fa-solid fa-coins"></i></div>
+        <span class="champ-category">TOP MONEY</span>
+        <img src="https://visage.surgeplay.com/head/128/steve" alt="Top Money" class="champ-avatar" id="champImgBalance">
+        <h4 class="champ-name" id="champNameBalance">Loading...</h4>
+        <div class="champ-val val-green" id="champValBalance">--</div>
+      </div>
+
+      <div class="champ-card" id="champ-kills" onclick="openProfileByName(this.dataset.player)">
+        <div class="champ-icon icon-kills"><i class="fa-solid fa-skull-crossbones"></i></div>
+        <span class="champ-category">TOP KILLS</span>
+        <img src="https://visage.surgeplay.com/head/128/steve" alt="Top Kills" class="champ-avatar" id="champImgKills">
+        <h4 class="champ-name" id="champNameKills">Loading...</h4>
+        <div class="champ-val val-red" id="champValKills">--</div>
+      </div>
+
+      <div class="champ-card" id="champ-deaths" onclick="openProfileByName(this.dataset.player)">
+        <div class="champ-icon icon-deaths"><i class="fa-solid fa-heart-crack"></i></div>
+        <span class="champ-category">TOP DEATHS</span>
+        <img src="https://visage.surgeplay.com/head/128/steve" alt="Top Deaths" class="champ-avatar" id="champImgDeaths">
+        <h4 class="champ-name" id="champNameDeaths">Loading...</h4>
+        <div class="champ-val val-purple" id="champValDeaths">--</div>
+      </div>
+    </div>
+
+    <!-- Tab Selector -->
     <div class="leaderboard-nav">
-      <button class="lb-btn active" onclick="loadLeaderboard('balance')"><i class="fa-solid fa-coins"></i> Balance</button>
-      <button class="lb-btn" onclick="loadLeaderboard('playtime')"><i class="fa-solid fa-stopwatch"></i> Playtime</button>
-      <button class="lb-btn" onclick="loadLeaderboard('kills')"><i class="fa-solid fa-skull"></i> Kills</button>
-      <button class="lb-btn" onclick="loadLeaderboard('deaths')"><i class="fa-solid fa-heart-crack"></i> Deaths</button>
+      <button class="lb-btn active" onclick="switchBoard('balance', this)"><i class="fa-solid fa-coins"></i> Balance</button>
+      <button class="lb-btn" onclick="switchBoard('playtime', this)"><i class="fa-solid fa-clock"></i> Playtime</button>
+      <button class="lb-btn" onclick="switchBoard('kills', this)"><i class="fa-solid fa-skull"></i> Kills</button>
+      <button class="lb-btn" onclick="switchBoard('deaths', this)"><i class="fa-solid fa-heart-crack"></i> Deaths</button>
     </div>
 
+    <!-- Table -->
     <div class="leaderboard-table-wrap">
       <table class="leaderboard-table">
         <thead>
           <tr>
-            <th>Rank</th>
+            <th style="width: 70px;">Rank</th>
             <th>Player</th>
-            <th>Primary Role</th>
-            <th id="lbValueHeader">Balance</th>
+            <th id="tableScoreHeader" style="text-align: right;">Balance</th>
           </tr>
         </thead>
-        <tbody id="leaderboardBody"></tbody>
+        <tbody id="lbTableBody">
+          <tr><td colspan="3" style="text-align:center; padding:30px; color:#9ca3af;">Loading rankings...</td></tr>
+        </tbody>
       </table>
     </div>
   </main>
 
+  <!-- HavenCraft-Style Full Player Profile Modal -->
+  <div class="profile-modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
+    <div class="profile-modal-card" onclick="event.stopPropagation()">
+      <button class="profile-close-btn" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="profile-hero">
+        <img src="https://visage.surgeplay.com/full/384/steve" alt="Player Skin" class="profile-3d-skin" id="modalSkin">
+        <div class="profile-hero-meta">
+          <h2 id="modalPlayerName">Player</h2>
+          <p class="profile-sub">Player on <strong>Eternal SMP</strong></p>
+          <div class="profile-tags">
+            <span class="profile-tag tag-member" id="modalTag">MEMBER</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-stats-grid">
+        <div class="p-stat-box">
+          <div class="p-icon text-cyan"><i class="fa-solid fa-clock"></i></div>
+          <div class="p-info">
+            <div class="p-value" id="modalStatPlaytime">--</div>
+            <div class="p-label">PLAYTIME</div>
+          </div>
+        </div>
+
+        <div class="p-stat-box">
+          <div class="p-icon text-purple"><i class="fa-solid fa-crosshairs"></i></div>
+          <div class="p-info">
+            <div class="p-value" id="modalStatKills">0</div>
+            <div class="p-label">KILLS</div>
+          </div>
+        </div>
+
+        <div class="p-stat-box">
+          <div class="p-icon text-red"><i class="fa-solid fa-heart-crack"></i></div>
+          <div class="p-info">
+            <div class="p-value" id="modalStatDeaths">0</div>
+            <div class="p-label">DEATHS</div>
+          </div>
+        </div>
+
+        <div class="p-stat-box">
+          <div class="p-icon text-gold"><i class="fa-solid fa-coins"></i></div>
+          <div class="p-info">
+            <div class="p-value" id="modalStatMoney">$0</div>
+            <div class="p-label">MONEY</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-stat-ratio-row">
+        <div class="p-ratio-box">
+          <span class="r-label">K/D RATIO</span>
+          <span class="r-val" id="modalKdRatio">0.00</span>
+        </div>
+        <div class="p-ratio-box">
+          <span class="r-label">PVP STATUS</span>
+          <span class="r-val text-green" id="modalStatus">Active</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast">Copied IP to clipboard!</div>
   <script src="app.js"></script>
+
+  <script>
+    let currentType = 'balance';
+    let cachedData = { balance: [], playtime: [], kills: [], deaths: [] };
+
+    // Formatters
+    function formatScore(val, type) {
+      if (type === 'balance') {
+        if (val >= 1e6) return '$' + (val / 1e6).toFixed(2) + 'M';
+        if (val >= 1e3) return '$' + (val / 1e3).toFixed(1) + 'K';
+        return '$' + Number(val).toLocaleString();
+      }
+      if (type === 'playtime') {
+        const hrs = (val / 3600).toFixed(1);
+        return `${hrs}h`;
+      }
+      return Number(val).toLocaleString();
+    }
+
+    async function fetchBoard(type) {
+      try {
+        const res = await fetch(`/api/leaderboard?type=${type}`);
+        if (!res.ok) return [];
+        return await res.json();
+      } catch {
+        return [];
+      }
+    }
+
+    async function loadAllData() {
+      const [bal, play, kil, dth] = await Promise.all([
+        fetchBoard('balance'),
+        fetchBoard('playtime'),
+        fetchBoard('kills'),
+        fetchBoard('deaths')
+      ]);
+
+      cachedData.balance = bal;
+      cachedData.playtime = play;
+      cachedData.kills = kil;
+      cachedData.deaths = dth;
+
+      // Populate #1 Champion Boxes
+      setChampion('Playtime', play[0], 'playtime');
+      setChampion('Balance', bal[0], 'balance');
+      setChampion('Kills', kil[0], 'kills');
+      setChampion('Deaths', dth[0], 'deaths');
+
+      renderTable();
+    }
+
+    function setChampion(idKey, topPlayer, type) {
+      if (!topPlayer) return;
+      document.getElementById(`champName${idKey}`).textContent = topPlayer.name;
+      document.getElementById(`champVal${idKey}`).textContent = formatScore(topPlayer.value, type);
+      document.getElementById(`champImg${idKey}`).src = `https://visage.surgeplay.com/head/128/${topPlayer.name}`;
+      document.getElementById(`champ-${type}`).dataset.player = topPlayer.name;
+    }
+
+    function switchBoard(type, btn) {
+      currentType = type;
+      document.querySelectorAll('.lb-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const headers = { balance: 'Balance', playtime: 'Playtime', kills: 'Kills', deaths: 'Deaths' };
+      document.getElementById('tableScoreHeader').textContent = headers[type];
+      renderTable();
+    }
+
+    function renderTable() {
+      const data = cachedData[currentType] || [];
+      const tbody = document.getElementById('lbTableBody');
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px; color:#9ca3af;">No player records found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.map((item, index) => {
+        let rankBadge = `<span class="rank-num">#${index + 1}</span>`;
+        if (index === 0) rankBadge = `<span class="rank-medal gold">🥇 1</span>`;
+        if (index === 1) rankBadge = `<span class="rank-medal silver">🥈 2</span>`;
+        if (index === 2) rankBadge = `<span class="rank-medal bronze">🥉 3</span>`;
+
+        return `
+          <tr class="clickable-row" onclick="openProfileByName('${item.name}')">
+            <td>${rankBadge}</td>
+            <td>
+              <div class="player-cell">
+                <img src="https://visage.surgeplay.com/head/64/${item.name}" alt="${item.name}">
+                <span class="player-title">${item.name}</span>
+              </div>
+            </td>
+            <td style="text-align: right; font-weight: 700; color: #f3f4f6;">
+              ${formatScore(item.value, currentType)}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openProfileByName(name) {
+      if (!name || name === 'Loading...') return;
+
+      const pMoney = cachedData.balance.find(p => p.name === name)?.value || 0;
+      const pPlay = cachedData.playtime.find(p => p.name === name)?.value || 0;
+      const pKills = cachedData.kills.find(p => p.name === name)?.value || 0;
+      const pDeaths = cachedData.deaths.find(p => p.name === name)?.value || 0;
+
+      document.getElementById('modalPlayerName').textContent = name;
+      document.getElementById('modalSkin').src = `https://visage.surgeplay.com/full/384/${name}`;
+      document.getElementById('modalStatMoney').textContent = formatScore(pMoney, 'balance');
+      document.getElementById('modalStatPlaytime').textContent = formatScore(pPlay, 'playtime');
+      document.getElementById('modalStatKills').textContent = Number(pKills).toLocaleString();
+      document.getElementById('modalStatDeaths').textContent = Number(pDeaths).toLocaleString();
+
+      const kd = pDeaths > 0 ? (pKills / pDeaths).toFixed(2) : Number(pKills).toFixed(2);
+      document.getElementById('modalKdRatio').textContent = kd;
+
+      document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.remove('active');
+    }
+
+    loadAllData();
+  </script>
 </body>
 </html>
