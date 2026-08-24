@@ -58,82 +58,8 @@
       <button class="shop-tab" onclick="filterGallery('community', this)">Community</button>
     </div>
 
-    <!-- Gallery Grid -->
-    <div class="gallery-grid" id="galleryContainer">
-
-      <!-- Community Beginnings -->
-      <div class="gallery-item" data-category="community" onclick="openLightbox('ETERNAL_SMP_BEGIN.jpg', 'Eternal SMP Official Launch & Founding Squad')">
-        <img src="ETERNAL_SMP_BEGIN.jpg" alt="Eternal SMP Beginning" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-users"></i> Server Genesis: Founding Squad</span>
-        </div>
-      </div>
-
-      <!-- Spawn Aerial Top -->
-      <div class="gallery-item" data-category="spawn" onclick="openLightbox('ETERNAL_SMP_SPAWN4.jpg', 'Spawn Sanctuary — Top-Down Aerial View')">
-        <img src="ETERNAL_SMP_SPAWN4.jpg" alt="Spawn Aerial View" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-ring"></i> Spawn Sanctuary (Top-Down)</span>
-        </div>
-      </div>
-
-      <!-- Spawn Center Village -->
-      <div class="gallery-item" data-category="spawn" onclick="openLightbox('ETERNAL_SMP_SPAWN3.jpg', 'Spawn Town Square & Gatehouse')">
-        <img src="ETERNAL_SMP_SPAWN3.jpg" alt="Spawn Gatehouse" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-archway"></i> Town Square & Portals</span>
-        </div>
-      </div>
-
-      <!-- Spawn Dusk Perimeter -->
-      <div class="gallery-item" data-category="spawn" onclick="openLightbox('ETERNAL_SMP_SPAWN2.jpg', 'Spawn Ring of Flame — Sunset Atmosphere')">
-        <img src="ETERNAL_SMP_SPAWN2.jpg" alt="Spawn Perimeter Sunset" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-fire"></i> Ring of Flame (Evening)</span>
-        </div>
-      </div>
-
-      <!-- Spawn Night Landscape -->
-      <div class="gallery-item" data-category="spawn" onclick="openLightbox('ETERNAL_SMP_SPAWN1.jpg', 'Spawn Citadel — Night Sky View')">
-        <img src="ETERNAL_SMP_SPAWN1.jpg" alt="Spawn Night Landscape" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-moon"></i> Spawn Citadel Under Stars</span>
-        </div>
-      </div>
-
-      <!-- Arena Dome Interior View -->
-      <div class="gallery-item" data-category="arena" onclick="openLightbox('ETERNAL_SMP_ARENA4.jpg', 'Cosmic Dome — Amethyst PvP Colosseum')">
-        <img src="ETERNAL_SMP_ARENA4.jpg" alt="Amethyst Arena Dome" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-shield-halved"></i> Cosmic Amethyst Dome</span>
-        </div>
-      </div>
-
-      <!-- Arena Symmetry Ceiling -->
-      <div class="gallery-item" data-category="arena" onclick="openLightbox('ETERNAL_SMP_ARENA3.jpg', 'Colosseum Geometry — Celestial Ceiling Pattern')">
-        <img src="ETERNAL_SMP_ARENA3.jpg" alt="Arena Celestial Ceiling" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-compass-drafting"></i> Ceiling Geometry</span>
-        </div>
-      </div>
-
-      <!-- Arena Battlefield Floor -->
-      <div class="gallery-item" data-category="arena" onclick="openLightbox('ETERNAL_SMP_ARENA2.jpg', 'Purpur Duel Ring — Ranked Combat Stage')">
-        <img src="ETERNAL_SMP_ARENA2.jpg" alt="Arena Floor Stage" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-crosshairs"></i> Duel Ring Combat Floor</span>
-        </div>
-      </div>
-
-      <!-- Arena Outer Void & Singularity -->
-      <div class="gallery-item" data-category="arena" onclick="openLightbox('ETERNAL_SMP_ARENA1.jpg', 'The Singularity — Orbital Combat Sphere')">
-        <img src="ETERNAL_SMP_ARENA1.jpg" alt="Orbital Combat Sphere Void" loading="lazy">
-        <div class="gallery-label">
-          <span><i class="fa-solid fa-meteor"></i> Orbital Sphere & Singularity</span>
-        </div>
-      </div>
-
-    </div>
+    <!-- Gallery Grid Dynamically Rendered -->
+    <div class="gallery-grid" id="galleryContainer"></div>
   </main>
 
   <!-- Fullscreen Lightbox Modal -->
@@ -149,18 +75,113 @@
   <script src="app.js"></script>
 
   <script>
+    let allGalleryItems = [];
+
+    async function initGallery() {
+      try {
+        const res = await fetch('gallery-data.json');
+        if (!res.ok) throw new Error('Could not fetch JSON');
+        allGalleryItems = await res.json();
+      } catch (err) {
+        console.warn('Falling back to local cache array');
+        allGalleryItems = [
+          {
+            id: "begin",
+            category: "community",
+            title: "Server Genesis: Founding Squad",
+            description: "Eternal SMP Official Launch & Founding Squad",
+            icon: "fa-users",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541781/ETERNAL_SMP_BEGIN.png"
+          },
+          {
+            id: "spawn-1",
+            category: "spawn",
+            title: "Custom Spawn Citadel",
+            description: "Spawn Citadel — Night Sky View",
+            icon: "fa-moon",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541814/ETERNAL_SMP_SPAWN1.png"
+          },
+          {
+            id: "spawn-2",
+            category: "spawn",
+            title: "Ring of Flame (Evening)",
+            description: "Spawn Ring of Flame — Sunset Atmosphere",
+            icon: "fa-fire",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541811/ETERNAL_SMP_SPAWN2.png"
+          },
+          {
+            id: "spawn-3",
+            category: "spawn",
+            title: "Town Square & Portals",
+            description: "Spawn Town Square & Gatehouse",
+            icon: "fa-archway",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541822/ETERNAL_SMP_SPAWN3.png"
+          },
+          {
+            id: "spawn-4",
+            category: "spawn",
+            title: "Spawn Sanctuary (Top-Down)",
+            description: "Spawn Sanctuary — Top-Down Aerial View",
+            icon: "fa-ring",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541823/ETERNAL_SMP_SPAWN4.png"
+          },
+          {
+            id: "arena-1",
+            category: "arena",
+            title: "Cosmic Duel Arena",
+            description: "The Singularity — Orbital Combat Sphere",
+            icon: "fa-meteor",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541782/ETERNAL_SMP_ARENA1.png"
+          },
+          {
+            id: "arena-2",
+            category: "arena",
+            title: "Duel Ring Combat Floor",
+            description: "Purpur Duel Ring — Ranked Combat Stage",
+            icon: "fa-crosshairs",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541834/ETERNAL_SMP_ARENA2.png"
+          },
+          {
+            id: "arena-3",
+            category: "arena",
+            title: "Ceiling Geometry",
+            description: "Colosseum Geometry — Celestial Ceiling Pattern",
+            icon: "fa-compass-drafting",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541819/ETERNAL_SMP_ARENA3.png"
+          },
+          {
+            id: "arena-4",
+            category: "arena",
+            title: "Cosmic Amethyst Dome",
+            description: "Cosmic Dome — Amethyst PvP Colosseum",
+            icon: "fa-shield-halved",
+            url: "https://res.cloudinary.com/retvp8pw/image/upload/v1787541824/ETERNAL_SMP_ARENA4.png"
+          }
+        ];
+      }
+      renderGallery('all');
+    }
+
+    function renderGallery(category) {
+      const container = document.getElementById('galleryContainer');
+      const filtered = category === 'all' 
+        ? allGalleryItems 
+        : allGalleryItems.filter(item => item.category === category);
+
+      container.innerHTML = filtered.map(item => `
+        <div class="gallery-item" data-category="${item.category}" onclick="openLightbox('${item.url}', '${item.description}')">
+          <img src="${item.url}" alt="${item.title}" loading="lazy">
+          <div class="gallery-label">
+            <span><i class="fa-solid ${item.icon}"></i> ${item.title}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
     function filterGallery(category, btn) {
       document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
-
-      const items = document.querySelectorAll('.gallery-item');
-      items.forEach(item => {
-        if (category === 'all' || item.dataset.category === category) {
-          item.style.display = 'block';
-        } else {
-          item.style.display = 'none';
-        }
-      });
+      renderGallery(category);
     }
 
     function openLightbox(imgSrc, captionText) {
@@ -172,6 +193,8 @@
     function closeLightbox() {
       document.getElementById('lightboxModal').classList.remove('active');
     }
+
+    initGallery();
   </script>
 </body>
 </html>
