@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Eternal SMP</title>
   <link rel="icon" type="image/png" href="/logo.png">
   <link rel="stylesheet" href="/style.css">
@@ -33,10 +33,10 @@
       <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="index.html" class="nav-link active"><i class="fa-solid fa-house"></i> Home</a></li>
       <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
       <li><a href="ranks.html" class="nav-link"><i class="fa-solid fa-crown"></i> Server Ranks</a></li>
-      <li><a href="leaderboard.html" class="nav-link active"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
       <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
       <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
@@ -94,21 +94,27 @@
       </div>
     </div>
 
-    <!-- Screenshots Showcase -->
+    <!-- Screenshots Showcase Using Server Assets -->
     <div class="section-block">
       <h2 class="section-title">Server Highlights</h2>
       <div class="gallery-grid">
         <div class="gallery-item">
-          <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80" alt="Spawn Hub">
-          <div class="gallery-label">Custom Spawn & Hub</div>
+          <img src="/api/ETERNAL_SMP_SPAWN1.jpg" alt="Spawn Sanctuary" loading="lazy">
+          <div class="gallery-label">
+            <span><i class="fa-solid fa-landmark"></i> Custom Spawn Citadel</span>
+          </div>
         </div>
         <div class="gallery-item">
-          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80" alt="PvP Arena">
-          <div class="gallery-label">Competitive PvP Arenas</div>
+          <img src="/api/ETERNAL_SMP_ARENA1.jpg" alt="PvP Arena Singularity" loading="lazy">
+          <div class="gallery-label">
+            <span><i class="fa-solid fa-crosshairs"></i> Cosmic Duel Arena</span>
+          </div>
         </div>
         <div class="gallery-item">
-          <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80" alt="Survival World">
-          <div class="gallery-label">Player Towns & Economies</div>
+          <img src="/api/ETERNAL_SMP_BEGIN.jpg" alt="Founding Squad" loading="lazy">
+          <div class="gallery-label">
+            <span><i class="fa-solid fa-users"></i> Founding Community</span>
+          </div>
         </div>
       </div>
     </div>
