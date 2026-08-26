@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Eternal SMP | Crate Keys</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+      <a href="index.html" class="logo-link">
+        <img src="logo.png" alt="Eternal SMP Logo" class="nav-logo-img">
+        <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+      </a>
+    </div>
+    <div class="ip-widget" onclick="copyIP('ETERNAL.ozima.bond')">
+      <span class="status-dot" id="headerDot"></span>
+      <span id="ipText">ETERNAL.ozima.bond</span>
+      <i class="fa-regular fa-copy"></i>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Navigation</h3>
+      <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="shop.html" class="nav-link active"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
+      <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+    </ul>
+  </nav>
+
+  <main class="content-container">
+    <div class="page-header">
+      <h2>Crate Keys</h2>
+      <p>Unlock custom gear, currency bundles, spawner drops, and unique materials at Spawn.</p>
+    </div>
+
+    <div class="ranks-showcase-grid">
+
+      <!-- Common Crate Key Bundle -->
+      <div class="rank-card-box rank-knight">
+        <div class="rank-card-header">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-key"></i></div>
+          <h3>5x Common Keys</h3>
+          <div class="rank-card-price">20 <span>BDT</span></div>
+        </div>
+        <ul class="rank-perk-list">
+          <li><i class="fa-solid fa-check"></i> Basic enchanted tools & weapons</li>
+          <li><i class="fa-solid fa-check"></i> Starter economy money vouchers</li>
+          <li><i class="fa-solid fa-check"></i> Useful building blocks & food bundles</li>
+          <li><i class="fa-solid fa-check"></i> Redeemable at <code>/warp crates</code></li>
+        </ul>
+        <a href="payment.html?item=5x%20Common%20Crate%20Key&price=20" class="rank-buy-btn">Purchase Bundle</a>
+      </div>
+
+      <!-- OP Crate Key Bundle -->
+      <div class="rank-card-box rank-hydra">
+        <div class="rank-card-header">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-bolt"></i></div>
+          <h3>5x OP Keys</h3>
+          <div class="rank-card-price">40 <span>BDT</span></div>
+        </div>
+        <ul class="rank-perk-list">
+          <li><i class="fa-solid fa-check"></i> High-tier Netherite PvP armor</li>
+          <li><i class="fa-solid fa-check"></i> Custom enchanted swords & bows</li>
+          <li><i class="fa-solid fa-check"></i> High-value economy cash pouches</li>
+          <li><i class="fa-solid fa-check"></i> Rare mob spawner rewards</li>
+        </ul>
+        <a href="payment.html?item=5x%20OP%20Crate%20Key&price=40" class="rank-buy-btn">Purchase Bundle</a>
+      </div>
+
+      <!-- Eternal Crate Key Bundle -->
+      <div class="rank-card-box rank-phoenix">
+        <div class="rank-card-header">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-fire"></i></div>
+          <h3>3x Eternal Keys</h3>
+          <div class="rank-card-price">50 <span>BDT</span></div>
+        </div>
+        <ul class="rank-perk-list">
+          <li><i class="fa-solid fa-check"></i> God-tier custom weapons & armor sets</li>
+          <li><i class="fa-solid fa-check"></i> Mega economy jackpots</li>
+          <li><i class="fa-solid fa-check"></i> Ultra-rare items & permanent cosmetics</li>
+          <li><i class="fa-solid fa-check"></i> Highest tier loot in Eternal SMP</li>
+        </ul>
+        <a href="payment.html?item=3x%20Eternal%20Crate%20Key&price=50" class="rank-buy-btn">Purchase Bundle</a>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Copied IP to clipboard!</div>
+  <script src="app.js"></script>
+</body>
+</html>
