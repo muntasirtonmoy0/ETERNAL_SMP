@@ -132,7 +132,7 @@ html, body {
   box-shadow: 0 0 8px var(--success);
 }
 
-/* SIDEBAR */
+/* SIDEBAR NAVIGATION */
 .sidebar-overlay {
   position: fixed;
   inset: 0;
@@ -385,7 +385,7 @@ html, body {
   box-shadow: 0 0 8px var(--success);
 }
 
-/* GALLERY & SERVER MEMORIES */
+/* GALLERY & SERVER HIGHLIGHTS */
 .section-block {
   margin-top: 60px;
 }
@@ -442,7 +442,7 @@ html, body {
   margin-right: 8px;
 }
 
-/* LIGHTBOX MODAL */
+/* FULLSCREEN LIGHTBOX MODAL */
 .lightbox-overlay {
   position: fixed;
   inset: 0;
@@ -495,7 +495,7 @@ html, body {
   text-align: center;
 }
 
-/* STORE / SHOP */
+/* STORE & SHOP CATEGORIES (SHOP.HTML) */
 .page-header {
   text-align: center;
   margin-bottom: 36px;
@@ -540,66 +540,6 @@ html, body {
   border-color: var(--accent);
 }
 
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-}
-
-.product-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: relative;
-}
-
-.badge-tag {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: rgba(241, 196, 15, 0.15);
-  color: #f1c40f;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.badge-tag.best {
-  background: rgba(155, 89, 182, 0.2);
-  color: #9b59b6;
-}
-
-.product-icon {
-  font-size: 2.4rem;
-  margin-bottom: 14px;
-}
-
-.product-card h3 {
-  font-size: 1.3rem;
-  margin-bottom: 8px;
-}
-
-.product-desc {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  margin-bottom: 20px;
-  flex-grow: 1;
-}
-
-.product-price {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 14px;
-  color: var(--accent);
-}
-
-/* STORE HUB CATEGORIES (SHOP.HTML) */
 .store-categories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -657,7 +597,7 @@ html, body {
   font-size: 1.2rem;
 }
 
-/* RANKS SHOWCASE GRID (RANKS.HTML) */
+/* RANKS SHOWCASE GRID (RANKS.HTML & CRATES.HTML) */
 .ranks-showcase-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -775,6 +715,143 @@ html, body {
 .rank-buy-btn:hover {
   opacity: 0.9;
   transform: translateY(-2px);
+}
+
+/* SPAWNER CATEGORIES & CARDS (SPAWNERS.HTML) */
+.spawner-category-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.spawner-cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.spawner-cat-header h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.spawner-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.spawner-card {
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.spawner-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.spawner-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.spawner-info p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.btn-buy-mini {
+  background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+  color: #000;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.btn-buy-mini:hover {
+  opacity: 0.9;
+  transform: scale(1.04);
+}
+
+.spawner-notices-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.notice-box {
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+}
+
+.notice-box h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notice-box p {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.warning-notice {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.warning-notice h4 {
+  color: var(--danger);
+}
+
+.info-notice {
+  background: rgba(0, 210, 255, 0.08);
+  border-color: rgba(0, 210, 255, 0.25);
+}
+
+.info-notice h4 {
+  color: var(--accent);
 }
 
 /* CHECKOUT / PAYMENTS PAGE */
@@ -1410,7 +1487,7 @@ html, body {
 .staff-links a { color: var(--text-muted); font-size: 1.1rem; }
 .staff-links a:hover { color: var(--accent); }
 
-/* LEGACY ONLINE PLAYERS MODAL */
+/* ONLINE PLAYERS MODAL */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -1528,7 +1605,7 @@ html, body {
   color: #9ca3af;
 }
 
-/* TOAST */
+/* TOAST NOTIFICATION */
 .toast {
   position: fixed;
   bottom: 24px;
