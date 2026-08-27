@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Eternal SMP | Mob Spawners</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+      <a href="index.html" class="logo-link">
+        <img src="logo.png" alt="Eternal SMP Logo" class="nav-logo-img">
+        <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+      </a>
+    </div>
+    <div class="ip-widget" onclick="copyIP('ETERNAL.ozima.bond')">
+      <span class="status-dot" id="headerDot"></span>
+      <span id="ipText">ETERNAL.ozima.bond</span>
+      <i class="fa-regular fa-copy"></i>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Navigation</h3>
+      <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="shop.html" class="nav-link active"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
+      <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+    </ul>
+  </nav>
+
+  <main class="content-container">
+    <div class="page-header">
+      <h2>Mob Spawner Shop</h2>
+      <p>Automate your farm production, grinder XP, and mob drops with custom spawners.</p>
+    </div>
+
+    <!-- Tier Filter Tabs -->
+    <div class="shop-tabs">
+      <button class="shop-tab active" onclick="filterSpawners('all', this)">All Spawners</button>
+      <button class="shop-tab" onclick="filterSpawners('basic', this)">Basic (20৳)</button>
+      <button class="shop-tab" onclick="filterSpawners('combat', this)">Combat (30৳)</button>
+      <button class="shop-tab" onclick="filterSpawners('advanced', this)">Advanced (40৳)</button>
+      <button class="shop-tab" onclick="filterSpawners('special', this)">Special (50৳)</button>
+    </div>
+
+    <!-- Category 1: Basic Spawners -->
+    <div class="spawner-category-block" data-category="basic">
+      <div class="spawner-cat-header">
+        <h3><i class="fa-solid fa-egg text-gold"></i> Basic Spawners</h3>
+        <span class="price-pill">20 BDT / Piece</span>
+      </div>
+      <div class="spawner-items-grid">
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Pig Spawner</h4>
+            <p>Porkchop & food supplies</p>
+          </div>
+          <a href="payment.html?item=Pig%20Spawner&price=20" class="btn-buy-mini">Buy 20৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Cow Spawner</h4>
+            <p>Leather, raw beef & milk</p>
+          </div>
+          <a href="payment.html?item=Cow%20Spawner&price=20" class="btn-buy-mini">Buy 20৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Chicken Spawner</h4>
+            <p>Feathers, eggs & raw chicken</p>
+          </div>
+          <a href="payment.html?item=Chicken%20Spawner&price=20" class="btn-buy-mini">Buy 20৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Sheep Spawner</h4>
+            <p>Wool colors & mutton meat</p>
+          </div>
+          <a href="payment.html?item=Sheep%20Spawner&price=20" class="btn-buy-mini">Buy 20৳</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 2: Combat Spawners -->
+    <div class="spawner-category-block" data-category="combat">
+      <div class="spawner-cat-header">
+        <h3><i class="fa-solid fa-fire text-red"></i> Combat Spawners</h3>
+        <span class="price-pill">30 BDT / Piece</span>
+      </div>
+      <div class="spawner-items-grid">
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Zombie Spawner</h4>
+            <p>Rotten flesh, iron & XP grinder</p>
+          </div>
+          <a href="payment.html?item=Zombie%20Spawner&price=30" class="btn-buy-mini">Buy 30৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Spider Spawner</h4>
+            <p>String & spider eyes</p>
+          </div>
+          <a href="payment.html?item=Spider%20Spawner&price=30" class="btn-buy-mini">Buy 30৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Skeleton Spawner</h4>
+            <p>Bones, bonemeal, arrows & bows</p>
+          </div>
+          <a href="payment.html?item=Skeleton%20Spawner&price=30" class="btn-buy-mini">Buy 30৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Guardian Spawner</h4>
+            <p>Prismarine shards & crystals</p>
+          </div>
+          <a href="payment.html?item=Guardian%20Spawner&price=30" class="btn-buy-mini">Buy 30৳</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 3: Advanced Spawners -->
+    <div class="spawner-category-block" data-category="advanced">
+      <div class="spawner-cat-header">
+        <h3><i class="fa-solid fa-bolt text-purple"></i> Advanced Spawners</h3>
+        <span class="price-pill">40 BDT / Piece</span>
+      </div>
+      <div class="spawner-items-grid">
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Enderman Spawner</h4>
+            <p>Ender pearls & rapid XP farming</p>
+          </div>
+          <a href="payment.html?item=Enderman%20Spawner&price=40" class="btn-buy-mini">Buy 40৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Slime Spawner</h4>
+            <p>Slimeballs & sticky piston crafting</p>
+          </div>
+          <a href="payment.html?item=Slime%20Spawner&price=40" class="btn-buy-mini">Buy 40৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Magma Cube Spawner</h4>
+            <p>Magma cream & fire potion bases</p>
+          </div>
+          <a href="payment.html?item=Magma%20Cube%20Spawner&price=40" class="btn-buy-mini">Buy 40৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Creeper Spawner</h4>
+            <p>Gunpowder for rockets & TNT</p>
+          </div>
+          <a href="payment.html?item=Creeper%20Spawner&price=40" class="btn-buy-mini">Buy 40৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Blaze Spawner</h4>
+            <p>Blaze rods, fuel & brewing ingredients</p>
+          </div>
+          <a href="payment.html?item=Blaze%20Spawner&price=40" class="btn-buy-mini">Buy 40৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Zombified Piglin Spawner</h4>
+            <p>Gold nuggets & ingots farming</p>
+          </div>
+          <a href="payment.html?item=Zombified%20Piglin%20Spawner&price=40" class="btn-buy-mini">Buy 40৳</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 4: Special Spawners -->
+    <div class="spawner-category-block" data-category="special">
+      <div class="spawner-cat-header">
+        <h3><i class="fa-solid fa-star text-cyan"></i> Special Spawners</h3>
+        <span class="price-pill">50 BDT / Piece</span>
+      </div>
+      <div class="spawner-items-grid">
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Iron Golem Spawner</h4>
+            <p>Automated raw iron & poppies</p>
+          </div>
+          <a href="payment.html?item=Iron%20Golem%20Spawner&price=50" class="btn-buy-mini">Buy 50৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Ghast Spawner</h4>
+            <p>Ghast tears & massive gunpowder</p>
+          </div>
+          <a href="payment.html?item=Ghast%20Spawner&price=50" class="btn-buy-mini">Buy 50৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Breeze Spawner</h4>
+            <p>Breeze rods & wind charge crafting</p>
+          </div>
+          <a href="payment.html?item=Breeze%20Spawner&price=50" class="btn-buy-mini">Buy 50৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Wither Skeleton Spawner</h4>
+            <p>Wither skulls, coal & bones</p>
+          </div>
+          <a href="payment.html?item=Wither%20Skeleton%20Spawner&price=50" class="btn-buy-mini">Buy 50৳</a>
+        </div>
+        <div class="spawner-card">
+          <div class="spawner-info">
+            <h4>Shulker Spawner</h4>
+            <p>Shulker shells for infinite box storage</p>
+          </div>
+          <a href="payment.html?item=Shulker%20Spawner&price=50" class="btn-buy-mini">Buy 50৳</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Server Balance & Purchase Notices -->
+    <div class="spawner-notices-container">
+      <div class="notice-box warning-notice">
+        <h4><i class="fa-solid fa-triangle-exclamation"></i> Balance Notice</h4>
+        <p>High-tier spawners are limited per claim to protect economy inflation and TPS performance. Placement limits may be adjusted for server balance.</p>
+      </div>
+
+      <div class="notice-box info-notice">
+        <h4><i class="fa-solid fa-circle-info"></i> Delivery Notice</h4>
+        <p>After completing your bKash payment, submit your Transaction ID and your spawners will be placed directly into your in-game inventory via claim voucher.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast">Copied IP to clipboard!</div>
+  <script src="app.js"></script>
+  <script>
+    function filterSpawners(tier, btn) {
+      document.querySelectorAll('.shop-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const blocks = document.querySelectorAll('.spawner-category-block');
+      blocks.forEach(block => {
+        if (tier === 'all' || block.dataset.category === tier) {
+          block.style.display = 'block';
+        } else {
+          block.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
