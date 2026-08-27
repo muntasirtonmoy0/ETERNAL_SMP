@@ -34,8 +34,8 @@
     </div>
     <ul class="nav-links">
       <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
-      <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
-      <li><a href="leaderboard.html" class="nav-link active"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="shop.html" class="nav-link active"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
       <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
       <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
@@ -63,7 +63,7 @@
             </div>
             <div class="form-group">
               <label>Full Real Name *</label>
-              <input type="text" id="realNameInput" placeholder="e.g. Sadman Sakib" required>
+              <input type="text" id="realNameInput" placeholder="e.g. Munatsir Tonmoy" required>
             </div>
             <div class="form-group">
               <label>Email Address *</label>
@@ -85,7 +85,7 @@
           <div class="bkash-payment-box">
             <div class="bkash-top">
               <span class="bkash-badge-tag"><i class="fa-solid fa-wallet"></i> bKash Personal (Send Money)</span>
-              <div class="price-summary-tag">Pay: <span id="displayPrice">৳0 BDT</span> (<span id="displayRank">None</span>)</div>
+              <div class="price-summary-tag">Pay: <span id="displayPrice">৳0 BDT</span> (<span id="displayItem">None</span>)</div>
             </div>
             <div class="bkash-phone-display">01741644334</div>
             <p class="bkash-note">Send the exact amount via <strong>Send Money (Personal to Personal)</strong> to the number above, then enter your transaction details below.</p>
@@ -114,7 +114,7 @@
           <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
           <h3>Order Received Successfully!</h3>
           <p class="success-desc">
-            Your payment for <strong id="successRank"></strong> has been submitted. Our administrators have received your order log.
+            Your payment for <strong id="successItem"></strong> has been submitted. Our administrators have received your order log.
           </p>
 
           <div class="order-receipt">
@@ -139,11 +139,23 @@
   <script src="app.js"></script>
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const rankName = urlParams.get('rank') || 'Knight';
-    const rankPrice = urlParams.get('price') || '120';
+    
+    // Dynamically retrieve either the item name or rank name from URL params
+    const rawRank = urlParams.get('rank');
+    const rawItem = urlParams.get('item');
+    
+    let itemName = 'Server Item';
+    if (rawItem) {
+      itemName = decodeURIComponent(rawItem);
+    } else if (rawRank) {
+      const decodedRank = decodeURIComponent(rawRank);
+      itemName = decodedRank.toLowerCase().includes('rank') ? decodedRank : `${decodedRank} Rank`;
+    }
 
-    document.getElementById('displayRank').textContent = rankName + ' Rank';
-    document.getElementById('displayPrice').textContent = `৳${rankPrice} BDT`;
+    const itemPrice = urlParams.get('price') || '0';
+
+    document.getElementById('displayItem').textContent = itemName;
+    document.getElementById('displayPrice').textContent = `৳${itemPrice} BDT`;
 
     async function submitCheckout(e) {
       e.preventDefault();
@@ -153,8 +165,9 @@
       submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting Order...';
 
       const orderData = {
-        rank: rankName + ' Rank',
-        price: rankPrice,
+        item: itemName,
+        rank: itemName,
+        price: itemPrice,
         ign: document.getElementById('ignInput').value.trim(),
         realName: document.getElementById('realNameInput').value.trim(),
         email: document.getElementById('emailInput').value.trim(),
@@ -177,21 +190,21 @@
           throw new Error('Order logging failed');
         }
 
-        document.getElementById('successRank').textContent = orderData.rank;
+        document.getElementById('successItem').textContent = orderData.item;
         document.getElementById('recIGN').textContent = orderData.ign;
         document.getElementById('recTrx').textContent = orderData.trxId;
-        document.getElementById('recPrice').textContent = `৳${rankPrice} BDT`;
+        document.getElementById('recPrice').textContent = `৳${itemPrice} BDT`;
 
         document.getElementById('checkoutFormSection').style.display = 'none';
         document.getElementById('checkoutSuccessSection').style.display = 'block';
 
       } catch (err) {
-        alert('Notice: Order saved. Please open a Discord ticket with your TrxID to claim your rank faster!');
+        alert('Notice: Order submitted. Please open a Discord ticket with your TrxID to claim your items faster!');
         
-        document.getElementById('successRank').textContent = orderData.rank;
+        document.getElementById('successItem').textContent = orderData.item;
         document.getElementById('recIGN').textContent = orderData.ign;
         document.getElementById('recTrx').textContent = orderData.trxId;
-        document.getElementById('recPrice').textContent = `৳${rankPrice} BDT`;
+        document.getElementById('recPrice').textContent = `৳${itemPrice} BDT`;
 
         document.getElementById('checkoutFormSection').style.display = 'none';
         document.getElementById('checkoutSuccessSection').style.display = 'block';
