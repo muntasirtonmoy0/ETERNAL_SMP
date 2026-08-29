@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eternal SMP</title>
+  <title>Eternal SMP | Community Events</title>
   <link rel="icon" type="image/png" href="/logo.png">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -35,9 +35,9 @@
     <ul class="nav-links">
       <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
       <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
-      <li><a href="leaderboard.html" class="nav-link active"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
       <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
-      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="events.html" class="nav-link active"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
       <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
     </ul>
@@ -51,28 +51,13 @@
 
     <div class="events-section">
       <h3 class="event-subtitle"><i class="fa-solid fa-bolt"></i> Active & Upcoming Events</h3>
-      <div class="events-grid">
-        <div class="event-card active-border">
-          <div class="event-status live">LIVE NOW</div>
-          <h4>Netherite PvP Championship</h4>
-          <p>1v1 kit battles at the central arena. Winner takes 500,000 in-game balance and the Champion tag!</p>
-          <div class="event-meta">
-            <span><i class="fa-regular fa-clock"></i> Ends in 2 Days</span>
-            <span><i class="fa-solid fa-trophy"></i> $500K Pool</span>
-          </div>
-        </div>
+      <div class="events-grid" id="activeEventsContainer">
+        <!-- Rendered via JavaScript -->
       </div>
 
       <h3 class="event-subtitle" style="margin-top: 40px;"><i class="fa-solid fa-clock-rotate-left"></i> Event History</h3>
-      <div class="events-grid">
-        <div class="event-card clickable" onclick="openEventHistory('Build Battle Season 1', 'Steve_99', '$250k + VIP Rank', '15 players participated in a 60-minute theme build showdown in the creative event plot.')">
-          <div class="event-status ended">COMPLETED</div>
-          <h4>Build Battle Season 1</h4>
-          <p>Theme: Medieval Castles. Click to view victory details and prize payouts.</p>
-          <div class="event-meta">
-            <span><i class="fa-solid fa-medal"></i> Winner: Steve_99</span>
-          </div>
-        </div>
+      <div class="events-grid" id="pastEventsContainer">
+        <!-- Rendered via JavaScript -->
       </div>
     </div>
   </main>
@@ -88,6 +73,115 @@
   </div>
 
   <div class="toast" id="toast">Copied IP to clipboard!</div>
+  
   <script src="app.js"></script>
+  <script>
+    /* ==========================================================================
+       ADMIN EVENT CONFIGURATION
+       To add or edit an event, add an object into the arrays below.
+       ========================================================================== */
+
+    const ACTIVE_EVENTS = [
+      /* Example:
+      {
+        title: "Netherite PvP Championship",
+        desc: "1v1 kit battles at the arena. Winner takes $500k balance + Champion tag!",
+        statusText: "LIVE NOW",     // "LIVE NOW" or "UPCOMING"
+        statusClass: "live",        // "live" or "upcoming"
+        timeLeft: "Ends in 2 Days",
+        prize: "$500K Pool"
+      }
+      */
+    ];
+
+    const PAST_EVENTS = [
+      /* Example:
+      {
+        title: "Build Battle Season 1",
+        shortDesc: "Theme: Medieval Castles. Click to view victory details.",
+        winner: "Steve_99",
+        prize: "$250k + VIP Rank",
+        fullDetails: "15 players participated in a 60-minute theme build showdown in the creative event plot."
+      }
+      */
+    ];
+
+    /* ==========================================================================
+       RENDER ENGINE
+       ========================================================================== */
+    function renderEvents() {
+      const activeContainer = document.getElementById('activeEventsContainer');
+      const pastContainer = document.getElementById('pastEventsContainer');
+
+      // 1. Render Active Events
+      if (!ACTIVE_EVENTS.length) {
+        activeContainer.innerHTML = `
+          <div class="event-card" style="grid-column: 1 / -1; text-align: center; padding: 35px 20px; color: var(--text-muted, #94a3b8);">
+            <i class="fa-solid fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 12px; display: block; opacity: 0.7;"></i>
+            <h4 style="color: #fff; margin-bottom: 6px;">No Active Events</h4>
+            <p style="margin: 0; font-size: 0.9rem;">Join our <a href="https://discord.gg/qTTKaQ6uP4" target="_blank" style="color: #5865F2; text-decoration: underline;">Discord Server</a> to get notified when the next tournament starts!</p>
+          </div>
+        `;
+      } else {
+        activeContainer.innerHTML = ACTIVE_EVENTS.map(event => `
+          <div class="event-card active-border">
+            <div class="event-status ${event.statusClass || 'live'}">${event.statusText || 'LIVE'}</div>
+            <h4>${event.title}</h4>
+            <p>${event.desc}</p>
+            <div class="event-meta">
+              <span><i class="fa-regular fa-clock"></i> ${event.timeLeft}</span>
+              <span><i class="fa-solid fa-trophy"></i> ${event.prize}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // 2. Render Past Events
+      if (!PAST_EVENTS.length) {
+        pastContainer.innerHTML = `
+          <div class="event-card" style="grid-column: 1 / -1; text-align: center; padding: 35px 20px; color: var(--text-muted, #94a3b8);">
+            <i class="fa-solid fa-hourglass-empty" style="font-size: 2rem; margin-bottom: 12px; display: block; opacity: 0.7;"></i>
+            <h4 style="color: #fff; margin-bottom: 6px;">No Past Event Records</h4>
+            <p style="margin: 0; font-size: 0.9rem;">Past winners and tournament results will be archived here.</p>
+          </div>
+        `;
+      } else {
+        pastContainer.innerHTML = PAST_EVENTS.map(event => `
+          <div class="event-card clickable" onclick="openEventHistory('${event.title.replace(/'/g, "\\'")}', '${event.winner.replace(/'/g, "\\'")}', '${event.prize.replace(/'/g, "\\'")}', '${event.fullDetails.replace(/'/g, "\\'")}')">
+            <div class="event-status ended">COMPLETED</div>
+            <h4>${event.title}</h4>
+            <p>${event.shortDesc}</p>
+            <div class="event-meta">
+              <span><i class="fa-solid fa-medal"></i> Winner: ${event.winner}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function openEventHistory(title, winner, prize, details) {
+      const modal = document.getElementById('eventModal');
+      document.getElementById('eventModalTitle').textContent = title;
+      document.getElementById('eventModalBody').innerHTML = `
+        <p style="margin-bottom: 15px;">${details}</p>
+        <div style="background: rgba(255,255,255,0.04); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+          <div style="margin-bottom: 6px;"><strong style="color:#00d2ff;"><i class="fa-solid fa-trophy"></i> Champion:</strong> ${winner}</div>
+          <div><strong style="color:#FFE259;"><i class="fa-solid fa-gift"></i> Prize Claimed:</strong> ${prize}</div>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    document.getElementById('closeEventModal')?.addEventListener('click', () => {
+      document.getElementById('eventModal').style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('eventModal');
+      if (e.target === modal) modal.style.display = 'none';
+    });
+
+    document.addEventListener('DOMContentLoaded', renderEvents);
+  </script>
 </body>
 </html>
