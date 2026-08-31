@@ -15,7 +15,8 @@ import {
   increment 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// --- 1. YOUR FIREBASE CONFIG (From Firebase Console) ---
+// --- 1. FIREBASE CONFIGURATION ---
+// Replace these with your actual keys from Firebase Console (Project Settings -> General)
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "your-project-id.firebaseapp.com",
@@ -32,7 +33,7 @@ export const db = getFirestore(app);
 let currentMode = 'login';
 export let currentUserProfile = null;
 
-// --- 2. AUTH STATE LISTENER ---
+// --- 2. AUTH STATE LISTENER (Updates Navbar & User Balance) ---
 onAuthStateChanged(auth, async (user) => {
   const loggedOutView = document.getElementById("loggedOutView");
   const loggedInView = document.getElementById("loggedInView");
@@ -43,14 +44,18 @@ onAuthStateChanged(auth, async (user) => {
 
     if (snap.exists()) {
       currentUserProfile = snap.data();
-      document.getElementById("userIgnDisplay").innerHTML = `<i class="fa-solid fa-user"></i> ${currentUserProfile.ign}`;
-      document.getElementById("userBalanceDisplay").innerText = currentUserProfile.coins || 0;
+      
+      const ignDisplay = document.getElementById("userIgnDisplay");
+      const balanceDisplay = document.getElementById("userBalanceDisplay");
+      
+      if (ignDisplay) ignDisplay.innerHTML = `<i class="fa-solid fa-user"></i> ${currentUserProfile.ign || 'Player'}`;
+      if (balanceDisplay) balanceDisplay.innerText = currentUserProfile.coins ?? 0;
       
       // Auto-fill checkout fields if on payment.html
       const ignField = document.getElementById("ignInput");
       const emailField = document.getElementById("emailInput");
-      if (ignField) ignField.value = currentUserProfile.ign;
-      if (emailField) emailField.value = user.email;
+      if (ignField) ignField.value = currentUserProfile.ign || '';
+      if (emailField) emailField.value = user.email || '';
     }
 
     if (loggedOutView) loggedOutView.style.display = "none";
@@ -62,7 +67,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// --- 3. LOGIN & SIGNUP SUBMIT ---
+// --- 3. LOGIN & SIGNUP SUBMIT HANDLER ---
 window.handleAuthSubmit = async function (e) {
   e.preventDefault();
   const email = document.getElementById("authEmail").value.trim();
@@ -76,19 +81,15 @@ window.handleAuthSubmit = async function (e) {
   try {
     if (currentMode === 'register') {
       if (!ign || ign.length < 3) throw new Error("Please enter a valid Minecraft username.");
-      
-      // Verify Java account against Mojang API (Optional check)
-      const mojangCheck = await fetch(`https://api.mojang.com/users/profiles/minecraft/${ign}`).catch(() => null);
-      
+
       const creds = await createUserWithEmailAndPassword(auth, email, pass);
       
-      // Create user record with starting wallet balance (0 Coins)
+      // Create permanent player record in Firestore with 0 coins starting balance
       await setDoc(doc(db, "users", creds.user.uid), {
         uid: creds.user.uid,
         email: email,
         ign: ign,
         coins: 0,
-        totalPurchases: 0,
         createdAt: new Date().toISOString()
       });
 
@@ -113,20 +114,23 @@ window.openAuthModal = function (mode) {
   const title = document.getElementById("authModalTitle");
   const switchText = document.getElementById("authSwitchText");
 
+  if (!modal) return;
+
   if (mode === 'register') {
-    title.innerText = "Create Account";
-    ignGroup.style.display = "block";
-    switchText.innerHTML = `Already have an account? <a href="#" onclick="toggleAuthMode()">Login</a>`;
+    if (title) title.innerText = "Create Account";
+    if (ignGroup) ignGroup.style.display = "block";
+    if (switchText) switchText.innerHTML = `Already have an account? <a href="#" onclick="toggleAuthMode()">Login</a>`;
   } else {
-    title.innerText = "Account Sign In";
-    ignGroup.style.display = "none";
-    switchText.innerHTML = `Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign up here</a>`;
+    if (title) title.innerText = "Account Sign In";
+    if (ignGroup) ignGroup.style.display = "none";
+    if (switchText) switchText.innerHTML = `Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign up here</a>`;
   }
   modal.classList.add("active");
 };
 
 window.closeAuthModal = function () {
-  document.getElementById("authModal").classList.remove("active");
+  const modal = document.getElementById("authModal");
+  if (modal) modal.classList.remove("active");
 };
 
 window.toggleAuthMode = function () {
@@ -135,4 +139,19 @@ window.toggleAuthMode = function () {
 
 window.logoutAccount = function () {
   signOut(auth);
+};
+
+// --- 5. ADMIN UTILITY: REWARD EVENT COINS / TOP-UPS ---
+window.grantCoinsToUser = async function (userUid, amount) {
+  try {
+    const userRef = doc(db, "users", userUid);
+    await updateDoc(userRef, {
+      coins: increment(amount)
+    });
+    console.log(`Successfully added ${amount} coins to ${userUid}`);
+    alert(`Success: Added ${amount} coins to UID: ${userUid}`);
+  } catch (error) {
+    console.error("Failed to grant coins:", error);
+    alert("Error granting coins: " + error.message);
+  }
 };
