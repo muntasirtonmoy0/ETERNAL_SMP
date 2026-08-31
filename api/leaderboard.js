@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const { type = 'balance' } = req.query;
-  const SERVER_HOST = "http://n6.ozima.cloud:25909";
+  const SERVER_HOST = "http://160.25.5.205:4350";
 
   const boardMap = {
     balance: 'vault_eco_balance',
