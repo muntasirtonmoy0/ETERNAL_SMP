@@ -3,6 +3,8 @@ import {
   getAuth, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut, 
   onAuthStateChanged 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -15,7 +17,7 @@ import {
   increment 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// --- 1. FIREBASE CONFIGURATION (Linked with Eternal SMP) ---
+// --- 1. FIREBASE CONFIGURATION ---
 const firebaseConfig = {
   apiKey: "AIzaSyDEIyn-2eWwTqsufAUTDcsrT-ypDf8Gc1Q",
   authDomain: "eternal-smp.firebaseapp.com",
@@ -29,11 +31,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
 
 let currentMode = 'login';
 export let currentUserProfile = null;
 
-// --- 2. AUTH STATE LISTENER (Updates Navbar & Live Balance) ---
+// --- 2. AUTH STATE LISTENER ---
 onAuthStateChanged(auth, async (user) => {
   const loggedOutView = document.getElementById("loggedOutView");
   const loggedInView = document.getElementById("loggedInView");
@@ -44,19 +47,29 @@ onAuthStateChanged(auth, async (user) => {
 
     if (snap.exists()) {
       currentUserProfile = snap.data();
-      
-      const ignDisplay = document.getElementById("userIgnDisplay");
-      const balanceDisplay = document.getElementById("userBalanceDisplay");
-      
-      if (ignDisplay) ignDisplay.innerHTML = `<i class="fa-solid fa-user"></i> ${currentUserProfile.ign || 'Player'}`;
-      if (balanceDisplay) balanceDisplay.innerText = currentUserProfile.coins ?? 0;
-      
-      // Auto-fill checkout fields if on payment.html
-      const ignField = document.getElementById("ignInput");
-      const emailField = document.getElementById("emailInput");
-      if (ignField) ignField.value = currentUserProfile.ign || '';
-      if (emailField) emailField.value = user.email || '';
+    } else {
+      // First-time Google user profile creation
+      let defaultIgn = prompt("Welcome! Please enter your Minecraft In-Game Name (IGN):") || user.displayName || "Player";
+      currentUserProfile = {
+        uid: user.uid,
+        email: user.email,
+        ign: defaultIgn.trim(),
+        coins: 0,
+        createdAt: new Date().toISOString()
+      };
+      await setDoc(userRef, currentUserProfile);
     }
+
+    const ignDisplay = document.getElementById("userIgnDisplay");
+    const balanceDisplay = document.getElementById("userBalanceDisplay");
+    
+    if (ignDisplay) ignDisplay.innerHTML = `<i class="fa-solid fa-user"></i> ${currentUserProfile.ign || 'Player'}`;
+    if (balanceDisplay) balanceDisplay.innerText = currentUserProfile.coins ?? 0;
+    
+    const ignField = document.getElementById("ignInput");
+    const emailField = document.getElementById("emailInput");
+    if (ignField) ignField.value = currentUserProfile.ign || '';
+    if (emailField) emailField.value = user.email || '';
 
     if (loggedOutView) loggedOutView.style.display = "none";
     if (loggedInView) loggedInView.style.display = "flex";
@@ -67,7 +80,17 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// --- 3. LOGIN & SIGNUP SUBMIT HANDLER ---
+// --- 3. GOOGLE POPUP LOGIN ---
+window.handleGoogleSignIn = async function () {
+  try {
+    await signInWithPopup(auth, googleProvider);
+    closeAuthModal();
+  } catch (error) {
+    alert("Google sign-in error: " + error.message);
+  }
+};
+
+// --- 4. EMAIL/PASSWORD SUBMIT HANDLER ---
 window.handleAuthSubmit = async function (e) {
   e.preventDefault();
   const email = document.getElementById("authEmail").value.trim();
@@ -84,7 +107,6 @@ window.handleAuthSubmit = async function (e) {
 
       const creds = await createUserWithEmailAndPassword(auth, email, pass);
       
-      // Store new player in Firestore with 0 starter coins
       await setDoc(doc(db, "users", creds.user.uid), {
         uid: creds.user.uid,
         email: email,
@@ -106,7 +128,7 @@ window.handleAuthSubmit = async function (e) {
   }
 };
 
-// --- 4. MODAL CONTROLS ---
+// --- 5. MODAL CONTROLS ---
 window.openAuthModal = function (mode) {
   currentMode = mode;
   const modal = document.getElementById("authModal");
@@ -141,17 +163,15 @@ window.logoutAccount = function () {
   signOut(auth);
 };
 
-// --- 5. ADMIN UTILITY: GRANT EVENT COINS / TOP-UPS ---
+// --- 6. ADMIN UTILITY: GRANT EVENT COINS / TOP-UPS ---
 window.grantCoinsToUser = async function (userUid, amount) {
   try {
     const userRef = doc(db, "users", userUid);
     await updateDoc(userRef, {
       coins: increment(amount)
     });
-    console.log(`Successfully added ${amount} coins to ${userUid}`);
     alert(`Success: Added ${amount} coins to UID: ${userUid}`);
   } catch (error) {
-    console.error("Failed to grant coins:", error);
     alert("Error granting coins: " + error.message);
   }
 };
