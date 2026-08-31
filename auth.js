@@ -15,15 +15,15 @@ import {
   increment 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// --- 1. FIREBASE CONFIGURATION ---
-// Replace these with your actual keys from Firebase Console (Project Settings -> General)
+// --- 1. FIREBASE CONFIGURATION (Linked with Eternal SMP) ---
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "XXXXXX",
-  appId: "XXXXXX"
+  apiKey: "AIzaSyDEIyn-2eWwTqsufAUTDcsrT-ypDf8Gc1Q",
+  authDomain: "eternal-smp.firebaseapp.com",
+  projectId: "eternal-smp",
+  storageBucket: "eternal-smp.firebasestorage.app",
+  messagingSenderId: "944948857359",
+  appId: "1:944948857359:web:a73b359a986fac5b8bf17a",
+  measurementId: "G-C21NEYVSVX"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -33,7 +33,7 @@ export const db = getFirestore(app);
 let currentMode = 'login';
 export let currentUserProfile = null;
 
-// --- 2. AUTH STATE LISTENER (Updates Navbar & User Balance) ---
+// --- 2. AUTH STATE LISTENER (Updates Navbar & Live Balance) ---
 onAuthStateChanged(auth, async (user) => {
   const loggedOutView = document.getElementById("loggedOutView");
   const loggedInView = document.getElementById("loggedInView");
@@ -84,7 +84,7 @@ window.handleAuthSubmit = async function (e) {
 
       const creds = await createUserWithEmailAndPassword(auth, email, pass);
       
-      // Create permanent player record in Firestore with 0 coins starting balance
+      // Store new player in Firestore with 0 starter coins
       await setDoc(doc(db, "users", creds.user.uid), {
         uid: creds.user.uid,
         email: email,
@@ -141,7 +141,7 @@ window.logoutAccount = function () {
   signOut(auth);
 };
 
-// --- 5. ADMIN UTILITY: REWARD EVENT COINS / TOP-UPS ---
+// --- 5. ADMIN UTILITY: GRANT EVENT COINS / TOP-UPS ---
 window.grantCoinsToUser = async function (userUid, amount) {
   try {
     const userRef = doc(db, "users", userUid);
