@@ -16,6 +16,7 @@ const PLAYER_RANKS = {
 let currentOnlinePlayers = [];
 
 document.addEventListener("DOMContentLoaded", () => {
+  loadGlobalAuthModal();
   setupSidebar();
   fetchServerStatus();
 
@@ -25,6 +26,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setInterval(fetchServerStatus, 30000);
 });
+
+// --- GLOBAL AUTH MODAL INJECTION ---
+async function loadGlobalAuthModal() {
+  try {
+    const res = await fetch('/auth-modal.html');
+    if (!res.ok) return;
+    const modalHTML = await res.text();
+
+    const div = document.createElement('div');
+    div.id = 'global-auth-container';
+    div.innerHTML = modalHTML;
+    document.body.appendChild(div);
+
+    const navbar = document.querySelector('.navbar');
+    const authWidget = document.getElementById('authWidget');
+    if (navbar && authWidget) {
+      navbar.appendChild(authWidget);
+    }
+  } catch (err) {
+    console.warn("Global auth modal not loaded:", err);
+  }
+}
 
 // --- CLIPBOARD COPY & TOAST NOTIFICATION ---
 function copyIP(customText) {
