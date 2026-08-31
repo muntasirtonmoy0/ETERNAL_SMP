@@ -36,6 +36,18 @@
         </div>
         <button type="submit" class="btn btn-primary full-width" id="authSubmitBtn">Continue</button>
       </form>
+
+      <div style="display:flex;align-items:center;margin:15px 0;color:var(--text-muted);font-size:0.8rem;">
+        <hr style="flex:1;border:0;border-top:1px solid var(--border);">
+        <span style="padding:0 10px;">OR</span>
+        <hr style="flex:1;border:0;border-top:1px solid var(--border);">
+      </div>
+
+      <!-- Google Sign In Button -->
+      <button type="button" class="btn btn-secondary full-width" onclick="handleGoogleSignIn()" style="display:flex;justify-content:center;gap:10px;">
+        <i class="fa-brands fa-google"></i> Continue with Google
+      </button>
+
       <p class="auth-switch-text" id="authSwitchText">
         Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign up here</a>
       </p>
