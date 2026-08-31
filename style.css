@@ -1626,3 +1626,73 @@ html, body {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ==========================================================================
+   GLOBAL AUTH WIDGET, USER PILL & WALLET BADGES
+   ========================================================================== */
+.auth-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.wallet-badge {
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.3);
+  color: #facc15;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.logout-btn {
+  background: transparent;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: transform 0.2s;
+}
+
+.logout-btn:hover {
+  transform: scale(1.15);
+}
+
+.auth-card {
+  max-width: 420px;
+}
+
+.auth-switch-text {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.auth-switch-text a {
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
+}
