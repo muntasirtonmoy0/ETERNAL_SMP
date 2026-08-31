@@ -1,6 +1,6 @@
 // --- CONFIGURATION ---
 const SERVER_DOMAIN = "play-eternal-smp.duckdns.org:5479";
-const FALLBACK_ADDRESS = "neon.qbitnode.com:5479";
+const FALLBACK_ADDRESS = "160.25.5.205:5479";
 
 // Custom Rank Mappings
 const PLAYER_RANKS = {
