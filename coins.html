@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eternal SMP | Coin Top-Up Bundles</title>
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+      <a href="index.html" class="logo-link">
+        <img src="logo.png" alt="Eternal SMP Logo" class="nav-logo-img">
+        <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+      </a>
+    </div>
+    <div class="ip-widget" onclick="copyIP('play-eternal-smp.duckdns.org:5479')">
+      <span class="status-dot" id="headerDot"></span>
+      <span id="ipText">Click To Copy IP</span>
+      <i class="fa-regular fa-copy"></i>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Navigation</h3>
+      <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="coins.html" class="nav-link active"><i class="fa-solid fa-coins"></i> Buy Coins</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
+      <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+    </ul>
+  </nav>
+
+  <main class="content-container">
+    <div class="page-header">
+      <h2>Server Coin Bundles</h2>
+      <p>Purchase Eternal Coins via bKash to unlock ranks, crate keys, and mob spawners instantly.</p>
+    </div>
+
+    <div class="store-grid">
+      <!-- Tier 1: Pouch -->
+      <div class="rank-card">
+        <div class="rank-icon-wrapper"><i class="fa-solid fa-coins text-gold"></i></div>
+        <h3>Coin Pouch</h3>
+        <div class="rank-price">৳50 <span>BDT</span></div>
+        <div class="coin-reward-badge">+500 Eternal Coins</div>
+        <ul class="rank-perks">
+          <li><i class="fa-solid fa-check"></i> 500 Account Web Coins</li>
+          <li><i class="fa-solid fa-check"></i> Enough for 1x Special Spawner</li>
+          <li><i class="fa-solid fa-check"></i> Enough for 3x Eternal Keys</li>
+        </ul>
+        <a href="payment.html?item=500%20Coins%20Bundle&price=50" class="btn-rank">Buy 500 Coins</a>
+      </div>
+
+      <!-- Tier 2: Bag -->
+      <div class="rank-card">
+        <div class="rank-icon-wrapper"><i class="fa-solid fa-sack-dollar text-gold"></i></div>
+        <h3>Coin Bag</h3>
+        <div class="rank-price">৳120 <span>BDT</span></div>
+        <div class="coin-reward-badge">+1,200 Eternal Coins</div>
+        <ul class="rank-perks">
+          <li><i class="fa-solid fa-check"></i> 1,200 Account Web Coins</li>
+          <li><i class="fa-solid fa-check"></i> Unlocks <b>Knight Rank</b></li>
+          <li><i class="fa-solid fa-check"></i> Instant Web Wallet Credit</li>
+        </ul>
+        <a href="payment.html?item=1200%20Coins%20Bundle&price=120" class="btn-rank">Buy 1,200 Coins</a>
+      </div>
+
+      <!-- Tier 3: Chest -->
+      <div class="rank-card featured-rank">
+        <div class="featured-badge">MOST POPULAR</div>
+        <div class="rank-icon-wrapper"><i class="fa-solid fa-box-open text-gold"></i></div>
+        <h3>Coin Chest</h3>
+        <div class="rank-price">৳220 <span>BDT</span></div>
+        <div class="coin-reward-badge">+2,300 Eternal Coins (+100 Bonus)</div>
+        <ul class="rank-perks">
+          <li><i class="fa-solid fa-check"></i> 2,300 Account Web Coins</li>
+          <li><i class="fa-solid fa-check"></i> Unlocks <b>Hydra Rank</b></li>
+          <li><i class="fa-solid fa-check"></i> 100 Free Bonus Coins</li>
+        </ul>
+        <a href="payment.html?item=2300%20Coins%20Bundle&price=220" class="btn-rank">Buy 2,300 Coins</a>
+      </div>
+
+      <!-- Tier 4: Vault -->
+      <div class="rank-card">
+        <div class="rank-icon-wrapper"><i class="fa-solid fa-vault text-gold"></i></div>
+        <h3>Coin Vault</h3>
+        <div class="rank-price">৳420 <span>BDT</span></div>
+        <div class="coin-reward-badge">+4,500 Eternal Coins (+300 Bonus)</div>
+        <ul class="rank-perks">
+          <li><i class="fa-solid fa-check"></i> 4,500 Account Web Coins</li>
+          <li><i class="fa-solid fa-check"></i> Unlocks <b>Phoenix Rank</b></li>
+          <li><i class="fa-solid fa-check"></i> 300 Free Bonus Coins</li>
+        </ul>
+        <a href="payment.html?item=4500%20Coins%20Bundle&price=420" class="btn-rank">Buy 4,500 Coins</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Copied IP to clipboard!</div>
+  <script src="app.js"></script>
+  <script type="module" src="auth.js"></script>
+</body>
+</html>
