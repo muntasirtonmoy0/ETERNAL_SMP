@@ -31,7 +31,9 @@ html, body {
   line-height: 1.6;
 }
 
-/* NAVBAR & MOBILE OVERFLOW FIX */
+/* ==========================================================================
+   NAVBAR & MOBILE OVERFLOW FIX
+   ========================================================================== */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -135,7 +137,9 @@ html, body {
   box-shadow: 0 0 8px var(--success);
 }
 
-/* SIDEBAR NAVIGATION */
+/* ==========================================================================
+   SIDEBAR NAVIGATION
+   ========================================================================== */
 .sidebar-overlay {
   position: fixed;
   inset: 0;
@@ -209,7 +213,9 @@ html, body {
   color: var(--accent);
 }
 
-/* MAIN CONTAINER */
+/* ==========================================================================
+   MAIN CONTENT & HERO LAYOUT
+   ========================================================================== */
 .content-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -217,7 +223,6 @@ html, body {
   box-sizing: border-box;
 }
 
-/* HERO SECTION & BANNER IMAGE (HOME) */
 .hero-banner-container {
   position: relative;
   background: url('banner.png') center center / cover no-repeat;
@@ -320,7 +325,9 @@ html, body {
   border-color: var(--text-muted);
 }
 
-/* STATS CARDS (HOME) */
+/* ==========================================================================
+   STATS CARDS (HOME)
+   ========================================================================== */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -388,7 +395,9 @@ html, body {
   box-shadow: 0 0 8px var(--success);
 }
 
-/* GALLERY & SERVER HIGHLIGHTS */
+/* ==========================================================================
+   GALLERY & SERVER HIGHLIGHTS
+   ========================================================================== */
 .section-block {
   margin-top: 60px;
 }
@@ -445,7 +454,9 @@ html, body {
   margin-right: 8px;
 }
 
-/* FULLSCREEN LIGHTBOX MODAL */
+/* ==========================================================================
+   FULLSCREEN LIGHTBOX MODAL
+   ========================================================================== */
 .lightbox-overlay {
   position: fixed;
   inset: 0;
@@ -498,7 +509,9 @@ html, body {
   text-align: center;
 }
 
-/* STORE & SHOP CATEGORIES (SHOP.HTML) */
+/* ==========================================================================
+   STORE TOP CATEGORY CARDS (shop.html)
+   ========================================================================== */
 .page-header {
   text-align: center;
   margin-bottom: 36px;
@@ -543,9 +556,6 @@ html, body {
   border-color: var(--accent);
 }
 
-/* ==========================================================================
-   STORE TOP CATEGORY CARDS (Fixes Raw Blue Links in shop.html)
-   ========================================================================== */
 .store-nav-grid, .store-categories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -629,7 +639,7 @@ html, body {
 }
 
 /* ==========================================================================
-   RANKS SHOWCASE & STORE PACKAGES GRID
+   RANKS SHOWCASE & STORE PACKAGES GRID (Fixed Text/Command Wrapping)
    ========================================================================== */
 .store-grid, .ranks-showcase-grid {
   display: grid;
@@ -647,6 +657,7 @@ html, body {
   flex-direction: column;
   position: relative;
   transition: transform 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
 }
 
 .rank-card:hover, .rank-card-box:hover {
@@ -670,6 +681,18 @@ html, body {
   font-weight: 800;
   padding: 3px 12px;
   border-radius: 20px;
+}
+
+.rank-knight { border-top: 4px solid #a0aec0; }
+.rank-hydra { border-top: 4px solid #38bdf8; }
+.rank-emperor { border-top: 4px solid #eab308; }
+.rank-phoenix { border-top: 4px solid #f97316; }
+
+.rank-card-header {
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 18px;
+  margin-bottom: 18px;
 }
 
 .rank-icon-wrapper {
@@ -712,7 +735,7 @@ html, body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 25px;
   flex: 1;
 }
@@ -721,23 +744,30 @@ html, body {
   font-size: 0.88rem;
   color: var(--text-muted);
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  line-height: 1.35;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.5;
+  word-break: break-word;
 }
 
 .rank-perks li i, .rank-perk-list li i {
   color: var(--success);
-  margin-top: 3px;
   font-size: 0.85rem;
+  flex-shrink: 0;
 }
 
 .rank-perks li code, .rank-perk-list li code {
-  background: rgba(0, 0, 0, 0.4);
-  padding: 2px 6px;
-  border-radius: 4px;
+  background: rgba(0, 210, 255, 0.12);
+  border: 1px solid rgba(0, 210, 255, 0.25);
   color: var(--accent);
-  font-size: 0.8rem;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-family: monospace;
+  white-space: normal;
+  display: inline-block;
+  margin: 1px 0;
 }
 
 .btn-rank, .rank-buy-btn {
@@ -750,6 +780,8 @@ html, body {
   text-decoration: none;
   transition: 0.2s;
   display: block;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-rank:hover, .rank-buy-btn:hover {
@@ -757,7 +789,9 @@ html, body {
   box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
 }
 
-/* SPAWNER CATEGORIES & CARDS (SPAWNERS.HTML) */
+/* ==========================================================================
+   SPAWNER CATEGORIES & CARDS (SPAWNERS.HTML)
+   ========================================================================== */
 .spawner-category-block {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -841,6 +875,8 @@ html, body {
   white-space: nowrap;
   flex-shrink: 0;
   transition: opacity 0.2s, transform 0.2s;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-buy-mini:hover {
@@ -894,7 +930,9 @@ html, body {
   color: var(--accent);
 }
 
-/* CHECKOUT / PAYMENTS PAGE */
+/* ==========================================================================
+   CHECKOUT / PAYMENTS PAGE
+   ========================================================================== */
 .checkout-wrapper {
   max-width: 680px;
   margin: 0 auto;
@@ -1100,7 +1138,9 @@ html, body {
   opacity: 0.9;
 }
 
-/* CHAMPIONS TOP #1 GRID (LEADERBOARD) */
+/* ==========================================================================
+   CHAMPIONS TOP #1 GRID (LEADERBOARD)
+   ========================================================================== */
 .top-champions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -1170,7 +1210,9 @@ html, body {
 .val-red { color: #ef4444; }
 .val-purple { color: #c084fc; }
 
-/* LEADERBOARD TABLE & TABS */
+/* ==========================================================================
+   LEADERBOARD TABLE & TABS
+   ========================================================================== */
 .leaderboard-nav {
   display: flex;
   justify-content: center;
@@ -1258,7 +1300,9 @@ html, body {
 .rank-medal.silver { color: #e2e8f0; }
 .rank-medal.bronze { color: #d97706; }
 
-/* HAVENCRAFT-STYLE FULL PLAYER PROFILE MODAL */
+/* ==========================================================================
+   HAVENCRAFT-STYLE FULL PLAYER PROFILE MODAL
+   ========================================================================== */
 .profile-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1393,7 +1437,9 @@ html, body {
 .r-label { color: var(--text-muted); font-weight: 700; font-size: 0.75rem; }
 .r-val { font-weight: 800; color: #fff; }
 
-/* EVENTS */
+/* ==========================================================================
+   EVENTS & ABOUT
+   ========================================================================== */
 .event-subtitle {
   font-size: 1.2rem;
   margin-bottom: 16px;
@@ -1456,7 +1502,6 @@ html, body {
   color: var(--text-muted);
 }
 
-/* ABOUT */
 .about-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1476,7 +1521,9 @@ html, body {
   margin-bottom: 12px;
 }
 
-/* STAFF */
+/* ==========================================================================
+   STAFF CARDS
+   ========================================================================== */
 .staff-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -1527,7 +1574,9 @@ html, body {
 .staff-links a { color: var(--text-muted); font-size: 1.1rem; }
 .staff-links a:hover { color: var(--accent); }
 
-/* ONLINE PLAYERS & AUTH MODALS */
+/* ==========================================================================
+   ONLINE PLAYERS & AUTH MODALS
+   ========================================================================== */
 .modal-backdrop {
   position: fixed;
   inset: 0;
