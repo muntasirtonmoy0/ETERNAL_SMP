@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Eternal SMP | Store</title>
+  <title>Eternal SMP | Server Store</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -35,6 +35,7 @@
     <ul class="nav-links">
       <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
       <li><a href="shop.html" class="nav-link active"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="coins.html" class="nav-link"><i class="fa-solid fa-coins"></i> Buy Coins</a></li>
       <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
       <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
       <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
@@ -46,39 +47,143 @@
   <main class="content-container">
     <div class="page-header">
       <h2>Server Store</h2>
-      <p>Upgrade your gameplay with ranks, crate keys, and custom mob spawners.</p>
+      <p>Upgrade your gameplay with coin bundles, VIP ranks, crate keys, and custom mob spawners.</p>
     </div>
 
-    <div class="store-categories-grid">
-      <!-- Ranks Category -->
-      <a href="ranks.html" class="store-category-box">
-        <div class="cat-icon"><i class="fa-solid fa-crown"></i></div>
-        <div class="cat-info">
+    <div class="store-nav-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+      
+      <a href="coins.html" class="store-nav-card featured-border">
+        <div class="store-nav-icon" style="background: linear-gradient(135deg, #FFE259, #FFA751); color: #000;">
+          <i class="fa-solid fa-coins"></i>
+        </div>
+        <div class="store-nav-info">
+          <div class="badge-mini" style="background:rgba(255,226,89,0.2); color:#FFE259; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:4px; width:max-content; margin-bottom:4px;">WEB WALLET</div>
+          <h3>Coin Bundles</h3>
+          <p>Top-up Eternal Coins for instant rank unlocks, keys, and spawner trades.</p>
+        </div>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </a>
+
+      <a href="#ranksSection" class="store-nav-card">
+        <div class="store-nav-icon">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <div class="store-nav-info">
           <h3>Server Ranks</h3>
           <p>Knight, Hydra, Emperor, and Phoenix tiers with custom kits & perks.</p>
         </div>
-        <div class="cat-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
       </a>
 
-      <!-- Crate Keys Category -->
-      <a href="crates.html" class="store-category-box">
-        <div class="cat-icon"><i class="fa-solid fa-key"></i></div>
-        <div class="cat-info">
+      <a href="crates.html" class="store-nav-card">
+        <div class="store-nav-icon">
+          <i class="fa-solid fa-key"></i>
+        </div>
+        <div class="store-nav-info">
           <h3>Crate Keys</h3>
           <p>Common, OP, and Eternal Crate Key bundles for top-tier loot.</p>
         </div>
-        <div class="cat-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
       </a>
 
-      <!-- Mob Spawners Category -->
-      <a href="spawners.html" class="store-category-box">
-        <div class="cat-icon"><i class="fa-solid fa-box-open"></i></div>
-        <div class="cat-info">
+      <a href="spawners.html" class="store-nav-card">
+        <div class="store-nav-icon">
+          <i class="fa-solid fa-box"></i>
+        </div>
+        <div class="store-nav-info">
           <h3>Mob Spawners</h3>
           <p>Basic, Combat, Advanced, and Special automated farming spawners.</p>
         </div>
-        <div class="cat-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
       </a>
+
+    </div>
+
+    <div class="section-block" id="ranksSection" style="margin-top: 50px;">
+      <div class="page-header" style="text-align: left; margin-bottom: 30px;">
+        <h3 style="font-size: 1.6rem; color: #fff; display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid fa-crown text-cyan"></i> VIP Rank Packages
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Select your tier below to view details and proceed to checkout.</p>
+      </div>
+
+      <div class="store-grid">
+        <div class="rank-card">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>KNIGHT</h3>
+          <div class="rank-price">৳120 <span>BDT</span></div>
+          <ul class="rank-perks">
+            <li><i class="fa-solid fa-check"></i> 4 Set Homes</li>
+            <li><i class="fa-solid fa-check"></i> <b>250K</b> Server Cash</li>
+            <li><i class="fa-solid fa-check"></i> KNIGHT Armor & Tools (Diamond Max Enchants)</li>
+            <li><i class="fa-solid fa-check"></i> 3 Shulker Boxes</li>
+            <li><i class="fa-solid fa-check"></i> 64 Golden Apples + 6 God Apples</li>
+            <li><i class="fa-solid fa-check"></i> 10,000 Claim Blocks</li>
+            <li><i class="fa-solid fa-check"></i> Common Armor Trim</li>
+            <li><i class="fa-solid fa-check"></i> 2 Common Spawners / 4 Common Keys</li>
+            <li><i class="fa-solid fa-terminal"></i> <code>/ptime</code>, <code>/near</code>, <code>/hat</code></li>
+          </ul>
+          <a href="payment.html?rank=Knight&price=120" class="btn-rank">Buy Now</a>
+        </div>
+
+        <div class="rank-card">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-dragon"></i></div>
+          <h3>HYDRA</h3>
+          <div class="rank-price">৳220 <span>BDT</span></div>
+          <ul class="rank-perks">
+            <li><i class="fa-solid fa-check"></i> 5 Set Homes</li>
+            <li><i class="fa-solid fa-check"></i> <b>500K</b> Server Cash</li>
+            <li><i class="fa-solid fa-check"></i> HYDRA Armor & Tools (Netherite Max Enchants)</li>
+            <li><i class="fa-solid fa-check"></i> 5 Shulker Boxes</li>
+            <li><i class="fa-solid fa-check"></i> 96 Golden Apples + 10 God Apples</li>
+            <li><i class="fa-solid fa-check"></i> 15,000 Claim Blocks</li>
+            <li><i class="fa-solid fa-check"></i> Uncommon Armor Trim</li>
+            <li><i class="fa-solid fa-check"></i> 2 Uncommon Spawners / 6 Common Keys</li>
+            <li><i class="fa-solid fa-terminal"></i> Knight Commands + <code>/back</code>, <code>/workbench</code>, <code>/echest</code>, <code>/nick</code></li>
+          </ul>
+          <a href="payment.html?rank=Hydra&price=220" class="btn-rank">Buy Now</a>
+        </div>
+
+        <div class="rank-card">
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-crown"></i></div>
+          <h3>EMPEROR</h3>
+          <div class="rank-price">৳320 <span>BDT</span></div>
+          <ul class="rank-perks">
+            <li><i class="fa-solid fa-check"></i> 6 Set Homes</li>
+            <li><i class="fa-solid fa-check"></i> <b>750K</b> Server Cash</li>
+            <li><i class="fa-solid fa-check"></i> EMPEROR Armor & Tools (Netherite Max Enchants)</li>
+            <li><i class="fa-solid fa-check"></i> <b>Mace 1x</b> (Limited Enchants)</li>
+            <li><i class="fa-solid fa-check"></i> 6x Shulker Boxes</li>
+            <li><i class="fa-solid fa-check"></i> 128 Golden Apples + 16 God Apples</li>
+            <li><i class="fa-solid fa-check"></i> 20,000 Claim Blocks</li>
+            <li><i class="fa-solid fa-check"></i> Rare Armor Trim</li>
+            <li><i class="fa-solid fa-check"></i> 2 Rare Spawners / 2 OP Keys</li>
+            <li><i class="fa-solid fa-terminal"></i> Hydra Commands + <code>/disposal</code>, <code>/smithingtable</code>, <code>/loom</code>, <code>/repair hand</code></li>
+          </ul>
+          <a href="payment.html?rank=Emperor&price=320" class="btn-rank">Buy Now</a>
+        </div>
+
+        <div class="rank-card featured-rank">
+          <div class="featured-badge">TOP TIER</div>
+          <div class="rank-icon-wrapper"><i class="fa-solid fa-fire"></i></div>
+          <h3>PHOENIX</h3>
+          <div class="rank-price">৳420 <span>BDT</span></div>
+          <ul class="rank-perks">
+            <li><i class="fa-solid fa-check"></i> 8 Set Homes</li>
+            <li><i class="fa-solid fa-check"></i> <b>1.5M</b> Server Cash</li>
+            <li><i class="fa-solid fa-check"></i> PHOENIX Armor & Tools (CUSTOM Enchants)</li>
+            <li><i class="fa-solid fa-check"></i> <b>MACE 1x</b> (CUSTOM Enchants)</li>
+            <li><i class="fa-solid fa-check"></i> <b>Elytra 1x</b></li>
+            <li><i class="fa-solid fa-check"></i> 8 Shulker Boxes</li>
+            <li><i class="fa-solid fa-check"></i> 192 Golden Apples</li>
+            <li><i class="fa-solid fa-check"></i> 30,000 Claim Blocks</li>
+            <li><i class="fa-solid fa-check"></i> Legendary Armor Trim</li>
+            <li><i class="fa-solid fa-check"></i> 2 High Tier Spawners / 2 ETERNAL Keys</li>
+            <li><i class="fa-solid fa-terminal"></i> Emperor Commands + <code>/heal</code>, <code>/night</code>, <code>/anvil</code></li>
+          </ul>
+          <a href="payment.html?rank=Phoenix&price=420" class="btn-rank">Buy Now</a>
+        </div>
+      </div>
     </div>
   </main>
 
