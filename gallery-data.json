@@ -79,5 +79,14 @@
     "icon": "fa-shield-halved",
     "featured": false,
     "url": "https://res.cloudinary.com/retvp8pw/image/upload/v1787541824/ETERNAL_SMP_ARENA4.png"
+  },
+  {
+    "id": "TAB",
+    "category": "community",
+    "title": "The Beginning Of Eternal SMP",
+    "description": "Welcome to our server",
+    "icon": "fa-shield-halved",
+    "featured": false,
+    "url": "https://res.cloudinary.com/retvp8pw/image/upload/v1789955474/image.png"
   }
 ]
