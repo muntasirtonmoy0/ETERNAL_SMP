@@ -6,7 +6,9 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getFirestore, 
@@ -36,6 +38,11 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
+
+// Explicitly configure permanent session persistence across browser reloads
+setPersistence(auth, browserLocalPersistence).catch((err) => {
+  console.error("Firebase persistence error:", err);
+});
 
 let currentMode = 'login';
 export let currentUserProfile = null;
@@ -88,6 +95,7 @@ onAuthStateChanged(auth, async (user) => {
 // --- 3. GOOGLE POPUP LOGIN ---
 window.handleGoogleSignIn = async function () {
   try {
+    await setPersistence(auth, browserLocalPersistence);
     await signInWithPopup(auth, googleProvider);
     closeAuthModal();
   } catch (error) {
@@ -107,6 +115,8 @@ window.handleAuthSubmit = async function (e) {
   btn.innerText = "Processing...";
 
   try {
+    await setPersistence(auth, browserLocalPersistence);
+
     if (currentMode === 'register') {
       if (!ign || ign.length < 3) throw new Error("Please enter a valid Minecraft username.");
 
