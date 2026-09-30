@@ -33,7 +33,7 @@ html, body {
 }
 
 /* ==========================================================================
-   NAVBAR & MOBILE OVERFLOW FIX
+   NAVBAR & CLEAN TOP BAR (PC & MOBILE UNIFIED)
    ========================================================================== */
 .navbar {
   display: flex;
@@ -146,114 +146,7 @@ html, body {
 }
 
 /* ==========================================================================
-   GLOBAL AUTH WIDGET, USER PILL & WALLET BADGES
-   ========================================================================== */
-.auth-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-#loggedOutView, #loggedInView {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.nav-auth-btn {
-  padding: 8px 18px;
-  font-size: 0.85rem;
-  border-radius: 20px;
-}
-
-.user-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.nav-mc-head {
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  image-rendering: pixelated;
-  border: 1px solid var(--border);
-}
-
-.wallet-badge {
-  background: rgba(250, 204, 21, 0.12);
-  border: 1px solid rgba(250, 204, 21, 0.3);
-  color: var(--gold);
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.logout-btn {
-  background: transparent;
-  border: none;
-  color: var(--danger);
-  cursor: pointer;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  padding: 2px;
-  transition: transform 0.2s;
-}
-
-.logout-btn:hover {
-  transform: scale(1.15);
-}
-
-/* Mobile Sidebar Account Drawer Component */
-.mobile-user-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--bg-dark);
-  border: 1px solid var(--border-active);
-  padding: 12px 14px;
-  border-radius: 12px;
-}
-
-.mobile-player-face {
-  width: 38px;
-  height: 38px;
-  border-radius: 6px;
-  image-rendering: pixelated;
-}
-
-.mobile-user-details {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.mobile-player-ign {
-  font-weight: 800;
-  font-size: 0.95rem;
-  color: #fff;
-}
-
-.mobile-player-wallet {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--gold);
-}
-
-/* ==========================================================================
-   SIDEBAR NAVIGATION
+   SIDEBAR NAVIGATION & PROFILE ITEM
    ========================================================================== */
 .sidebar-overlay {
   position: fixed;
@@ -293,7 +186,7 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .close-btn {
@@ -328,8 +221,17 @@ html, body {
   color: var(--accent);
 }
 
+.sidebar-mc-head {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  image-rendering: pixelated;
+  border: 1px solid var(--border);
+  display: none;
+}
+
 /* ==========================================================================
-   MAIN CONTENT & HERO LAYOUT
+   MAIN CONTENT CONTAINER & HERO
    ========================================================================== */
 .content-container {
   max-width: 1200px;
@@ -908,7 +810,7 @@ html, body {
 
 /* ==========================================================================
    SPAWNER CATEGORIES & CARDS (SPAWNERS.HTML)
-   ========================================================================= */
+   ========================================================================== */
 .spawner-category-block {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1415,7 +1317,7 @@ html, body {
 .rank-medal.bronze { color: #d97706; }
 
 /* ==========================================================================
-   HAVENCRAFT-STYLE FULL PLAYER PROFILE MODAL
+   HAVENCRAFT-STYLE FULL PLAYER PROFILE MODAL & STANDALONE PROFILE.HTML
    ========================================================================== */
 .profile-modal-overlay {
   position: fixed;
@@ -1552,6 +1454,105 @@ html, body {
 
 .r-label { color: var(--text-muted); font-weight: 700; font-size: 0.75rem; }
 .r-val { font-weight: 800; color: #fff; }
+
+/* Dedicated Profile Page (profile.html) Custom Additions */
+.profile-hero-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.profile-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-3d-model {
+  height: 160px;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.7));
+}
+
+.profile-hero-meta h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 6px 0 2px;
+}
+
+.profile-email-sub {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.profile-badge-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.profile-verified-badge {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--success);
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.btn-change-ign {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-change-ign:hover {
+  background: rgba(0, 210, 255, 0.1);
+  border-color: var(--accent);
+}
+
+.profile-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.profile-wallet-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.p-wallet-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.p-wallet-num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--gold);
+}
 
 /* ==========================================================================
    EVENTS & ABOUT
@@ -1855,7 +1856,7 @@ html, body {
 }
 
 /* ==========================================================================
-   MOBILE RESPONSIVENESS OVERRIDES & SCREEN FIXES
+   MOBILE RESPONSIVENESS OVERRIDES & COMPLETE SCREEN OVERFLOW FIX
    ========================================================================== */
 @media (max-width: 768px) {
   html, body {
@@ -1879,13 +1880,6 @@ html, body {
     height: 30px;
   }
 
-  /* HIDE TOP-CORNER SIGN UP/SIGN IN/ACC FROM MOBILE NAVBAR */
-  /* Keeps the top bar fully un-cramped. Accessible via the sidebar drawer instead */
-  .navbar .auth-box {
-    display: none !important;
-  }
-
-  /* Hide raw text from IP Widget on small mobile screens */
   .ip-widget {
     max-width: 130px;
     padding: 5px 8px;
@@ -1908,7 +1902,7 @@ html, body {
     padding: 0 8px;
   }
 
-  /* Player Profile Modal Fixes */
+  /* Player Profile Modal & Dedicated Profile Card Fixes */
   .profile-modal-card {
     padding: 24px 16px;
     max-width: 92vw;
@@ -1938,6 +1932,25 @@ html, body {
   .p-stat-ratio-row {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .profile-hero-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 16px;
+  }
+
+  .profile-hero-left {
+    flex-direction: column;
+  }
+
+  .profile-hero-right {
+    align-items: center;
+    width: 100%;
+  }
+
+  .profile-badge-row {
+    justify-content: center;
   }
 
   /* Leaderboard Table Adjustments */
