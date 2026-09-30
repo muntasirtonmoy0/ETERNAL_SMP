@@ -45,6 +45,7 @@ setPersistence(auth, browserLocalPersistence).catch(console.error);
 let currentMode = 'login';
 export let currentUserProfile = null;
 
+// Multi-provider Avatar Fallbacks
 function getPlayerAvatar(ign) {
   const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
   return `https://mc-heads.net/avatar/${encodeURIComponent(clean)}/64`;
@@ -55,39 +56,56 @@ function getPlayerBodyUrl(ign) {
   return `https://mc-heads.net/body/${encodeURIComponent(clean)}/right`;
 }
 
-// --- AUTOMATIC STATS SYNC ENGINE ---
-async function fetchLiveLeaderboardStats(ign) {
+// Custom Ranks Matching app.js
+const PLAYER_RANKS = {
+  "REAL_TWILIGHT0_0": "Owner",
+  "PRIME_VENOX": "Admin",
+  "Kitsuroo": "Admin",
+  "LGalewfqUwU": "Moderator",
+  "HopeUltimate": "Moderator",
+  "D4XTROO": "Officer",
+  "GMRZ_TANJID": "Member"
+};
+
+// --- 2. LIVE STATS FETCH FROM /api/leaderboard ---
+async function fetchPlayerStatsFromAPI(ign) {
+  const stats = {
+    kills: 0,
+    deaths: 0,
+    playtimeSeconds: 0,
+    balance: 0,
+    rank: PLAYER_RANKS[ign] || "Member"
+  };
+
   try {
-    // 1. Check if app.js already loaded it into global window
-    let players = window.leaderboardData || window.playersData || null;
+    // Query all 4 boards from leaderboard.js in parallel
+    const [balRes, playRes, killRes, deathRes] = await Promise.all([
+      fetch(`/api/leaderboard?type=balance&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(`/api/leaderboard?type=playtime&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(`/api/leaderboard?type=kills&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(`/api/leaderboard?type=deaths&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => [])
+    ]);
 
-    // 2. If not loaded on this page, fetch the exact same data source app.js uses
-    if (!players || !Array.isArray(players) || players.length === 0) {
-      const endpoints = ['leaderboard-data.json', 'stats.json', 'data.json'];
-      for (const endpoint of endpoints) {
-        try {
-          const res = await fetch(endpoint);
-          if (res.ok) {
-            players = await res.json();
-            break;
-          }
-        } catch (e) {}
-      }
-    }
+    const target = ign.toLowerCase();
 
-    if (players && Array.isArray(players)) {
-      return players.find(p => 
-        (p.name && p.name.toLowerCase() === ign.toLowerCase()) || 
-        (p.ign && p.ign.toLowerCase() === ign.toLowerCase())
-      );
-    }
+    const balEntry = Array.isArray(balRes) ? balRes.find(p => p.name?.toLowerCase() === target) : null;
+    const playEntry = Array.isArray(playRes) ? playRes.find(p => p.name?.toLowerCase() === target) : null;
+    const killEntry = Array.isArray(killRes) ? killRes.find(p => p.name?.toLowerCase() === target) : null;
+    const deathEntry = Array.isArray(deathRes) ? deathRes.find(p => p.name?.toLowerCase() === target) : null;
+
+    if (balEntry) stats.balance = Number(balEntry.value) || 0;
+    if (playEntry) stats.playtimeSeconds = Number(playEntry.value) || 0;
+    if (killEntry) stats.kills = Number(killEntry.value) || 0;
+    if (deathEntry) stats.deaths = Number(deathEntry.value) || 0;
+
   } catch (err) {
-    console.warn("Could not auto-fetch leaderboard stats:", err);
+    console.warn("Failed fetching live player stats:", err);
   }
-  return null;
+
+  return stats;
 }
 
-// --- POPULATE PROFILE PAGE DATA ---
+// --- 3. POPULATE DEDICATED PROFILE PAGE (profile.html) ---
 async function renderProfilePage(user, profile) {
   const loggedOutBox = document.getElementById("profileLoggedOut");
   const loggedInBox = document.getElementById("profileLoggedIn");
@@ -108,51 +126,60 @@ async function renderProfilePage(user, profile) {
   const emailEl = document.getElementById("profileEmail");
   const coinEl = document.getElementById("profileCoinNum");
   const bodyEl = document.getElementById("profile3dBody");
+  const rankBadgeEl = document.getElementById("profileRankBadge");
 
   if (ignEl) ignEl.innerText = ign;
   if (emailEl) emailEl.innerText = user.email || "";
   if (coinEl) coinEl.innerText = profile?.coins ?? 0;
-  if (bodyEl) bodyEl.src = getPlayerBodyUrl(ign);
+  
+  // Set 3D skin model with fallback handler
+  if (bodyEl) {
+    bodyEl.src = getPlayerBodyUrl(ign);
+    bodyEl.onerror = () => {
+      // If full 3D body fails for offline skins, fallback to head avatar
+      bodyEl.src = `https://mc-heads.net/avatar/${encodeURIComponent(ign)}/140`;
+    };
+  }
 
-  // AUTOMATICALLY PULL EXACT LEADERBOARD STATS
-  const stats = await fetchLiveLeaderboardStats(ign);
+  // Fetch real data live from the server via /api/leaderboard
+  const liveStats = await fetchPlayerStatsFromAPI(ign);
 
   const ptEl = document.getElementById("statPlaytime");
   const klEl = document.getElementById("statKills");
   const dtEl = document.getElementById("statDeaths");
   const mnEl = document.getElementById("statMoney");
   const kdEl = document.getElementById("statKd");
-  const rkEl = document.getElementById("profileRankBadge");
 
-  if (stats) {
-    // Format playtime dynamically
-    let playtimeDisplay = stats.playtime || stats.time || stats.hours || "0.0h";
-    if (typeof playtimeDisplay === 'number') {
-      playtimeDisplay = (playtimeDisplay > 100 ? (playtimeDisplay / 3600).toFixed(1) : playtimeDisplay.toFixed(1)) + 'h';
-    }
+  // Format Playtime
+  const totalSecs = liveStats.playtimeSeconds;
+  const hours = Math.floor(totalSecs / 3600);
+  const mins = Math.floor((totalSecs % 3600) / 60);
+  let ptString = "0.0h";
+  if (hours > 0) {
+    ptString = `${hours}h ${mins}m`;
+  } else if (mins > 0) {
+    ptString = `${mins}m`;
+  } else if (totalSecs > 0) {
+    ptString = `${totalSecs}s`;
+  }
 
-    const kills = Number(stats.kills || 0);
-    const deaths = Number(stats.deaths || 0);
-    const money = Number(stats.balance || stats.money || 0);
-    const kd = deaths > 0 ? (kills / deaths).toFixed(2) : (kills > 0 ? kills.toFixed(2) : "0.00");
+  // Calculate K/D Ratio
+  const kd = liveStats.deaths > 0 
+    ? (liveStats.kills / liveStats.deaths).toFixed(2) 
+    : (liveStats.kills > 0 ? liveStats.kills.toFixed(2) : "0.00");
 
-    if (ptEl) ptEl.innerText = playtimeDisplay;
-    if (klEl) klEl.innerText = kills;
-    if (dtEl) dtEl.innerText = deaths;
-    if (mnEl) mnEl.innerText = `$${money.toLocaleString()}`;
-    if (kdEl) kdEl.innerText = kd;
-    if (rkEl && stats.rank) rkEl.innerText = stats.rank.toUpperCase();
-  } else {
-    // Fallback if player hasn't joined or data hasn't refreshed yet
-    if (ptEl) ptEl.innerText = "0.0h";
-    if (klEl) klEl.innerText = "0";
-    if (dtEl) dtEl.innerText = "0";
-    if (mnEl) mnEl.innerText = "$0";
-    if (kdEl) kdEl.innerText = "0.00";
+  if (ptEl) ptEl.innerText = ptString;
+  if (klEl) klEl.innerText = liveStats.kills;
+  if (dtEl) dtEl.innerText = liveStats.deaths;
+  if (mnEl) mnEl.innerText = `$${liveStats.balance.toLocaleString()}`;
+  if (kdEl) kdEl.innerText = kd;
+  if (rankBadgeEl) {
+    rankBadgeEl.innerText = liveStats.rank.toUpperCase();
+    rankBadgeEl.setAttribute("data-rank", liveStats.rank);
   }
 }
 
-// --- 2. AUTH STATE LISTENER (Sidebar Nav & Profile Page Sync) ---
+// --- 4. AUTH STATE LISTENER (Sidebar Nav & Profile Page Sync) ---
 onAuthStateChanged(auth, async (user) => {
   const authNavText = document.getElementById("authNavText");
   const authNavTab = document.getElementById("authNavTab");
@@ -180,7 +207,7 @@ onAuthStateChanged(auth, async (user) => {
     const ign = currentUserProfile.ign || 'Player';
     const avatarUrl = getPlayerAvatar(ign);
 
-    // Update Sidebar Navigation Item
+    // Sidebar navigation update
     if (authNavText) authNavText.innerText = ign;
     if (authNavTab) {
       authNavTab.href = "profile.html";
@@ -206,7 +233,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// --- CHANGE BOUND IGN HANDLER ---
+// --- 5. CHANGE BOUND IGN HANDLER ---
 window.promptChangeIgn = async function() {
   if (!auth.currentUser) return;
   const newIgn = prompt("Enter your new Minecraft In-Game Name (IGN):", currentUserProfile?.ign || "");
@@ -228,7 +255,37 @@ window.promptChangeIgn = async function() {
   }
 };
 
-// --- 3. GOOGLE POPUP LOGIN ---
+// --- 6. AUTH MODAL CONTROLS & LOGINS ---
+window.openAuthModal = function (mode) {
+  currentMode = mode;
+  const modal = document.getElementById("authModal");
+  const ignGroup = document.getElementById("ignGroup");
+  const title = document.getElementById("authModalTitle");
+  const switchText = document.getElementById("authSwitchText");
+
+  if (!modal) return;
+
+  if (mode === 'register') {
+    if (title) title.innerText = "Create Account";
+    if (ignGroup) ignGroup.style.display = "block";
+    if (switchText) switchText.innerHTML = `Already have an account? <a href="#" onclick="toggleAuthMode()">Login</a>`;
+  } else {
+    if (title) title.innerText = "Account Sign In";
+    if (ignGroup) ignGroup.style.display = "none";
+    if (switchText) switchText.innerHTML = `Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign up here</a>`;
+  }
+  modal.classList.add("active");
+};
+
+window.closeAuthModal = function () {
+  const modal = document.getElementById("authModal");
+  if (modal) modal.classList.remove("active");
+};
+
+window.toggleAuthMode = function () {
+  openAuthModal(currentMode === 'login' ? 'register' : 'login');
+};
+
 window.handleGoogleSignIn = async function () {
   try {
     await setPersistence(auth, browserLocalPersistence);
@@ -239,7 +296,6 @@ window.handleGoogleSignIn = async function () {
   }
 };
 
-// --- 4. EMAIL & PASSWORD SUBMIT HANDLER ---
 window.handleAuthSubmit = async function (e) {
   e.preventDefault();
   const email = document.getElementById("authEmail").value.trim();
@@ -278,44 +334,13 @@ window.handleAuthSubmit = async function (e) {
   }
 };
 
-// --- 5. MODAL CONTROLS ---
-window.openAuthModal = function (mode) {
-  currentMode = mode;
-  const modal = document.getElementById("authModal");
-  const ignGroup = document.getElementById("ignGroup");
-  const title = document.getElementById("authModalTitle");
-  const switchText = document.getElementById("authSwitchText");
-
-  if (!modal) return;
-
-  if (mode === 'register') {
-    if (title) title.innerText = "Create Account";
-    if (ignGroup) ignGroup.style.display = "block";
-    if (switchText) switchText.innerHTML = `Already have an account? <a href="#" onclick="toggleAuthMode()">Login</a>`;
-  } else {
-    if (title) title.innerText = "Account Sign In";
-    if (ignGroup) ignGroup.style.display = "none";
-    if (switchText) switchText.innerHTML = `Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign up here</a>`;
-  }
-  modal.classList.add("active");
-};
-
-window.closeAuthModal = function () {
-  const modal = document.getElementById("authModal");
-  if (modal) modal.classList.remove("active");
-};
-
-window.toggleAuthMode = function () {
-  openAuthModal(currentMode === 'login' ? 'register' : 'login');
-};
-
 window.logoutAccount = function () {
   signOut(auth).then(() => {
     window.location.reload();
   });
 };
 
-// --- 6. INSTANT COIN PURCHASE ENGINE ---
+// --- 7. COIN PURCHASES ---
 window.buyWithCoins = async function(itemName, coinCost) {
   if (!auth.currentUser) {
     alert("Please sign in to buy with coins!");
