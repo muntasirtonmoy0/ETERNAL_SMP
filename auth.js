@@ -3,12 +3,12 @@ import {
   getAuth, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
-  signInWithPopup,
-  GoogleAuthProvider,
+  signInWithPopup, 
+  GoogleAuthProvider, 
   signOut, 
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence
+  onAuthStateChanged, 
+  setPersistence, 
+  browserLocalPersistence 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getFirestore, 
@@ -16,11 +16,11 @@ import {
   setDoc, 
   getDoc, 
   updateDoc, 
-  increment,
-  collection,
-  query,
-  where,
-  getDocs
+  increment, 
+  collection, 
+  query, 
+  where, 
+  getDocs 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // --- 1. FIREBASE CONFIGURATION ---
@@ -50,14 +50,82 @@ export let currentUserProfile = null;
 // Dynamic Minecraft Avatar Generator
 function getPlayerAvatar(ign) {
   const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
-  return `https://mc-heads.net/avatar/${clean}/64`;
+  return `https://mc-heads.net/avatar/${encodeURIComponent(clean)}/64`;
 }
 
-// --- 2. AUTH STATE LISTENER (Desktop Navbar + Mobile Sidebar Sync) ---
+function getPlayerBodyUrl(ign) {
+  const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
+  return `https://mc-heads.net/body/${encodeURIComponent(clean)}/right`;
+}
+
+// --- POPULATE PROFILE PAGE DATA ---
+async function renderProfilePage(user, profile) {
+  const loggedOutBox = document.getElementById("profileLoggedOut");
+  const loggedInBox = document.getElementById("profileLoggedIn");
+
+  if (!loggedOutBox || !loggedInBox) return; // Not on profile.html
+
+  if (!user) {
+    loggedOutBox.style.display = "block";
+    loggedInBox.style.display = "none";
+    return;
+  }
+
+  loggedOutBox.style.display = "none";
+  loggedInBox.style.display = "block";
+
+  const ign = profile?.ign || "Steve";
+  const ignEl = document.getElementById("profileIgn");
+  const emailEl = document.getElementById("profileEmail");
+  const coinEl = document.getElementById("profileCoinNum");
+  const bodyEl = document.getElementById("profile3dBody");
+
+  if (ignEl) ignEl.innerText = ign;
+  if (emailEl) emailEl.innerText = user.email || "";
+  if (coinEl) coinEl.innerText = profile?.coins ?? 0;
+  if (bodyEl) bodyEl.src = getPlayerBodyUrl(ign);
+
+  // Sync In-Game Stats from Leaderboard API or fallback
+  try {
+    const res = await fetch(`https://api.eternal-smp.pro/player/${encodeURIComponent(ign)}`).catch(() => null);
+    if (res && res.ok) {
+      const data = await res.json();
+      const pt = document.getElementById("statPlaytime");
+      const kl = document.getElementById("statKills");
+      const dt = document.getElementById("statDeaths");
+      const mn = document.getElementById("statMoney");
+      const kd = document.getElementById("statKd");
+      const rk = document.getElementById("profileRankBadge");
+
+      if (pt) pt.innerText = data.playtime || "0h";
+      if (kl) kl.innerText = data.kills || "0";
+      if (dt) dt.innerText = data.deaths || "0";
+      if (mn) mn.innerText = `$${(data.money || 0).toLocaleString()}`;
+      if (kd) kd.innerText = data.deaths > 0 ? (data.kills / data.deaths).toFixed(2) : (data.kills || "0.00");
+      if (rk && data.rank) rk.innerText = data.rank.toUpperCase();
+    } else {
+      const pt = document.getElementById("statPlaytime");
+      const kl = document.getElementById("statKills");
+      const dt = document.getElementById("statDeaths");
+      const mn = document.getElementById("statMoney");
+      const kd = document.getElementById("statKd");
+
+      if (pt) pt.innerText = "1.0h";
+      if (kl) kl.innerText = "0";
+      if (dt) dt.innerText = "0";
+      if (mn) mn.innerText = "$0";
+      if (kd) kd.innerText = "0.00";
+    }
+  } catch {
+    // Graceful fallback
+  }
+}
+
+// --- 2. AUTH STATE LISTENER (Sidebar Nav & Profile Page Sync) ---
 onAuthStateChanged(auth, async (user) => {
-  const loggedOutView = document.getElementById("loggedOutView");
-  const loggedInView = document.getElementById("loggedInView");
-  const mobileSlot = document.getElementById("mobileAuthSlot");
+  const authNavText = document.getElementById("authNavText");
+  const authNavTab = document.getElementById("authNavTab");
+  const authNavAvatar = document.getElementById("authNavAvatar");
 
   if (user) {
     const userRef = doc(db, "users", user.uid);
@@ -79,33 +147,14 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     const ign = currentUserProfile.ign || 'Player';
-    const coins = currentUserProfile.coins ?? 0;
     const avatarUrl = getPlayerAvatar(ign);
 
-    // 1. Sync Desktop Navbar Head & Balances
-    const navAvatar = document.getElementById("userNavAvatar");
-    const ignDisplay = document.getElementById("userIgnDisplay");
-    const balanceDisplay = document.getElementById("userBalanceDisplay");
-
-    if (navAvatar) navAvatar.src = avatarUrl;
-    if (ignDisplay) ignDisplay.innerText = ign;
-    if (balanceDisplay) balanceDisplay.innerText = coins;
-
-    if (loggedOutView) loggedOutView.style.display = "none";
-    if (loggedInView) loggedInView.style.display = "flex";
-
-    // 2. Sync Mobile Sidebar Account Drawer
-    if (mobileSlot) {
-      mobileSlot.innerHTML = `
-        <div class="mobile-user-card">
-          <img src="${avatarUrl}" class="mobile-player-face" alt="${ign}">
-          <div class="mobile-user-details">
-            <span class="mobile-player-ign">${ign}</span>
-            <span class="mobile-player-wallet"><i class="fa-solid fa-coins text-gold"></i> ${coins} Coins</span>
-          </div>
-          <button class="logout-btn" onclick="logoutAccount()" title="Logout"><i class="fa-solid fa-power-off"></i></button>
-        </div>
-      `;
+    // Update Sidebar Navigation item
+    if (authNavText) authNavText.innerText = ign;
+    if (authNavTab) authNavTab.href = "profile.html";
+    if (authNavAvatar) {
+      authNavAvatar.src = avatarUrl;
+      authNavAvatar.style.display = "inline-block";
     }
 
     // Auto-fill checkout fields if user is on payment.html
@@ -114,21 +163,37 @@ onAuthStateChanged(auth, async (user) => {
     if (ignField && !ignField.value) ignField.value = ign;
     if (emailField) emailField.value = user.email || '';
 
+    renderProfilePage(user, currentUserProfile);
   } else {
     currentUserProfile = null;
-    if (loggedOutView) loggedOutView.style.display = "flex";
-    if (loggedInView) loggedInView.style.display = "none";
+    if (authNavText) authNavText.innerText = "Sign In / Account";
+    if (authNavTab) authNavTab.href = "profile.html";
+    if (authNavAvatar) authNavAvatar.style.display = "none";
 
-    // Show Sign In inside the Mobile Sidebar drawer when logged out
-    if (mobileSlot) {
-      mobileSlot.innerHTML = `
-        <button class="btn btn-primary full-width" onclick="openAuthModal('login')">
-          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In / Register
-        </button>
-      `;
-    }
+    renderProfilePage(null, null);
   }
 });
+
+// --- CHANGE BOUND IGN HANDLER ---
+window.promptChangeIgn = async function() {
+  if (!auth.currentUser) return;
+  const newIgn = prompt("Enter your new Minecraft In-Game Name (IGN):", currentUserProfile?.ign || "");
+  if (!newIgn || newIgn.trim().length < 3) return;
+
+  try {
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, { ign: newIgn.trim() });
+    currentUserProfile.ign = newIgn.trim();
+    alert(`Successfully bound character to: ${newIgn.trim()}`);
+    renderProfilePage(auth.currentUser, currentUserProfile);
+    const authNavText = document.getElementById("authNavText");
+    const authNavAvatar = document.getElementById("authNavAvatar");
+    if (authNavText) authNavText.innerText = newIgn.trim();
+    if (authNavAvatar) authNavAvatar.src = getPlayerAvatar(newIgn.trim());
+  } catch (err) {
+    alert("Error updating IGN: " + err.message);
+  }
+};
 
 // --- 3. GOOGLE POPUP LOGIN ---
 window.handleGoogleSignIn = async function () {
@@ -213,7 +278,9 @@ window.toggleAuthMode = function () {
 };
 
 window.logoutAccount = function () {
-  signOut(auth);
+  signOut(auth).then(() => {
+    window.location.reload();
+  });
 };
 
 // --- 6. INSTANT COIN PURCHASE ENGINE ---
