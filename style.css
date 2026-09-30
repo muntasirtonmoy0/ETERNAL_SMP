@@ -58,6 +58,12 @@ html, body {
   flex-shrink: 0;
 }
 
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .menu-btn {
   background: transparent;
   border: none;
@@ -155,17 +161,31 @@ html, body {
   gap: 8px;
 }
 
+.nav-auth-btn {
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  border-radius: 20px;
+}
+
 .user-pill {
   display: flex;
   align-items: center;
   gap: 8px;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  padding: 5px 12px;
+  padding: 4px 12px;
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.nav-mc-head {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  image-rendering: pixelated;
+  border: 1px solid var(--border);
 }
 
 .wallet-badge {
@@ -194,6 +214,42 @@ html, body {
 
 .logout-btn:hover {
   transform: scale(1.15);
+}
+
+/* Mobile Sidebar Account Drawer Component */
+.mobile-user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-active);
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.mobile-player-face {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  image-rendering: pixelated;
+}
+
+.mobile-user-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.mobile-player-ign {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.mobile-player-wallet {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gold);
 }
 
 /* ==========================================================================
@@ -237,7 +293,7 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .close-btn {
@@ -852,7 +908,7 @@ html, body {
 
 /* ==========================================================================
    SPAWNER CATEGORIES & CARDS (SPAWNERS.HTML)
-   ========================================================================== */
+   ========================================================================= */
 .spawner-category-block {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1799,7 +1855,7 @@ html, body {
 }
 
 /* ==========================================================================
-   MOBILE RESPONSIVENESS OVERRIDES & COMPLETE SCREEN OVERFLOW FIX
+   MOBILE RESPONSIVENESS OVERRIDES & SCREEN FIXES
    ========================================================================== */
 @media (max-width: 768px) {
   html, body {
@@ -1823,21 +1879,17 @@ html, body {
     height: 30px;
   }
 
+  /* HIDE TOP-CORNER SIGN UP/SIGN IN/ACC FROM MOBILE NAVBAR */
+  /* Keeps the top bar fully un-cramped. Accessible via the sidebar drawer instead */
+  .navbar .auth-box {
+    display: none !important;
+  }
+
+  /* Hide raw text from IP Widget on small mobile screens */
   .ip-widget {
     max-width: 130px;
     padding: 5px 8px;
     font-size: 0.72rem;
-  }
-
-  .user-pill {
-    padding: 4px 8px;
-    gap: 5px;
-    font-size: 0.75rem;
-  }
-
-  .wallet-badge {
-    padding: 2px 6px;
-    font-size: 0.7rem;
   }
 
   /* Hero Section */
