@@ -146,6 +146,36 @@ html, body {
 }
 
 /* ==========================================================================
+   FORCE REMOVAL OF TOP-RIGHT SIGN-IN / SIGN-UP (CSS OVERRIDE FOR JS INJECTIONS)
+   ========================================================================== */
+.navbar .nav-right button,
+.navbar .nav-right a.btn,
+.navbar .nav-right a[href*="login"],
+.navbar .nav-right a[href*="register"],
+.navbar .nav-right a[href*="profile"]:not(.logo-link),
+.navbar .auth-box,
+.navbar .auth-buttons,
+.navbar #loggedOutView,
+.navbar #loggedInView,
+.navbar .user-pill,
+.nav-auth-btn {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* Ensure only the IP widget stays visible in nav-right */
+.navbar .nav-right > *:not(.ip-widget) {
+  display: none !important;
+}
+
+/* ==========================================================================
    SIDEBAR NAVIGATION & PROFILE ITEM
    ========================================================================== */
 .sidebar-overlay {
