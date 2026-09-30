@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eternal SMP | Player Profile</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+      <a href="index.html" class="logo-link">
+        <img src="logo.png" alt="Eternal SMP Logo" class="nav-logo-img">
+        <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <div class="ip-widget" onclick="copyIP('play-eternal-smp.duckdns.org:5479')">
+        <span class="status-dot" id="headerDot"></span>
+        <span id="ipText">Click To Copy IP</span>
+        <i class="fa-regular fa-copy"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Navigation</h3>
+      <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
+      <li><a href="coins.html" class="nav-link"><i class="fa-solid fa-coins"></i> Buy Coins</a></li>
+      <li><a href="leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      <li><a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a></li>
+      <li><a href="events.html" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+      <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
+      <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+      <!-- The dedicated Account/Profile item in the sidebar -->
+      <li id="sidebarAuthNav">
+        <a href="profile.html" class="nav-link active" id="authNavTab">
+          <i class="fa-solid fa-circle-user"></i> <span id="authNavText">Account</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Profile Screen -->
+  <main class="content-container">
+
+    <!-- Logged Out View -->
+    <div id="profileLoggedOut" style="display: none; text-align: center; padding: 60px 20px;">
+      <i class="fa-solid fa-user-lock" style="font-size: 3.5rem; color: var(--accent); margin-bottom: 20px;"></i>
+      <h2>Access Your Account</h2>
+      <p style="color: var(--text-muted); max-width: 480px; margin: 10px auto 25px;">
+        Sign in with your email or Google account to view your character model, in-game stats, coin balance, and order history.
+      </p>
+      <button class="btn btn-primary" onclick="openAuthModal('login')">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In / Register
+      </button>
+    </div>
+
+    <!-- Logged In Complete Profile View -->
+    <div id="profileLoggedIn" style="display: none;">
+      
+      <!-- Top Player Banner & 3D Skin -->
+      <div class="profile-hero-card">
+        <div class="profile-hero-left">
+          <img id="profile3dBody" src="https://mc-heads.net/body/Steve/right" alt="Player Skin" class="profile-3d-model">
+          <div class="profile-hero-meta">
+            <div class="profile-badge-row">
+              <span class="player-rank-badge" id="profileRankBadge">MEMBER</span>
+              <span class="profile-verified-badge"><i class="fa-solid fa-check-circle"></i> Linked</span>
+            </div>
+            <h1 id="profileIgn">Player</h1>
+            <p id="profileEmail" class="profile-email-sub">player@example.com</p>
+            <button class="btn-change-ign" onclick="promptChangeIgn()"><i class="fa-solid fa-pen-to-square"></i> Change Bound IGN</button>
+          </div>
+        </div>
+
+        <div class="profile-hero-right">
+          <div class="profile-wallet-box">
+            <span class="p-wallet-label"><i class="fa-solid fa-coins text-gold"></i> Web Coins Balance</span>
+            <span class="p-wallet-num" id="profileCoinNum">0</span>
+            <a href="coins.html" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.8rem; margin-top: 8px;">Top Up Coins</a>
+          </div>
+          <button class="btn btn-secondary" onclick="logoutAccount()" style="margin-top: 10px;">
+            <i class="fa-solid fa-power-off" style="color: var(--danger);"></i> Log Out
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Server Gameplay Stats -->
+      <h3 class="section-title" style="margin-top: 40px;"><i class="fa-solid fa-chart-simple text-cyan"></i> In-Game Statistics</h3>
+      <div class="profile-stats-grid">
+        <div class="p-stat-box">
+          <i class="fa-solid fa-clock p-icon text-cyan"></i>
+          <div>
+            <div class="p-value" id="statPlaytime">0h</div>
+            <div class="p-label">PLAYTIME</div>
+          </div>
+        </div>
+        <div class="p-stat-box">
+          <i class="fa-solid fa-crosshairs p-icon text-purple"></i>
+          <div>
+            <div class="p-value" id="statKills">0</div>
+            <div class="p-label">PLAYER KILLS</div>
+          </div>
+        </div>
+        <div class="p-stat-box">
+          <i class="fa-solid fa-skull p-icon text-red"></i>
+          <div>
+            <div class="p-value" id="statDeaths">0</div>
+            <div class="p-label">DEATHS</div>
+          </div>
+        </div>
+        <div class="p-stat-box">
+          <i class="fa-solid fa-money-bill-wave p-icon text-green"></i>
+          <div>
+            <div class="p-value" id="statMoney">$0</div>
+            <div class="p-label">SERVER CASH</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ratio Box Row -->
+      <div class="p-stat-ratio-row" style="margin-top: 14px;">
+        <div class="p-ratio-box">
+          <span class="r-label">K/D RATIO</span>
+          <span class="r-val" id="statKd">0.00</span>
+        </div>
+        <div class="p-ratio-box">
+          <span class="r-label">PVP STATUS</span>
+          <span class="r-val" style="color: var(--success);"><i class="fa-solid fa-shield"></i> Active</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Login/Sign-up Modal -->
+  <div class="modal-backdrop" id="authModal">
+    <div class="modal auth-card">
+      <div class="modal-header">
+        <h3 id="authModalTitle">Account Sign In</h3>
+        <button class="modal-close" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="handleAuthSubmit(event)">
+          <div class="form-group" id="ignGroup" style="display: none;">
+            <label>Minecraft IGN *</label>
+            <input type="text" id="authIgn" placeholder="e.g. REAL_TWILIGHT0_0">
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="authEmail" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label>Password *</label>
+            <input type="password" id="authPassword" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary full-width" id="authSubmitBtn">Continue</button>
+        </form>
+
+        <button type="button" class="btn btn-secondary full-width" style="margin-top: 10px;" onclick="handleGoogleSignIn()">
+          <i class="fa-brands fa-google"></i> Continue with Google
+        </button>
+
+        <div class="auth-switch-text" id="authSwitchText">
+          Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign up here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copied IP to clipboard!</div>
+  <script src="app.js"></script>
+  <script type="module" src="auth.js"></script>
+</body>
+</html>
