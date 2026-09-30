@@ -47,10 +47,17 @@ setPersistence(auth, browserLocalPersistence).catch((err) => {
 let currentMode = 'login';
 export let currentUserProfile = null;
 
-// --- 2. AUTH STATE LISTENER (Navbar, User Pill & Wallet Balance Sync) ---
+// Dynamic Minecraft Avatar Generator
+function getPlayerAvatar(ign) {
+  const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
+  return `https://mc-heads.net/avatar/${clean}/64`;
+}
+
+// --- 2. AUTH STATE LISTENER (Desktop Navbar + Mobile Sidebar Sync) ---
 onAuthStateChanged(auth, async (user) => {
   const loggedOutView = document.getElementById("loggedOutView");
   const loggedInView = document.getElementById("loggedInView");
+  const mobileSlot = document.getElementById("mobileAuthSlot");
 
   if (user) {
     const userRef = doc(db, "users", user.uid);
@@ -71,24 +78,55 @@ onAuthStateChanged(auth, async (user) => {
       await setDoc(userRef, currentUserProfile);
     }
 
+    const ign = currentUserProfile.ign || 'Player';
+    const coins = currentUserProfile.coins ?? 0;
+    const avatarUrl = getPlayerAvatar(ign);
+
+    // 1. Sync Desktop Navbar Head & Balances
+    const navAvatar = document.getElementById("userNavAvatar");
     const ignDisplay = document.getElementById("userIgnDisplay");
     const balanceDisplay = document.getElementById("userBalanceDisplay");
-    
-    if (ignDisplay) ignDisplay.innerHTML = `<i class="fa-solid fa-user"></i> ${currentUserProfile.ign || 'Player'}`;
-    if (balanceDisplay) balanceDisplay.innerText = currentUserProfile.coins ?? 0;
-    
-    // Auto-fill checkout fields if user is on payment.html
-    const ignField = document.getElementById("ignInput");
-    const emailField = document.getElementById("emailInput");
-    if (ignField && !ignField.value) ignField.value = currentUserProfile.ign || '';
-    if (emailField) emailField.value = user.email || '';
+
+    if (navAvatar) navAvatar.src = avatarUrl;
+    if (ignDisplay) ignDisplay.innerText = ign;
+    if (balanceDisplay) balanceDisplay.innerText = coins;
 
     if (loggedOutView) loggedOutView.style.display = "none";
     if (loggedInView) loggedInView.style.display = "flex";
+
+    // 2. Sync Mobile Sidebar Account Drawer
+    if (mobileSlot) {
+      mobileSlot.innerHTML = `
+        <div class="mobile-user-card">
+          <img src="${avatarUrl}" class="mobile-player-face" alt="${ign}">
+          <div class="mobile-user-details">
+            <span class="mobile-player-ign">${ign}</span>
+            <span class="mobile-player-wallet"><i class="fa-solid fa-coins text-gold"></i> ${coins} Coins</span>
+          </div>
+          <button class="logout-btn" onclick="logoutAccount()" title="Logout"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+      `;
+    }
+
+    // Auto-fill checkout fields if user is on payment.html
+    const ignField = document.getElementById("ignInput");
+    const emailField = document.getElementById("emailInput");
+    if (ignField && !ignField.value) ignField.value = ign;
+    if (emailField) emailField.value = user.email || '';
+
   } else {
     currentUserProfile = null;
     if (loggedOutView) loggedOutView.style.display = "flex";
     if (loggedInView) loggedInView.style.display = "none";
+
+    // Show Sign In inside the Mobile Sidebar drawer when logged out
+    if (mobileSlot) {
+      mobileSlot.innerHTML = `
+        <button class="btn btn-primary full-width" onclick="openAuthModal('login')">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In / Register
+        </button>
+      `;
+    }
   }
 });
 
@@ -108,7 +146,7 @@ window.handleAuthSubmit = async function (e) {
   e.preventDefault();
   const email = document.getElementById("authEmail").value.trim();
   const pass = document.getElementById("authPassword").value.trim();
-  const ign = document.getElementById("authIgn").value.trim();
+  const ign = document.getElementById("authIgn")?.value.trim();
   const btn = document.getElementById("authSubmitBtn");
 
   btn.disabled = true;
@@ -200,13 +238,11 @@ window.buyWithCoins = async function(itemName, coinCost) {
   if (!confirmBuy) return;
 
   try {
-    // 1. Deduct coins directly from the user's Firestore document
     const userRef = doc(db, "users", auth.currentUser.uid);
     await updateDoc(userRef, {
       coins: increment(-cost)
     });
 
-    // 2. Dispatch order notification to Discord webhook via /api/order
     await fetch('/api/order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -236,7 +272,6 @@ window.grantCoinsToUser = async function (identifier, amount) {
     const numAmount = Number(amount);
     if (isNaN(numAmount)) return alert("Please enter a valid numeric coin amount.");
 
-    // 1. Check if user exists by Minecraft IGN
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("ign", "==", identifier.trim()));
     const querySnapshot = await getDocs(q);
@@ -250,7 +285,6 @@ window.grantCoinsToUser = async function (identifier, amount) {
       return;
     }
 
-    // 2. Fallback: Check if identifier is direct Firebase UID
     const directDocRef = doc(db, "users", identifier.trim());
     const directSnap = await getDoc(directDocRef);
 
