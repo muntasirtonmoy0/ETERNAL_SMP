@@ -16,11 +16,7 @@ import {
   setDoc, 
   getDoc, 
   updateDoc, 
-  increment, 
-  collection, 
-  query, 
-  where, 
-  getDocs 
+  increment 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // --- 1. FIREBASE CONFIGURATION ---
@@ -39,22 +35,11 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Persistent login across all reloads & tab closes
+// Persistent login across all browser reloads & tab closes
 setPersistence(auth, browserLocalPersistence).catch(console.error);
 
 let currentMode = 'login';
 export let currentUserProfile = null;
-
-// Multi-provider Avatar Fallbacks
-function getPlayerAvatar(ign) {
-  const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
-  return `https://mc-heads.net/avatar/${encodeURIComponent(clean)}/64`;
-}
-
-function getPlayerBodyUrl(ign) {
-  const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
-  return `https://mc-heads.net/body/${encodeURIComponent(clean)}/right`;
-}
 
 // Custom Ranks Matching app.js
 const PLAYER_RANKS = {
@@ -67,6 +52,32 @@ const PLAYER_RANKS = {
   "GMRZ_TANJID": "Member"
 };
 
+// --- MULTI-CDN MINECRAFT SKIN RESOLVER ---
+async function resolvePlayerSkinUrl(ign) {
+  const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
+
+  // 1. Resolve official Mojang Java UUID first for 100% skin match accuracy
+  try {
+    const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${encodeURIComponent(clean)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.uuid) {
+        return `https://crafatar.com/renders/body/${data.uuid}?overlay=true&scale=6`;
+      }
+    }
+  } catch (e) {
+    // Fall back to direct username CDNs
+  }
+
+  // 2. Direct username fallbacks that reliably handle underscores and numbers
+  return `https://minotar.net/armor/body/${encodeURIComponent(clean)}/180.png`;
+}
+
+function getPlayerAvatar(ign) {
+  const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
+  return `https://mc-heads.net/avatar/${encodeURIComponent(clean)}/64`;
+}
+
 // --- 2. LIVE STATS FETCH FROM /api/leaderboard ---
 async function fetchPlayerStatsFromAPI(ign) {
   const stats = {
@@ -78,7 +89,7 @@ async function fetchPlayerStatsFromAPI(ign) {
   };
 
   try {
-    // Query all 4 boards from leaderboard.js in parallel
+    // Query all 4 boards from leaderboard.js in parallel with cache-busting
     const [balRes, playRes, killRes, deathRes] = await Promise.all([
       fetch(`/api/leaderboard?type=balance&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
       fetch(`/api/leaderboard?type=playtime&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
@@ -131,13 +142,18 @@ async function renderProfilePage(user, profile) {
   if (ignEl) ignEl.innerText = ign;
   if (emailEl) emailEl.innerText = user.email || "";
   if (coinEl) coinEl.innerText = profile?.coins ?? 0;
-  
-  // Set 3D skin model with fallback handler
+
+  // Set 3D skin model with cascading fallback
   if (bodyEl) {
-    bodyEl.src = getPlayerBodyUrl(ign);
+    resolvePlayerSkinUrl(ign).then(url => {
+      bodyEl.src = url;
+    });
+
     bodyEl.onerror = () => {
-      // If full 3D body fails for offline skins, fallback to head avatar
-      bodyEl.src = `https://mc-heads.net/avatar/${encodeURIComponent(ign)}/140`;
+      bodyEl.onerror = () => {
+        bodyEl.src = `https://mc-heads.net/body/${encodeURIComponent(ign)}/right`;
+      };
+      bodyEl.src = `https://minotar.net/armor/body/${encodeURIComponent(ign)}/180.png`;
     };
   }
 
