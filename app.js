@@ -5,12 +5,12 @@ const FALLBACK_ADDRESS = "160.25.5.205:5479";
 // Custom Rank Mappings
 const PLAYER_RANKS = {
   "REAL_TWILIGHT0_0": "Owner",
-  "PRIME_VENOX": "Admin",
+  "RealVenox": "Admin",
   "Kitsuroo": "Admin",
-  "LGalewfqUwU": "Moderator",
-  "HopeUltimate": "Moderator",
-  "D4XTROO": "Officer",
-  "GMRZ_TANJID": "Member"
+  "D4XTROO": "Moderator",
+  "LGalewfqUwU": "Manager",
+  "HopeUltimate": "Manager",
+  "HaRaM_BoY_": "Manager"
 };
 
 let currentOnlinePlayers = [];
