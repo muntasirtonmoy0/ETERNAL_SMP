@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Eternal SMP | Staff Team</title>
-  <link rel="icon" type="image/png" href="/logo.png">
-  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Skinview3d Three.js WebGL Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.1/bundles/skinview3d.bundle.js"></script>
 </head>
 <body>
 
+  <!-- Top Navbar -->
   <header class="navbar">
     <div class="nav-left">
       <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
@@ -19,19 +22,24 @@
         <div class="logo"><span class="logo-accent">ETERNAL</span>SMP</div>
       </a>
     </div>
-    <div class="ip-widget" onclick="copyIP('play.eternal-smp.pro')">
-      <span class="status-dot" id="headerDot"></span>
-      <span id="ipText">Click To Copy IP</span>
-      <i class="fa-regular fa-copy"></i>
+
+    <div class="nav-right">
+      <div class="ip-widget" onclick="copyIP('play.eternal-smp.pro')">
+        <span class="status-dot" id="headerDot"></span>
+        <span id="ipText">Click To Copy IP</span>
+        <i class="fa-regular fa-copy"></i>
+      </div>
     </div>
   </header>
 
+  <!-- Sidebar Navigation -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <h3>Navigation</h3>
       <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
     </div>
+
     <ul class="nav-links">
       <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
       <li><a href="shop.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Store</a></li>
@@ -41,115 +49,306 @@
       <li><a href="staff.html" class="nav-link active"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
       <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
       <li id="sidebarAuthNav">
-        <a href="profile.html" class="nav-link active" id="authNavTab">
-          <i class="fa-solid fa-circle-user"></i> <span id="authNavText">Account</span>
+        <a href="profile.html" class="nav-link" id="authNavTab">
+          <img id="authNavAvatar" src="" class="sidebar-mc-head" alt="Avatar">
+          <i class="fa-solid fa-circle-user" id="defaultUserIcon"></i>
+          <span id="authNavText">Sign In / Register</span>
         </a>
       </li>
     </ul>
   </nav>
 
+  <!-- Main Content -->
   <main class="content-container">
     <div class="page-header">
       <h2>Staff Team</h2>
-      <p>Meet the administrators and moderators keeping Eternal SMP fair and fun.</p>
+      <p>Meet the administrators, managers, and moderators keeping Eternal SMP fair and fun. Click any card to inspect their 3D character!</p>
     </div>
 
     <div class="staff-grid">
-      <!-- Owner: REAL_TWILIGHT0_0 -->
-      <div class="staff-card">
+
+      <!-- REAL_TWILIGHT0_0 (Owner) -->
+      <div class="staff-card clickable" onclick="openStaffModal('REAL_TWILIGHT0_0')">
         <div class="avatar-holder">
-          <img src="https://visage.surgeplay.com/full/512/REAL_TWILIGHT0_0" 
-               onerror="this.onerror=null;this.src='https://minotar.net/armor/body/REAL_TWILIGHT0_0/200.png';" 
-               alt="REAL_TWILIGHT0_0" class="mc-avatar">
+          <img src="https://visage.surgeplay.com/bust/160/REAL_TWILIGHT0_0" onerror="this.src='https://mc-heads.net/avatar/REAL_TWILIGHT0_0/100'" alt="REAL_TWILIGHT0_0" class="mc-avatar">
         </div>
-        <div class="staff-role role-owner">Owner</div>
+        <span class="staff-role role-owner">OWNER</span>
         <h3 class="staff-name">REAL_TWILIGHT0_0</h3>
-        <p class="staff-bio">Server founder & lead developer. Oversees infrastructure, Website development & maintainance, Discord server management and economy setup</p>
-        <div class="staff-links">
-          <a href="https://discord.gg/" target="_blank" title="Contact on Discord"><i class="fa-brands fa-discord"></i></a>
-          <a href="#" target="_blank" title="Server Mail"><i class="fa-solid fa-envelope"></i></a>
-        </div>
+        <p class="staff-bio">Server founder & lead developer. Oversees infrastructure, website, and server architecture.</p>
+        <div class="staff-card-hint"><i class="fa-solid fa-cube"></i> Click for 3D View</div>
       </div>
 
-      <!-- Admin: PRIME_VENOX -->
-      <div class="staff-card">
+      <!-- RealVenox (Admin) -->
+      <div class="staff-card clickable" onclick="openStaffModal('RealVenox')">
         <div class="avatar-holder">
-          <img src="https://visage.surgeplay.com/full/512/PRIME_VENOX" 
-               onerror="this.onerror=null;this.src='https://minotar.net/armor/body/PRIME_VENOX/200.png';" 
-               alt="PRIME_VENOX" class="mc-avatar">
+          <img src="https://visage.surgeplay.com/bust/160/RealVenox" onerror="this.src='https://mc-heads.net/avatar/RealVenox/100'" alt="RealVenox" class="mc-avatar">
         </div>
-        <div class="staff-role role-admin">Admin</div>
-        <h3 class="staff-name">PRIME_VENOX</h3>
-        <p class="staff-bio">Handles server administration, Bug reports, Plugins, Rank and Crates.</p>
-        <div class="staff-links">
-          <a href="https://discord.gg/" target="_blank" title="Contact on Discord"><i class="fa-brands fa-discord"></i></a>
-        </div>
+        <span class="staff-role role-admin">ADMIN</span>
+        <h3 class="staff-name">RealVenox</h3>
+        <p class="staff-bio">Handles server administration, bug reports, backend plugins, and crate configs.</p>
+        <div class="staff-card-hint"><i class="fa-solid fa-cube"></i> Click for 3D View</div>
       </div>
 
-      <!-- Admin: Kitsuroo -->
-      <div class="staff-card">
+      <!-- Kitsuroo (Admin) -->
+      <div class="staff-card clickable" onclick="openStaffModal('Kitsuroo')">
         <div class="avatar-holder">
-          <img src="https://visage.surgeplay.com/full/512/Kitsuroo" 
-               onerror="this.onerror=null;this.src='https://minotar.net/armor/body/Kitsuroo/200.png';" 
-               alt="Kitsuroo" class="mc-avatar">
+          <img src="https://visage.surgeplay.com/bust/160/Kitsuroo" onerror="this.src='https://mc-heads.net/avatar/Kitsuroo/100'" alt="Kitsuroo" class="mc-avatar">
         </div>
-        <div class="staff-role role-admin">Admin</div>
+        <span class="staff-role role-admin">ADMIN</span>
         <h3 class="staff-name">Kitsuroo</h3>
-        <p class="staff-bio">Oversees community governance, player abuse reports, event schedules, and land claims.</p>
-        <div class="staff-links">
-          <a href="https://discord.gg/" target="_blank" title="Contact on Discord"><i class="fa-brands fa-discord"></i></a>
-        </div>
+        <p class="staff-bio">Oversees community governance, player dispute reports, event schedules, and land claims.</p>
+        <div class="staff-card-hint"><i class="fa-solid fa-cube"></i> Click for 3D View</div>
       </div>
 
-      <!-- Moderator: LGalewfqUwU -->
-      <div class="staff-card">
+      <!-- D4XTROO (Moderator) -->
+      <div class="staff-card clickable" onclick="openStaffModal('D4XTROO')">
         <div class="avatar-holder">
-          <img src="https://visage.surgeplay.com/full/512/LGalewfqUwU" 
-               onerror="this.onerror=null;this.src='https://minotar.net/armor/body/LGalewfqUwU/200.png';" 
-               alt="LGalewfqUwU" class="mc-avatar">
+          <img src="https://visage.surgeplay.com/bust/160/D4XTROO" onerror="this.src='https://mc-heads.net/avatar/D4XTROO/100'" alt="D4XTROO" class="mc-avatar">
         </div>
-        <div class="staff-role role-mod">Moderator</div>
-        <h3 class="staff-name">LGalewfqUwU</h3>
-        <p class="staff-bio">Monitors chat rules, enforces fair PvP, prevents unauthorized cheats, and helps members.</p>
-        <div class="staff-links">
-          <a href="https://discord.gg/" target="_blank" title="Contact on Discord"><i class="fa-brands fa-discord"></i></a>
-        </div>
-      </div>
-
-      <!-- Moderator: HopeUltimate -->
-      <div class="staff-card">
-        <div class="avatar-holder">
-          <img src="https://visage.surgeplay.com/full/512/HopeUltimate" 
-               onerror="this.onerror=null;this.src='https://minotar.net/armor/body/HopeUltimate/200.png';" 
-               alt="HopeUltimate" class="mc-avatar">
-        </div>
-        <div class="staff-role role-mod">Moderator</div>
-        <h3 class="staff-name">HopeUltimate</h3>
-        <p class="staff-bio">Assists with in-game moderation, player dispute arbitration, and rule compliance.</p>
-        <div class="staff-links">
-          <a href="https://discord.gg/" target="_blank" title="Contact on Discord"><i class="fa-brands fa-discord"></i></a>
-        </div>
-      </div>
-
-      <!-- Officer: D4XTROO -->
-      <div class="staff-card">
-        <div class="avatar-holder">
-          <img src="https://visage.surgeplay.com/full/512/D4XTROO" 
-               onerror="this.onerror=null;this.src='https://minotar.net/armor/body/D4XTROO/200.png';" 
-               alt="D4XTROO" class="mc-avatar">
-        </div>
-        <div class="staff-role role-officer">Officer</div>
+        <span class="staff-role role-mod">MODERATOR</span>
         <h3 class="staff-name">D4XTROO</h3>
-        <p class="staff-bio">Community supervisor managing server tournaments, minigames, and event coordination.</p>
-        <div class="staff-links">
-          <a href="https://discord.gg/" target="_blank" title="Contact on Discord"><i class="fa-brands fa-discord"></i></a>
+        <p class="staff-bio">Enforces rules, handles moderation tickets, monitors PvP fairness, and ensures chat civility.</p>
+        <div class="staff-card-hint"><i class="fa-solid fa-cube"></i> Click for 3D View</div>
+      </div>
+
+      <!-- LGalewfqUwU (Manager) -->
+      <div class="staff-card clickable" onclick="openStaffModal('LGalewfqUwU')">
+        <div class="avatar-holder">
+          <img src="https://visage.surgeplay.com/bust/160/LGalewfqUwU" onerror="this.src='https://mc-heads.net/avatar/LGalewfqUwU/100'" alt="LGalewfqUwU" class="mc-avatar">
+        </div>
+        <span class="staff-role role-manager">MANAGER</span>
+        <h3 class="staff-name">LGalewfqUwU</h3>
+        <p class="staff-bio">Manages staff operations, server economy balance, Discord moderation, and player inquiries.</p>
+        <div class="staff-card-hint"><i class="fa-solid fa-cube"></i> Click for 3D View</div>
+      </div>
+
+      <!-- HopeUltimate (Manager) -->
+      <div class="staff-card clickable" onclick="openStaffModal('HopeUltimate')">
+        <div class="avatar-holder">
+          <img src="https://visage.surgeplay.com/bust/160/HopeUltimate" onerror="this.src='https://mc-heads.net/avatar/HopeUltimate/100'" alt="HopeUltimate" class="mc-avatar">
+        </div>
+        <span class="staff-role role-manager">MANAGER</span>
+        <h3 class="staff-name">HopeUltimate</h3>
+        <p class="staff-bio">Oversees community coordination, player support tickets, and server event workflows.</p>
+        <div class="staff-card-hint"><i class="fa-solid fa-cube"></i> Click for 3D View</div>
+      </div>
+
+      <!-- HaRaM_BoY_ (Manager) -->
+      <div class="staff-card clickable" onclick="openStaffModal('HaRaM_BoY_')">
+        <div class="avatar-holder">
+          <img src="https://visage.surgeplay.com/bust/160/HaRaM_BoY_" onerror="this.src='https://mc-heads.net/avatar/HaRaM_BoY_/100'" alt="HaRaM_BoY_" class="mc-avatar">
+        </div>
+        <span class="staff-role role-manager">MANAGER</span>
+        <h3 class="staff-name">HaRaM_BoY_</h3>
+        <p class="staff-bio">Directs staff workflows, handles community disputes, and assists server operations.</p>
+        <div class="staff-card-hint"><i class="fa-solid fa-cube"></i> Click for 3D View</div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 3D Rotatable Staff Profile Modal -->
+  <div class="modal-backdrop" id="staffProfileModal">
+    <div class="modal staff-profile-modal-card">
+      <button class="modal-close staff-modal-close" id="closeStaffModal"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="staff-modal-layout">
+        <!-- 3D Skinview3d Canvas Container -->
+        <div class="staff-3d-wrapper">
+          <canvas id="skin_container"></canvas>
+          <div class="canvas-controls-hint">
+            <span><i class="fa-solid fa-hand-pointer"></i> Drag to rotate 360° • Scroll to zoom</span>
+          </div>
+          <div class="canvas-anim-toggles">
+            <button class="btn-anim active" onclick="setViewerAnimation('walking')">Walk</button>
+            <button class="btn-anim" onclick="setViewerAnimation('running')">Run</button>
+            <button class="btn-anim" onclick="setViewerAnimation('idle')">Idle</button>
+          </div>
+        </div>
+
+        <!-- Staff Member Meta & Details -->
+        <div class="staff-modal-info">
+          <span class="staff-role" id="modalStaffRole">OWNER</span>
+          <h2 id="modalStaffName">REAL_TWILIGHT0_0</h2>
+          <p id="modalStaffTitle" class="staff-modal-subtitle">Lead Developer & Server Founder</p>
+          <div class="staff-modal-divider"></div>
+          
+          <p id="modalStaffBio" class="staff-modal-desc"></p>
+
+          <div class="staff-modal-details-grid">
+            <div class="s-detail-box">
+              <span class="s-label"><i class="fa-solid fa-shield-halved text-cyan"></i> Permissions</span>
+              <span class="s-val" id="modalStaffPerms">Root Access</span>
+            </div>
+            <div class="s-detail-box">
+              <span class="s-label"><i class="fa-solid fa-circle-check text-green"></i> Status</span>
+              <span class="s-val" style="color: var(--success);">Active Staff</span>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="staff-socials-container">
+            <h4>Connect with Staff</h4>
+            <div class="staff-social-icons" id="modalStaffSocials"></div>
+          </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 
   <div class="toast" id="toast">Copied IP to clipboard!</div>
   <script src="app.js"></script>
   <script type="module" src="auth.js"></script>
+
+  <script>
+    const STAFF_DATA = {
+      "REAL_TWILIGHT0_0": {
+        role: "OWNER",
+        roleClass: "role-owner",
+        title: "Server Founder & Infrastructure Engineer",
+        bio: "Founding developer of Eternal SMP. Handles server host configuration, custom economy architecture, WebGL frontend engineering, and Discord bot automation.",
+        perms: "Full Root / Console",
+        socials: [
+          { icon: "fa-brands fa-discord", url: "https://discord.gg/eternal-smp", label: "Discord" },
+          { icon: "fa-solid fa-envelope", url: "mailto:support@eternal-smp.pro", label: "Email" }
+        ]
+      },
+      "RealVenox": {
+        role: "ADMIN",
+        roleClass: "role-admin",
+        title: "Systems & Security Administrator",
+        bio: "Manages backend plugin integrations, anti-cheat detection, bug remediation, and marketplace crate configuration across all survival realms.",
+        perms: "Administrator",
+        socials: [
+          { icon: "fa-brands fa-discord", url: "https://discord.gg/eternal-smp", label: "Discord" }
+        ]
+      },
+      "Kitsuroo": {
+        role: "ADMIN",
+        roleClass: "role-admin",
+        title: "Community & Gameplay Administrator",
+        bio: "Directs community governance, ticket review processes, staff hiring protocols, and custom SMP world generation events.",
+        perms: "Administrator",
+        socials: [
+          { icon: "fa-brands fa-discord", url: "https://discord.gg/eternal-smp", label: "Discord" }
+        ]
+      },
+      "D4XTROO": {
+        role: "MODERATOR",
+        roleClass: "role-mod",
+        title: "In-Game Moderator & PvP Marshal",
+        bio: "Monitors server chat, enforces grief prevention claims, mediates player disputes, and investigates combat logging violations.",
+        perms: "Moderator",
+        socials: [
+          { icon: "fa-brands fa-discord", url: "https://discord.gg/eternal-smp", label: "Discord" }
+        ]
+      },
+      "LGalewfqUwU": {
+        role: "MANAGER",
+        roleClass: "role-manager",
+        title: "Operations & Staff Manager",
+        bio: "Oversees daily staff scheduling, economy balances, community suggestions, and ticket escalations.",
+        perms: "Management",
+        socials: [
+          { icon: "fa-brands fa-discord", url: "https://discord.gg/eternal-smp", label: "Discord" }
+        ]
+      },
+      "HopeUltimate": {
+        role: "MANAGER",
+        roleClass: "role-manager",
+        title: "Community & Event Manager",
+        bio: "Leads community engagement, plans server tournaments, coordinates Discord giveaways, and handles player concerns.",
+        perms: "Management",
+        socials: [
+          { icon: "fa-brands fa-discord", url: "https://discord.gg/eternal-smp", label: "Discord" }
+        ]
+      },
+      "HaRaM_BoY_": {
+        role: "MANAGER",
+        roleClass: "role-manager",
+        title: "Server & Player Operations Manager",
+        bio: "Directs staff workflows, oversees ticket arbitrations, monitors trade compliance, and assists high-level server operations.",
+        perms: "Management",
+        socials: [
+          { icon: "fa-brands fa-discord", url: "https://discord.gg/eternal-smp", label: "Discord" }
+        ]
+      }
+    };
+
+    let skinViewer = null;
+
+    function initSkinViewer() {
+      if (skinViewer) return;
+      const canvas = document.getElementById("skin_container");
+      skinViewer = new skinview3d.SkinViewer({
+        canvas: canvas,
+        width: 280,
+        height: 380,
+        skin: "https://minotar.net/skin/Steve"
+      });
+
+      skinViewer.controls.enableRotate = true;
+      skinViewer.controls.enableZoom = true;
+      skinViewer.controls.enablePan = false;
+      skinViewer.camera.position.z = 70;
+      skinViewer.fov = 40;
+    }
+
+    function setViewerAnimation(type) {
+      document.querySelectorAll(".btn-anim").forEach(b => b.classList.remove("active"));
+      if (window.event && window.event.target) window.event.target.classList.add("active");
+
+      if (!skinViewer) return;
+
+      if (type === 'walking') {
+        skinViewer.animation = new skinview3d.WalkingAnimation();
+        skinViewer.animation.speed = 0.8;
+      } else if (type === 'running') {
+        skinViewer.animation = new skinview3d.RunningAnimation();
+        skinViewer.animation.speed = 0.9;
+      } else {
+        skinViewer.animation = new skinview3d.IdleAnimation();
+      }
+    }
+
+    async function openStaffModal(ign) {
+      initSkinViewer();
+      const modal = document.getElementById("staffProfileModal");
+      const member = STAFF_DATA[ign] || {
+        role: "STAFF",
+        roleClass: "role-member",
+        title: "Eternal SMP Team Member",
+        bio: "Dedicated staff team member.",
+        perms: "Staff",
+        socials: [{ icon: "fa-brands fa-discord", url: "#", label: "Discord" }]
+      };
+
+      document.getElementById("modalStaffName").innerText = ign;
+      document.getElementById("modalStaffTitle").innerText = member.title;
+      document.getElementById("modalStaffBio").innerText = member.bio;
+      document.getElementById("modalStaffPerms").innerText = member.perms;
+
+      const roleEl = document.getElementById("modalStaffRole");
+      roleEl.innerText = member.role;
+      roleEl.className = "staff-role " + member.roleClass;
+
+      const socialsContainer = document.getElementById("modalStaffSocials");
+      socialsContainer.innerHTML = member.socials.map(s => `
+        <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="staff-social-link">
+          <i class="${s.icon}"></i> ${s.label}
+        </a>
+      `).join('');
+
+      // High-res skin loading
+      skinViewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(ign)}`);
+      setViewerAnimation('walking');
+
+      modal.classList.add("active");
+    }
+
+    document.getElementById("closeStaffModal").addEventListener("click", () => {
+      document.getElementById("staffProfileModal").classList.remove("active");
+    });
+  </script>
 </body>
 </html>
