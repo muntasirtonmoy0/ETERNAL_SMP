@@ -41,7 +41,7 @@ setPersistence(auth, browserLocalPersistence).catch(console.error);
 let currentMode = 'login';
 export let currentUserProfile = null;
 
-// Custom Ranks Matching app.js
+// Custom Ranks Matching app.js & leaderboard.html
 const PLAYER_RANKS = {
   "REAL_TWILIGHT0_0": "Owner",
   "RealVenox": "Admin",
@@ -52,26 +52,30 @@ const PLAYER_RANKS = {
   "HaRaM_BoY_": "Manager"
 };
 
-// --- MULTI-CDN MINECRAFT SKIN RESOLVER ---
-async function resolvePlayerSkinUrl(ign) {
-  const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
-
-  // 1. Resolve official Mojang Java UUID first for 100% skin match accuracy
-  try {
-    const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${encodeURIComponent(clean)}`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.uuid) {
-        return `https://crafatar.com/renders/body/${data.uuid}?overlay=true&scale=6`;
-      }
-    }
-  } catch (e) {
-    // Fall back to direct username CDNs
-  }
-
-  // 2. Direct username fallbacks that reliably handle underscores and numbers
-  return `https://minotar.net/armor/body/${encodeURIComponent(clean)}/180.png`;
+function getPlayerRole(name) {
+  if (!name) return "Member";
+  const key = Object.keys(PLAYER_RANKS).find(k => k.toLowerCase() === name.toLowerCase());
+  return key ? PLAYER_RANKS[key] : "Member";
 }
+
+// Global 3D Viewer Instance on profile.html
+let profileSkinViewer = null;
+
+window.setProfileAnim = function(type) {
+  document.querySelectorAll(".profile-hero-left .btn-anim").forEach(b => b.classList.remove("active"));
+  if (window.event && window.event.target) window.event.target.classList.add("active");
+
+  if (!profileSkinViewer) return;
+  if (type === 'walking') {
+    profileSkinViewer.animation = new skinview3d.WalkingAnimation();
+    profileSkinViewer.animation.speed = 0.8;
+  } else if (type === 'running') {
+    profileSkinViewer.animation = new skinview3d.RunningAnimation();
+    profileSkinViewer.animation.speed = 0.9;
+  } else {
+    profileSkinViewer.animation = new skinview3d.IdleAnimation();
+  }
+};
 
 function getPlayerAvatar(ign) {
   const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
@@ -80,16 +84,16 @@ function getPlayerAvatar(ign) {
 
 // --- 2. LIVE STATS FETCH FROM /api/leaderboard ---
 async function fetchPlayerStatsFromAPI(ign) {
+  const role = getPlayerRole(ign);
   const stats = {
     kills: 0,
     deaths: 0,
     playtimeSeconds: 0,
     balance: 0,
-    rank: PLAYER_RANKS[ign] || "Member"
+    rank: role
   };
 
   try {
-    // Query all 4 boards from leaderboard.js in parallel with cache-busting
     const [balRes, playRes, killRes, deathRes] = await Promise.all([
       fetch(`/api/leaderboard?type=balance&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
       fetch(`/api/leaderboard?type=playtime&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
@@ -136,25 +140,32 @@ async function renderProfilePage(user, profile) {
   const ignEl = document.getElementById("profileIgn");
   const emailEl = document.getElementById("profileEmail");
   const coinEl = document.getElementById("profileCoinNum");
-  const bodyEl = document.getElementById("profile3dBody");
   const rankBadgeEl = document.getElementById("profileRankBadge");
 
   if (ignEl) ignEl.innerText = ign;
   if (emailEl) emailEl.innerText = user.email || "";
   if (coinEl) coinEl.innerText = profile?.coins ?? 0;
 
-  // Set 3D skin model with cascading fallback
-  if (bodyEl) {
-    resolvePlayerSkinUrl(ign).then(url => {
-      bodyEl.src = url;
-    });
-
-    bodyEl.onerror = () => {
-      bodyEl.onerror = () => {
-        bodyEl.src = `https://mc-heads.net/body/${encodeURIComponent(ign)}/right`;
-      };
-      bodyEl.src = `https://minotar.net/armor/body/${encodeURIComponent(ign)}/180.png`;
-    };
+  // Initialize and load 3D skin model on profile.html
+  const profileCanvas = document.getElementById("profile_skin_container");
+  if (profileCanvas && typeof skinview3d !== 'undefined') {
+    if (!profileSkinViewer) {
+      profileSkinViewer = new skinview3d.SkinViewer({
+        canvas: profileCanvas,
+        width: 220,
+        height: 290,
+        skin: `https://minotar.net/skin/${encodeURIComponent(ign)}`
+      });
+      profileSkinViewer.controls.enableRotate = true;
+      profileSkinViewer.controls.enableZoom = true;
+      profileSkinViewer.controls.enablePan = false;
+      profileSkinViewer.camera.position.z = 65;
+      profileSkinViewer.fov = 40;
+      profileSkinViewer.animation = new skinview3d.WalkingAnimation();
+      profileSkinViewer.animation.speed = 0.8;
+    } else {
+      profileSkinViewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(ign)}`);
+    }
   }
 
   // Fetch real data live from the server via /api/leaderboard
