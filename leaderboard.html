@@ -8,12 +8,9 @@
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <!-- Skinview3d WebGL Engine -->
-  <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.1/bundles/skinview3d.bundle.js"></script>
 </head>
 <body>
 
-  <!-- Top Navbar -->
   <header class="navbar">
     <div class="nav-left">
       <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
@@ -29,7 +26,6 @@
     </div>
   </header>
 
-  <!-- Sidebar Navigation -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -45,10 +41,8 @@
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
       <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
       <li id="sidebarAuthNav">
-        <a href="profile.html" class="nav-link" id="authNavTab">
-          <img id="authNavAvatar" src="" class="sidebar-mc-head" alt="Avatar">
-          <i class="fa-solid fa-circle-user" id="defaultUserIcon"></i>
-          <span id="authNavText">Sign In / Register</span>
+        <a href="profile.html" class="nav-link active" id="authNavTab">
+          <i class="fa-solid fa-circle-user"></i> <span id="authNavText">Account</span>
         </a>
       </li>
     </ul>
@@ -57,7 +51,7 @@
   <main class="content-container">
     <div class="page-header">
       <h2>Server Leaderboard</h2>
-      <p>Top server champions and live real-time player rankings. Click any player to inspect their interactive 3D skin!</p>
+      <p>Top server champions and live real-time player rankings.</p>
     </div>
 
     <!-- Champions Top #1 Cards Grid -->
@@ -103,48 +97,35 @@
       <button class="lb-btn" onclick="switchBoard('deaths', this)"><i class="fa-solid fa-heart-crack"></i> Deaths</button>
     </div>
 
-    <!-- Leaderboard Table with Role Badges -->
+    <!-- Table -->
     <div class="leaderboard-table-wrap">
       <table class="leaderboard-table">
         <thead>
           <tr>
             <th style="width: 70px;">Rank</th>
             <th>Player</th>
-            <th style="width: 140px;">Role</th>
             <th id="tableScoreHeader" style="text-align: right;">Balance</th>
           </tr>
         </thead>
         <tbody id="lbTableBody">
-          <tr><td colspan="4" style="text-align:center; padding:30px; color:#9ca3af;">Loading rankings...</td></tr>
+          <tr><td colspan="3" style="text-align:center; padding:30px; color:#9ca3af;">Loading rankings...</td></tr>
         </tbody>
       </table>
     </div>
   </main>
 
-  <!-- 3D HavenCraft-Style Rotatable Player Profile Modal -->
+  <!-- HavenCraft-Style Full Player Profile Modal -->
   <div class="profile-modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
     <div class="profile-modal-card" onclick="event.stopPropagation()">
       <button class="profile-close-btn" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></button>
       
       <div class="profile-hero">
-        <!-- Interactive 3D Skinview3d Canvas Container -->
-        <div class="profile-3d-wrapper">
-          <canvas id="lb_skin_container"></canvas>
-          <div class="canvas-controls-hint">
-            <span><i class="fa-solid fa-hand-pointer"></i> Drag to spin 360° • Scroll to zoom</span>
-          </div>
-          <div class="canvas-anim-toggles">
-            <button class="btn-anim active" onclick="setLeaderboardAnim('walking')">Walk</button>
-            <button class="btn-anim" onclick="setLeaderboardAnim('running')">Run</button>
-            <button class="btn-anim" onclick="setLeaderboardAnim('idle')">Idle</button>
-          </div>
-        </div>
-
+        <img src="https://visage.surgeplay.com/full/384/steve" alt="Player Skin" class="profile-3d-skin" id="modalSkin">
         <div class="profile-hero-meta">
           <h2 id="modalPlayerName">Player</h2>
           <p class="profile-sub">Player on <strong>Eternal SMP</strong></p>
           <div class="profile-tags">
-            <span class="player-rank-badge" id="modalTag" data-rank="Member">MEMBER</span>
+            <span class="profile-tag tag-member" id="modalTag">MEMBER</span>
           </div>
         </div>
       </div>
@@ -201,57 +182,8 @@
   <script type="module" src="auth.js"></script>
 
   <script>
-    const PLAYER_RANKS = {
-      "REAL_TWILIGHT0_0": "Owner",
-      "RealVenox": "Admin",
-      "Kitsuroo": "Admin",
-      "D4XTROO": "Moderator",
-      "LGalewfqUwU": "Manager",
-      "HopeUltimate": "Manager",
-      "HaRaM_BoY_": "Manager"
-    };
-
-    function getPlayerRole(name) {
-      if (!name) return "Member";
-      const key = Object.keys(PLAYER_RANKS).find(k => k.toLowerCase() === name.toLowerCase());
-      return key ? PLAYER_RANKS[key] : "Member";
-    }
-
     let currentType = 'balance';
     let cachedData = { balance: [], playtime: [], kills: [], deaths: [] };
-    let lbSkinViewer = null;
-
-    function initLeaderboardSkinViewer() {
-      if (lbSkinViewer) return;
-      const canvas = document.getElementById("lb_skin_container");
-      lbSkinViewer = new skinview3d.SkinViewer({
-        canvas: canvas,
-        width: 220,
-        height: 290,
-        skin: "https://minotar.net/skin/steve"
-      });
-      lbSkinViewer.controls.enableRotate = true;
-      lbSkinViewer.controls.enableZoom = true;
-      lbSkinViewer.controls.enablePan = false;
-      lbSkinViewer.camera.position.z = 65;
-      lbSkinViewer.fov = 40;
-    }
-
-    function setLeaderboardAnim(type) {
-      document.querySelectorAll(".profile-3d-wrapper .btn-anim").forEach(b => b.classList.remove("active"));
-      if (window.event && window.event.target) window.event.target.classList.add("active");
-
-      if (!lbSkinViewer) return;
-      if (type === 'walking') {
-        lbSkinViewer.animation = new skinview3d.WalkingAnimation();
-        lbSkinViewer.animation.speed = 0.8;
-      } else if (type === 'running') {
-        lbSkinViewer.animation = new skinview3d.RunningAnimation();
-        lbSkinViewer.animation.speed = 0.9;
-      } else {
-        lbSkinViewer.animation = new skinview3d.IdleAnimation();
-      }
-    }
 
     function formatScore(val, type) {
       if (type === 'balance') {
@@ -323,7 +255,7 @@
       const data = cachedData[currentType] || [];
       const tbody = document.getElementById('lbTableBody');
       if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#9ca3af;">No player records found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px; color:#9ca3af;">No player records found.</td></tr>`;
         return;
       }
 
@@ -332,8 +264,6 @@
         if (index === 0) rankBadge = `<span class="rank-medal gold">🥇 1</span>`;
         if (index === 1) rankBadge = `<span class="rank-medal silver">🥈 2</span>`;
         if (index === 2) rankBadge = `<span class="rank-medal bronze">🥉 3</span>`;
-
-        const role = getPlayerRole(item.name);
 
         return `
           <tr class="clickable-row" onclick="openProfileByName('${item.name}')">
@@ -344,9 +274,6 @@
                 <span class="player-title">${item.name}</span>
               </div>
             </td>
-            <td>
-              <span class="player-rank-badge" data-rank="${role}">${role}</span>
-            </td>
             <td style="text-align: right; font-weight: 700; color: #f3f4f6;">
               ${formatScore(item.value, currentType)}
             </td>
@@ -355,22 +282,19 @@
       }).join('');
     }
 
-    async function openProfileByName(name) {
+    function openProfileByName(name) {
       if (!name || name === 'Loading...') return;
 
-      initLeaderboardSkinViewer();
-
-      const pMoney = cachedData.balance.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
-      const pPlay = cachedData.playtime.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
-      const pKills = cachedData.kills.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
-      const pDeaths = cachedData.deaths.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
+      const pMoney = cachedData.balance.find(p => p.name === name)?.value || 0;
+      const pPlay = cachedData.playtime.find(p => p.name === name)?.value || 0;
+      const pKills = cachedData.kills.find(p => p.name === name)?.value || 0;
+      const pDeaths = cachedData.deaths.find(p => p.name === name)?.value || 0;
 
       document.getElementById('modalPlayerName').textContent = name;
 
-      const role = getPlayerRole(name);
-      const tagEl = document.getElementById('modalTag');
-      tagEl.textContent = role.toUpperCase();
-      tagEl.setAttribute('data-rank', role);
+      const modalSkin = document.getElementById('modalSkin');
+      modalSkin.src = `https://visage.surgeplay.com/full/384/${name}`;
+      modalSkin.onerror = () => { modalSkin.src = 'https://visage.surgeplay.com/full/384/steve'; };
 
       document.getElementById('modalStatMoney').textContent = formatScore(pMoney, 'balance');
       document.getElementById('modalStatPlaytime').textContent = formatScore(pPlay, 'playtime');
@@ -379,10 +303,6 @@
 
       const kd = pDeaths > 0 ? (pKills / pDeaths).toFixed(2) : Number(pKills).toFixed(2);
       document.getElementById('modalKdRatio').textContent = kd;
-
-      // Load skin into 3D viewer
-      lbSkinViewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(name)}`);
-      setLeaderboardAnim('walking');
 
       document.getElementById('profileModal').classList.add('active');
     }
