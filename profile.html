@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Eternal SMP | Player Profile</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Skinview3d Three.js WebGL Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.1/bundles/skinview3d.bundle.js"></script>
 </head>
 <body>
 
@@ -73,13 +75,25 @@
     <!-- Logged In Complete Profile View -->
     <div id="profileLoggedIn" style="display: none;">
       
-      <!-- Top Player Banner & 3D Skin -->
+      <!-- Top Player Banner & Rotatable 3D Skin -->
       <div class="profile-hero-card">
         <div class="profile-hero-left">
-          <img id="profile3dBody" src="https://mc-heads.net/body/Steve/right" alt="Player Skin" class="profile-3d-model">
+          <!-- Interactive 3D Skinview3d Canvas Container -->
+          <div class="profile-3d-wrapper">
+            <canvas id="profile_skin_container"></canvas>
+            <div class="canvas-controls-hint">
+              <span><i class="fa-solid fa-hand-pointer"></i> Drag to spin 360° • Scroll to zoom</span>
+            </div>
+            <div class="canvas-anim-toggles">
+              <button class="btn-anim active" onclick="setProfileAnim('walking')">Walk</button>
+              <button class="btn-anim" onclick="setProfileAnim('running')">Run</button>
+              <button class="btn-anim" onclick="setProfileAnim('idle')">Idle</button>
+            </div>
+          </div>
+
           <div class="profile-hero-meta">
             <div class="profile-badge-row">
-              <span class="player-rank-badge" id="profileRankBadge">MEMBER</span>
+              <span class="player-rank-badge" id="profileRankBadge" data-rank="Member">MEMBER</span>
               <span class="profile-verified-badge"><i class="fa-solid fa-check-circle"></i> Linked</span>
             </div>
             <h1 id="profileIgn">Player</h1>
