@@ -1813,7 +1813,7 @@ html, body {
 }
 
 /* ==========================================================================
-   3D INTERACTIVE STAFF PROFILE MODAL (skinview3d)
+   3D INTERACTIVE STAFF & PLAYER PROFILE MODAL (skinview3d)
    ========================================================================== */
 .staff-profile-modal-card {
   max-width: 780px !important;
@@ -1848,7 +1848,8 @@ html, body {
   align-items: center;
 }
 
-.staff-3d-wrapper {
+.staff-3d-wrapper,
+.profile-3d-wrapper {
   background: radial-gradient(circle, rgba(0, 210, 255, 0.08) 0%, rgba(9, 10, 15, 0.9) 100%);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -1866,7 +1867,16 @@ html, body {
   cursor: grab;
 }
 
-#skin_container:active {
+#lb_skin_container,
+#profile_skin_container {
+  width: 220px;
+  height: 290px;
+  cursor: grab;
+}
+
+#skin_container:active,
+#lb_skin_container:active,
+#profile_skin_container:active {
   cursor: grabbing;
 }
 
