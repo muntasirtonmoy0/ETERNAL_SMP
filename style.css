@@ -1669,7 +1669,7 @@ html, body {
 }
 
 /* ==========================================================================
-   STAFF CARDS
+   STAFF CARDS & MODAL INTERACTION
    ========================================================================== */
 .staff-grid {
   display: grid;
@@ -1688,6 +1688,31 @@ html, body {
   align-items: center;
 }
 
+.staff-card.clickable {
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.staff-card.clickable:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 25px rgba(0, 210, 255, 0.2);
+}
+
+.staff-card-hint {
+  margin-top: 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(0, 210, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .avatar-holder {
   height: 140px;
   display: flex;
@@ -1701,25 +1726,278 @@ html, body {
   filter: drop-shadow(0 8px 12px rgba(0,0,0,0.5));
 }
 
-.staff-role {
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 8px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.role-owner { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
-.role-admin { background: rgba(52, 152, 219, 0.15); color: #3498db; }
-.role-mod { background: rgba(149, 165, 166, 0.2); color: #bdc3c7; }
-.role-officer { background: rgba(255, 182, 193, 0.2); color: #ffb6c1; }
-
 .staff-name { font-size: 1.2rem; margin-bottom: 8px; }
 .staff-bio { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px; }
 .staff-links { display: flex; gap: 12px; }
 .staff-links a { color: var(--text-muted); font-size: 1.1rem; }
 .staff-links a:hover { color: var(--accent); }
+
+/* ==========================================================================
+   STAFF RANK BADGES WITH DISCORD & IN-GAME GRADIENTS
+   ========================================================================== */
+.staff-role {
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: inline-block;
+  letter-spacing: 0.6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* OWNER: Yellow Base -> White Gradient */
+.role-owner,
+.player-rank-badge[data-rank="Owner"] {
+  background: linear-gradient(135deg, #facc15 0%, #ffffff 100%) !important;
+  color: #000000 !important;
+  border: 1px solid rgba(250, 204, 21, 0.8) !important;
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.4) !important;
+}
+
+/* ADMIN: Red Base -> White Gradient */
+.role-admin,
+.player-rank-badge[data-rank="Admin"] {
+  background: linear-gradient(135deg, #ef4444 0%, #ffffff 100%) !important;
+  color: #000000 !important;
+  border: 1px solid rgba(239, 68, 68, 0.8) !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+}
+
+/* MODERATOR: Dark Blue Base -> Light Blue Gradient */
+.role-mod,
+.player-rank-badge[data-rank="Moderator"] {
+  background: linear-gradient(135deg, #1d4ed8 0%, #38bdf8 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(56, 189, 248, 0.8) !important;
+  box-shadow: 0 0 10px rgba(29, 78, 216, 0.4) !important;
+}
+
+/* MANAGER: Grey Base -> White Gradient */
+.role-manager,
+.player-rank-badge[data-rank="Manager"] {
+  background: linear-gradient(135deg, #4b5563 0%, #ffffff 100%) !important;
+  color: #000000 !important;
+  border: 1px solid rgba(156, 163, 175, 0.8) !important;
+  box-shadow: 0 0 10px rgba(75, 85, 99, 0.4) !important;
+}
+
+/* OFFICER fallback */
+.role-officer,
+.player-rank-badge[data-rank="Officer"] {
+  background: linear-gradient(135deg, #f472b6 0%, #ffffff 100%) !important;
+  color: #000000 !important;
+  border: 1px solid rgba(244, 114, 182, 0.8) !important;
+}
+
+/* VIP & Member Leaderboard Fallbacks */
+.player-rank-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+.player-rank-badge[data-rank="VIP"] {
+  background: rgba(241, 196, 15, 0.2);
+  color: #f1c40f;
+  border: 1px solid rgba(241, 196, 15, 0.4);
+}
+
+.player-rank-badge[data-rank="Member"] {
+  background: rgba(255, 255, 255, 0.08);
+  color: #9ca3af;
+}
+
+/* ==========================================================================
+   3D INTERACTIVE STAFF PROFILE MODAL (skinview3d)
+   ========================================================================== */
+.staff-profile-modal-card {
+  max-width: 780px !important;
+  width: 95% !important;
+  padding: 30px !important;
+  border-radius: 20px !important;
+  background: #11131c !important;
+  border: 1px solid rgba(0, 210, 255, 0.25) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8) !important;
+}
+
+.staff-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+}
+
+.staff-modal-close:hover {
+  color: #fff;
+}
+
+.staff-modal-layout {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.staff-3d-wrapper {
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.08) 0%, rgba(9, 10, 15, 0.9) 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+#skin_container {
+  width: 280px;
+  height: 380px;
+  cursor: grab;
+}
+
+#skin_container:active {
+  cursor: grabbing;
+}
+
+.canvas-controls-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-align: center;
+}
+
+.canvas-anim-toggles {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.btn-anim {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-anim:hover, .btn-anim.active {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
+
+.staff-modal-info {
+  flex: 1;
+}
+
+.staff-modal-info h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 6px 0 2px;
+}
+
+.staff-modal-subtitle {
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.staff-modal-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 14px;
+}
+
+.staff-modal-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.staff-modal-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.s-detail-box {
+  background: #090a0f;
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.s-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.s-val {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.staff-socials-container h4 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.staff-social-icons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.staff-social-link {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.2s;
+}
+
+.staff-social-link:hover {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
 
 /* ==========================================================================
    ONLINE PLAYERS & AUTH MODALS
@@ -1799,51 +2077,6 @@ html, body {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-}
-
-/* RANK BADGES */
-.player-rank-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-muted);
-}
-
-.player-rank-badge[data-rank="Owner"] {
-  background: rgba(231, 76, 60, 0.2);
-  color: #e74c3c;
-  border: 1px solid rgba(231, 76, 60, 0.4);
-}
-
-.player-rank-badge[data-rank="Admin"] {
-  background: rgba(52, 152, 219, 0.2);
-  color: #3498db;
-  border: 1px solid rgba(52, 152, 219, 0.4);
-}
-
-.player-rank-badge[data-rank="Moderator"] {
-  background: rgba(189, 195, 199, 0.2);
-  color: #ecf0f1;
-  border: 1px solid rgba(189, 195, 199, 0.4);
-}
-
-.player-rank-badge[data-rank="Officer"] {
-  background: rgba(255, 182, 193, 0.2);
-  color: #ffb6c1;
-  border: 1px solid rgba(255, 182, 193, 0.4);
-}
-
-.player-rank-badge[data-rank="VIP"] {
-  background: rgba(241, 196, 15, 0.2);
-  color: #f1c40f;
-  border: 1px solid rgba(241, 196, 15, 0.4);
-}
-
-.player-rank-badge[data-rank="Member"] {
-  background: rgba(255, 255, 255, 0.08);
-  color: #9ca3af;
 }
 
 /* TOAST NOTIFICATION */
@@ -1980,6 +2213,29 @@ html, body {
   }
 
   .profile-badge-row {
+    justify-content: center;
+  }
+
+  /* Staff Modal Responsive Fix */
+  .staff-modal-layout {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .staff-3d-wrapper {
+    width: 100%;
+  }
+
+  #skin_container {
+    width: 220px;
+    height: 300px;
+  }
+
+  .staff-modal-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-social-icons {
     justify-content: center;
   }
 
