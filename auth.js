@@ -44,12 +44,12 @@ export let currentUserProfile = null;
 // Custom Ranks Matching app.js
 const PLAYER_RANKS = {
   "REAL_TWILIGHT0_0": "Owner",
-  "PRIME_VENOX": "Admin",
+  "RealVenox": "Admin",
   "Kitsuroo": "Admin",
-  "LGalewfqUwU": "Moderator",
-  "HopeUltimate": "Moderator",
-  "D4XTROO": "Officer",
-  "GMRZ_TANJID": "Member"
+  "D4XTROO": "Moderator",
+  "LGalewfqUwU": "Manager",
+  "HopeUltimate": "Manager",
+  "HaRaM_BoY_": "Manager"
 };
 
 // --- MULTI-CDN MINECRAFT SKIN RESOLVER ---
