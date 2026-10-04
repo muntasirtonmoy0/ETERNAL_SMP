@@ -58,6 +58,30 @@ function getPlayerRole(name) {
   return key ? PLAYER_RANKS[key] : "Member";
 }
 
+// --- MULTI-CDN & CRACKED SKIN RESOLUTION PIPELINE ---
+async function resolvePlayerSkinUrl(ign) {
+  const clean = ign && ign.trim().length > 0 ? ign.trim() : 'Steve';
+
+  // 1. Resolve raw texture from Mojang/Ashcon (handles premium accounts & SkinsRestorer aliases)
+  try {
+    const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${encodeURIComponent(clean)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.textures?.skin?.url) {
+        return data.textures.skin.url;
+      }
+      if (data?.uuid) {
+        return `https://crafatar.com/skins/${data.uuid}`;
+      }
+    }
+  } catch (e) {
+    // Continue down the fallback chain
+  }
+
+  // 2. Direct fallback via Minotar skin texture pipeline
+  return `https://minotar.net/skin/${encodeURIComponent(clean)}`;
+}
+
 // Global 3D Viewer Instance on profile.html
 let profileSkinViewer = null;
 
@@ -146,25 +170,31 @@ async function renderProfilePage(user, profile) {
   if (emailEl) emailEl.innerText = user.email || "";
   if (coinEl) coinEl.innerText = profile?.coins ?? 0;
 
-  // Initialize and load 3D skin model on profile.html
+  // Initialize and load 3D skin model with balanced camera positioning
   const profileCanvas = document.getElementById("profile_skin_container");
   if (profileCanvas && typeof skinview3d !== 'undefined') {
+    const skinUrl = await resolvePlayerSkinUrl(ign);
+
     if (!profileSkinViewer) {
       profileSkinViewer = new skinview3d.SkinViewer({
         canvas: profileCanvas,
         width: 220,
         height: 290,
-        skin: `https://minotar.net/skin/${encodeURIComponent(ign)}`
+        skin: skinUrl
       });
       profileSkinViewer.controls.enableRotate = true;
       profileSkinViewer.controls.enableZoom = true;
       profileSkinViewer.controls.enablePan = false;
-      profileSkinViewer.camera.position.z = 65;
-      profileSkinViewer.fov = 40;
+
+      // Vertical offset ensures heads are not clipped on mobile boundaries
+      profileSkinViewer.camera.position.set(0, 2, 72);
+      profileSkinViewer.camera.lookAt(0, 0, 0);
+      profileSkinViewer.fov = 44;
+
       profileSkinViewer.animation = new skinview3d.WalkingAnimation();
       profileSkinViewer.animation.speed = 0.8;
     } else {
-      profileSkinViewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(ign)}`);
+      profileSkinViewer.loadSkin(skinUrl);
     }
   }
 
