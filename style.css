@@ -146,7 +146,7 @@ html, body {
 }
 
 /* ==========================================================================
-   FORCE REMOVAL OF TOP-RIGHT SIGN-IN / SIGN-UP (CSS OVERRIDE FOR JS INJECTIONS)
+   FORCE REMOVAL OF TOP-RIGHT SIGN-IN / SIGN-UP
    ========================================================================== */
 .navbar .nav-right button,
 .navbar .nav-right a.btn,
@@ -170,7 +170,6 @@ html, body {
   border: none !important;
 }
 
-/* Ensure only the IP widget stays visible in nav-right */
 .navbar .nav-right > *:not(.ip-widget) {
   display: none !important;
 }
@@ -688,7 +687,7 @@ html, body {
 }
 
 /* ==========================================================================
-   RANKS SHOWCASE & STORE PACKAGES GRID (Fixed Text/Command Wrapping)
+   RANKS SHOWCASE & STORE PACKAGES GRID
    ========================================================================== */
 .store-grid, .ranks-showcase-grid {
   display: grid;
@@ -1859,6 +1858,7 @@ html, body {
   align-items: center;
   position: relative;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 #skin_container {
@@ -2131,6 +2131,20 @@ html, body {
 /* ==========================================================================
    MOBILE RESPONSIVENESS OVERRIDES & COMPLETE SCREEN OVERFLOW FIX
    ========================================================================== */
+
+/* Universal text boundary prevention */
+.profile-hero-meta h1,
+.staff-modal-info h2,
+#modalPlayerName,
+#profileIgn {
+  font-size: clamp(1.2rem, 5.5vw, 2.2rem) !important;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  max-width: 100% !important;
+  text-align: center;
+  margin: 6px 0 !important;
+}
+
 @media (max-width: 768px) {
   html, body {
     overflow-x: hidden !important;
@@ -2175,78 +2189,80 @@ html, body {
     padding: 0 8px;
   }
 
-  /* Player Profile Modal & Dedicated Profile Card Fixes */
+  /* Strict modal & card width bounding on mobile */
+  .staff-profile-modal-card,
   .profile-modal-card {
-    padding: 24px 16px;
-    max-width: 92vw;
-    margin: auto;
+    width: 94vw !important;
+    max-width: 94vw !important;
+    padding: 18px 12px !important;
+    margin: 10px auto !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
 
+  .staff-modal-layout,
   .profile-hero {
-    flex-direction: column;
-    gap: 12px;
-    text-align: center;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 14px !important;
+    width: 100% !important;
   }
 
-  .profile-3d-skin {
-    height: 110px;
+  .staff-3d-wrapper,
+  .profile-3d-wrapper {
+    width: 100% !important;
+    max-width: 260px !important;
+    height: auto !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
   }
 
-  .profile-hero-meta h2 {
-    font-size: 1.5rem;
-    word-break: break-word;
+  #skin_container,
+  #lb_skin_container,
+  #profile_skin_container {
+    width: 220px !important;
+    height: 290px !important;
+    max-width: 100% !important;
   }
 
-  .profile-tags {
-    justify-content: center;
+  .profile-hero-card {
+    padding: 16px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+
+  .profile-hero-left,
+  .profile-hero-right {
+    width: 100% !important;
+    align-items: center !important;
+    text-align: center !important;
+    flex-direction: column !important;
+  }
+
+  .profile-wallet-box {
+    width: 100% !important;
+    max-width: 260px !important;
+    margin: 0 auto !important;
+  }
+
+  .profile-badge-row {
+    justify-content: center !important;
   }
 
   .profile-stats-grid,
   .p-stat-ratio-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .profile-hero-card {
-    flex-direction: column;
-    text-align: center;
-    padding: 24px 16px;
-  }
-
-  .profile-hero-left {
-    flex-direction: column;
-  }
-
-  .profile-hero-right {
-    align-items: center;
-    width: 100%;
-  }
-
-  .profile-badge-row {
-    justify-content: center;
-  }
-
-  /* Staff Modal Responsive Fix */
-  .staff-modal-layout {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .staff-3d-wrapper {
-    width: 100%;
-  }
-
-  #skin_container {
-    width: 220px;
-    height: 300px;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
   }
 
   .staff-modal-details-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 
   .staff-social-icons {
-    justify-content: center;
+    justify-content: center !important;
   }
 
   /* Leaderboard Table Adjustments */
