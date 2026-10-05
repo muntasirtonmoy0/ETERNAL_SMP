@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const { type = 'balance' } = req.query;
+  const { type = 'balance', limit = 50 } = req.query;
   const SERVER_HOST = "http://160.25.5.205:4350";
 
   const boardMap = {
@@ -10,10 +10,11 @@ export default async function handler(req, res) {
   };
 
   const targetBoard = boardMap[type] || 'vault_eco_balance';
+  const fetchCount = Math.min(parseInt(limit, 10) || 50, 100);
 
   try {
-    // Fetch top 10 ranked players directly from ajLb-REST
-    const requests = Array.from({ length: 10 }, (_, i) =>
+    // Fetch ranked players directly from ajLb-REST in parallel
+    const requests = Array.from({ length: fetchCount }, (_, i) =>
       fetch(`${SERVER_HOST}/${targetBoard}/alltime/${i + 1}`, {
         headers: { "Accept": "application/json" }
       })
@@ -39,7 +40,7 @@ export default async function handler(req, res) {
       });
 
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=30");
     return res.status(200).json(formatted);
 
   } catch (error) {
