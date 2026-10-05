@@ -106,7 +106,7 @@ function getPlayerAvatar(ign) {
   return `https://mc-heads.net/avatar/${encodeURIComponent(clean)}/64`;
 }
 
-// --- 2. LIVE STATS FETCH FROM /api/leaderboard ---
+// --- 2. LIVE STATS FETCH FROM /api/leaderboard (TOP 50 DEPTH) ---
 async function fetchPlayerStatsFromAPI(ign) {
   const role = getPlayerRole(ign);
   const stats = {
@@ -119,10 +119,10 @@ async function fetchPlayerStatsFromAPI(ign) {
 
   try {
     const [balRes, playRes, killRes, deathRes] = await Promise.all([
-      fetch(`/api/leaderboard?type=balance&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
-      fetch(`/api/leaderboard?type=playtime&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
-      fetch(`/api/leaderboard?type=kills&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
-      fetch(`/api/leaderboard?type=deaths&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => [])
+      fetch(`/api/leaderboard?type=balance&limit=50&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(`/api/leaderboard?type=playtime&limit=50&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(`/api/leaderboard?type=kills&limit=50&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(`/api/leaderboard?type=deaths&limit=50&_=${Date.now()}`).then(r => r.ok ? r.json() : []).catch(() => [])
     ]);
 
     const target = ign.toLowerCase();
@@ -149,7 +149,7 @@ async function renderProfilePage(user, profile) {
   const loggedOutBox = document.getElementById("profileLoggedOut");
   const loggedInBox = document.getElementById("profileLoggedIn");
 
-  if (!loggedOutBox || !loggedInBox) return; // Not on profile.html
+  if (!loggedOutBox || !loggedInBox) return;
 
   if (!user) {
     loggedOutBox.style.display = "block";
@@ -161,6 +161,7 @@ async function renderProfilePage(user, profile) {
   loggedInBox.style.display = "block";
 
   const ign = profile?.ign || "Steve";
+  const skinTarget = profile?.skinModel || ign;
   const ignEl = document.getElementById("profileIgn");
   const emailEl = document.getElementById("profileEmail");
   const coinEl = document.getElementById("profileCoinNum");
@@ -173,7 +174,7 @@ async function renderProfilePage(user, profile) {
   // Initialize and load 3D skin model with balanced camera positioning
   const profileCanvas = document.getElementById("profile_skin_container");
   if (profileCanvas && typeof skinview3d !== 'undefined') {
-    const skinUrl = await resolvePlayerSkinUrl(ign);
+    const skinUrl = await resolvePlayerSkinUrl(skinTarget);
 
     if (!profileSkinViewer) {
       profileSkinViewer = new skinview3d.SkinViewer({
@@ -255,6 +256,7 @@ onAuthStateChanged(auth, async (user) => {
         uid: user.uid,
         email: user.email,
         ign: defaultIgn.trim(),
+        skinModel: defaultIgn.trim(),
         coins: 0,
         createdAt: new Date().toISOString()
       };
@@ -262,7 +264,7 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     const ign = currentUserProfile.ign || 'Player';
-    const avatarUrl = getPlayerAvatar(ign);
+    const avatarUrl = getPlayerAvatar(currentUserProfile.skinModel || ign);
 
     // Sidebar navigation update
     if (authNavText) authNavText.innerText = ign;
@@ -290,23 +292,31 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// --- 5. CHANGE BOUND IGN HANDLER ---
+// --- 5. CHANGE BOUND IGN & CRACKED SKIN HANDLER ---
 window.promptChangeIgn = async function() {
   if (!auth.currentUser) return;
-  const newIgn = prompt("Enter your new Minecraft In-Game Name (IGN):", currentUserProfile?.ign || "");
+  const newIgn = prompt("Enter your Minecraft In-Game Name (IGN):", currentUserProfile?.ign || "");
   if (!newIgn || newIgn.trim().length < 3) return;
+
+  const skinIgn = prompt("Cracked player? Enter the premium name whose skin you use in SkinsRestorer (Leave blank if same as IGN):", currentUserProfile?.skinModel || newIgn.trim());
 
   try {
     const userRef = doc(db, "users", auth.currentUser.uid);
-    await updateDoc(userRef, { ign: newIgn.trim() });
-    currentUserProfile.ign = newIgn.trim();
-    alert(`Successfully bound character to: ${newIgn.trim()}`);
+    const updates = { 
+      ign: newIgn.trim(),
+      skinModel: (skinIgn && skinIgn.trim().length > 0) ? skinIgn.trim() : newIgn.trim()
+    };
+    await updateDoc(userRef, updates);
+    currentUserProfile.ign = updates.ign;
+    currentUserProfile.skinModel = updates.skinModel;
+
+    alert(`Successfully bound character to: ${updates.ign}`);
     renderProfilePage(auth.currentUser, currentUserProfile);
     
     const authNavText = document.getElementById("authNavText");
     const authNavAvatar = document.getElementById("authNavAvatar");
-    if (authNavText) authNavText.innerText = newIgn.trim();
-    if (authNavAvatar) authNavAvatar.src = getPlayerAvatar(newIgn.trim());
+    if (authNavText) authNavText.innerText = updates.ign;
+    if (authNavAvatar) authNavAvatar.src = getPlayerAvatar(updates.skinModel);
   } catch (err) {
     alert("Error updating IGN: " + err.message);
   }
@@ -374,6 +384,7 @@ window.handleAuthSubmit = async function (e) {
         uid: creds.user.uid,
         email: email,
         ign: ign,
+        skinModel: ign,
         coins: 0,
         createdAt: new Date().toISOString()
       });
