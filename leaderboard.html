@@ -8,8 +8,6 @@
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <!-- Skinview3d Three.js WebGL Engine -->
-  <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.1/bundles/skinview3d.bundle.js"></script>
 </head>
 <body>
 
@@ -43,7 +41,7 @@
       <li><a href="staff.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Staff Team</a></li>
       <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
       <li id="sidebarAuthNav">
-        <a href="profile.html" class="nav-link" id="authNavTab">
+        <a href="profile.html" class="nav-link active" id="authNavTab">
           <i class="fa-solid fa-circle-user"></i> <span id="authNavText">Account</span>
         </a>
       </li>
@@ -53,7 +51,7 @@
   <main class="content-container">
     <div class="page-header">
       <h2>Server Leaderboard</h2>
-      <p>Top server champions and live real-time player rankings. Click any player to inspect their 3D character!</p>
+      <p>Top server champions and live real-time player rankings.</p>
     </div>
 
     <!-- Champions Top #1 Cards Grid -->
@@ -106,40 +104,28 @@
           <tr>
             <th style="width: 70px;">Rank</th>
             <th>Player</th>
-            <th style="width: 140px;">Role</th>
             <th id="tableScoreHeader" style="text-align: right;">Balance</th>
           </tr>
         </thead>
         <tbody id="lbTableBody">
-          <tr><td colspan="4" style="text-align:center; padding:30px; color:#9ca3af;">Loading rankings...</td></tr>
+          <tr><td colspan="3" style="text-align:center; padding:30px; color:#9ca3af;">Loading rankings...</td></tr>
         </tbody>
       </table>
     </div>
   </main>
 
-  <!-- 3D Rotatable Player Profile Modal -->
+  <!-- HavenCraft-Style Full Player Profile Modal -->
   <div class="profile-modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
     <div class="profile-modal-card" onclick="event.stopPropagation()">
       <button class="profile-close-btn" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></button>
       
       <div class="profile-hero">
-        <div class="profile-3d-wrapper">
-          <canvas id="lb_skin_container"></canvas>
-          <div class="canvas-controls-hint">
-            <span><i class="fa-solid fa-hand-pointer"></i> Drag to spin 360° • Scroll to zoom</span>
-          </div>
-          <div class="canvas-anim-toggles">
-            <button class="btn-anim active" onclick="setLeaderboardAnim('walking')">Walk</button>
-            <button class="btn-anim" onclick="setLeaderboardAnim('running')">Run</button>
-            <button class="btn-anim" onclick="setLeaderboardAnim('idle')">Idle</button>
-          </div>
-        </div>
-
+        <img src="https://visage.surgeplay.com/full/384/steve" alt="Player Skin" class="profile-3d-skin" id="modalSkin">
         <div class="profile-hero-meta">
           <h2 id="modalPlayerName">Player</h2>
           <p class="profile-sub">Player on <strong>Eternal SMP</strong></p>
           <div class="profile-tags">
-            <span class="player-rank-badge" id="modalTag" data-rank="Member">MEMBER</span>
+            <span class="profile-tag tag-member" id="modalTag">MEMBER</span>
           </div>
         </div>
       </div>
@@ -196,60 +182,8 @@
   <script type="module" src="auth.js"></script>
 
   <script>
-    const PLAYER_RANKS = {
-      "REAL_TWILIGHT0_0": "Owner",
-      "RealVenox": "Admin",
-      "Kitsuroo": "Admin",
-      "D4XTROO": "Moderator",
-      "LGalewfqUwU": "Manager",
-      "HopeUltimate": "Manager",
-      "HaRaM_BoY_": "Manager"
-    };
-
-    function getPlayerRole(name) {
-      if (!name) return "Member";
-      const key = Object.keys(PLAYER_RANKS).find(k => k.toLowerCase() === name.toLowerCase());
-      return key ? PLAYER_RANKS[key] : "Member";
-    }
-
     let currentType = 'balance';
     let cachedData = { balance: [], playtime: [], kills: [], deaths: [] };
-    let lbSkinViewer = null;
-
-    function initLeaderboardSkinViewer() {
-      if (lbSkinViewer) return;
-      const canvas = document.getElementById("lb_skin_container");
-      if (!canvas || typeof skinview3d === 'undefined') return;
-
-      lbSkinViewer = new skinview3d.SkinViewer({
-        canvas: canvas,
-        width: 220,
-        height: 290,
-        skin: "https://minotar.net/skin/steve"
-      });
-      lbSkinViewer.controls.enableRotate = true;
-      lbSkinViewer.controls.enableZoom = true;
-      lbSkinViewer.controls.enablePan = false;
-      lbSkinViewer.camera.position.set(0, 2, 72);
-      lbSkinViewer.camera.lookAt(0, 0, 0);
-      lbSkinViewer.fov = 44;
-    }
-
-    function setLeaderboardAnim(type) {
-      document.querySelectorAll(".profile-3d-wrapper .btn-anim").forEach(b => b.classList.remove("active"));
-      if (window.event && window.event.target) window.event.target.classList.add("active");
-
-      if (!lbSkinViewer) return;
-      if (type === 'walking') {
-        lbSkinViewer.animation = new skinview3d.WalkingAnimation();
-        lbSkinViewer.animation.speed = 0.8;
-      } else if (type === 'running') {
-        lbSkinViewer.animation = new skinview3d.RunningAnimation();
-        lbSkinViewer.animation.speed = 0.9;
-      } else {
-        lbSkinViewer.animation = new skinview3d.IdleAnimation();
-      }
-    }
 
     function formatScore(val, type) {
       if (type === 'balance') {
@@ -266,109 +200,79 @@
 
     async function fetchBoard(type) {
       try {
-        const res = await fetch(`/api/leaderboard?type=${type}&limit=15&_=${Date.now()}`);
+        const res = await fetch(`/api/leaderboard?type=${type}`);
         if (!res.ok) return [];
-        const data = await res.json();
-        return Array.isArray(data) ? data : [];
-      } catch (err) {
-        console.warn("Failed loading board:", type, err);
+        return await res.json();
+      } catch {
         return [];
       }
     }
 
     async function loadAllData() {
-      try {
-        const [bal, play, kil, dth] = await Promise.all([
-          fetchBoard('balance'),
-          fetchBoard('playtime'),
-          fetchBoard('kills'),
-          fetchBoard('deaths')
-        ]);
+      const [bal, play, kil, dth] = await Promise.all([
+        fetchBoard('balance'),
+        fetchBoard('playtime'),
+        fetchBoard('kills'),
+        fetchBoard('deaths')
+      ]);
 
-        cachedData.balance = bal;
-        cachedData.playtime = play;
-        cachedData.kills = kil;
-        cachedData.deaths = dth;
+      cachedData.balance = bal;
+      cachedData.playtime = play;
+      cachedData.kills = kil;
+      cachedData.deaths = dth;
 
-        setChampion('Playtime', play[0], 'playtime');
-        setChampion('Balance', bal[0], 'balance');
-        setChampion('Kills', kil[0], 'kills');
-        setChampion('Deaths', dth[0], 'deaths');
+      setChampion('Playtime', play[0], 'playtime');
+      setChampion('Balance', bal[0], 'balance');
+      setChampion('Kills', kil[0], 'kills');
+      setChampion('Deaths', dth[0], 'deaths');
 
-        renderTable();
-      } catch (err) {
-        console.error("Critical leaderboard load error:", err);
-        const tbody = document.getElementById('lbTableBody');
-        if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:var(--danger);">Error syncing server stats. Server may be restarting.</td></tr>`;
-      }
+      renderTable();
     }
 
     function setChampion(idKey, topPlayer, type) {
-      const nameEl = document.getElementById(`champName${idKey}`);
-      const valEl = document.getElementById(`champVal${idKey}`);
+      if (!topPlayer) return;
+      document.getElementById(`champName${idKey}`).textContent = topPlayer.name;
+      document.getElementById(`champVal${idKey}`).textContent = formatScore(topPlayer.value, type);
+
       const avatarImg = document.getElementById(`champImg${idKey}`);
-      const cardEl = document.getElementById(`champ-${type}`);
+      avatarImg.src = `https://minotar.net/helm/${topPlayer.name}/128.png`;
+      avatarImg.onerror = () => { avatarImg.src = 'https://minotar.net/helm/steve/128.png'; };
 
-      if (!topPlayer) {
-        if (nameEl) nameEl.textContent = "None";
-        if (valEl) valEl.textContent = "--";
-        return;
-      }
-
-      if (nameEl) nameEl.textContent = topPlayer.name;
-      if (valEl) valEl.textContent = formatScore(topPlayer.value, type);
-
-      if (avatarImg) {
-        avatarImg.src = `https://minotar.net/helm/${encodeURIComponent(topPlayer.name)}/128.png`;
-        avatarImg.onerror = () => { avatarImg.src = 'https://minotar.net/helm/steve/128.png'; };
-      }
-
-      if (cardEl) cardEl.dataset.player = topPlayer.name;
+      document.getElementById(`champ-${type}`).dataset.player = topPlayer.name;
     }
 
     function switchBoard(type, btn) {
       currentType = type;
       document.querySelectorAll('.lb-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+      btn.classList.add('active');
 
       const headers = { balance: 'Balance', playtime: 'Playtime', kills: 'Kills', deaths: 'Deaths' };
-      const tableHeader = document.getElementById('tableScoreHeader');
-      if (tableHeader) tableHeader.textContent = headers[type];
-      
+      document.getElementById('tableScoreHeader').textContent = headers[type];
       renderTable();
     }
 
     function renderTable() {
-      const fullData = cachedData[currentType] || [];
+      const data = cachedData[currentType] || [];
       const tbody = document.getElementById('lbTableBody');
-      if (!tbody) return;
-
-      if (fullData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#9ca3af;">No player records found.</td></tr>`;
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px; color:#9ca3af;">No player records found.</td></tr>`;
         return;
       }
 
-      const displayData = fullData.slice(0, 10);
-
-      tbody.innerHTML = displayData.map((item, index) => {
+      tbody.innerHTML = data.map((item, index) => {
         let rankBadge = `<span class="rank-num">#${index + 1}</span>`;
         if (index === 0) rankBadge = `<span class="rank-medal gold">🥇 1</span>`;
         if (index === 1) rankBadge = `<span class="rank-medal silver">🥈 2</span>`;
         if (index === 2) rankBadge = `<span class="rank-medal bronze">🥉 3</span>`;
-
-        const role = getPlayerRole(item.name);
 
         return `
           <tr class="clickable-row" onclick="openProfileByName('${item.name}')">
             <td>${rankBadge}</td>
             <td>
               <div class="player-cell">
-                <img src="https://minotar.net/helm/${encodeURIComponent(item.name)}/64.png" onerror="this.onerror=null;this.src='https://minotar.net/helm/steve/64.png';" alt="${item.name}">
+                <img src="https://minotar.net/helm/${item.name}/64.png" onerror="this.onerror=null;this.src='https://minotar.net/helm/steve/64.png';" alt="${item.name}">
                 <span class="player-title">${item.name}</span>
               </div>
-            </td>
-            <td>
-              <span class="player-rank-badge" data-rank="${role}">${role}</span>
             </td>
             <td style="text-align: right; font-weight: 700; color: #f3f4f6;">
               ${formatScore(item.value, currentType)}
@@ -378,62 +282,33 @@
       }).join('');
     }
 
-    async function openProfileByName(name) {
-      if (!name || name === 'Loading...' || name === 'None') return;
+    function openProfileByName(name) {
+      if (!name || name === 'Loading...') return;
 
-      initLeaderboardSkinViewer();
+      const pMoney = cachedData.balance.find(p => p.name === name)?.value || 0;
+      const pPlay = cachedData.playtime.find(p => p.name === name)?.value || 0;
+      const pKills = cachedData.kills.find(p => p.name === name)?.value || 0;
+      const pDeaths = cachedData.deaths.find(p => p.name === name)?.value || 0;
 
-      const pMoney = cachedData.balance.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
-      const pPlay = cachedData.playtime.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
-      const pKills = cachedData.kills.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
-      const pDeaths = cachedData.deaths.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
+      document.getElementById('modalPlayerName').textContent = name;
 
-      const nameEl = document.getElementById('modalPlayerName');
-      if (nameEl) nameEl.textContent = name;
+      const modalSkin = document.getElementById('modalSkin');
+      modalSkin.src = `https://visage.surgeplay.com/full/384/${name}`;
+      modalSkin.onerror = () => { modalSkin.src = 'https://visage.surgeplay.com/full/384/steve'; };
 
-      const role = getPlayerRole(name);
-      const tagEl = document.getElementById('modalTag');
-      if (tagEl) {
-        tagEl.textContent = role.toUpperCase();
-        tagEl.setAttribute('data-rank', role);
-      }
-
-      const moneyEl = document.getElementById('modalStatMoney');
-      const playEl = document.getElementById('modalStatPlaytime');
-      const killsEl = document.getElementById('modalStatKills');
-      const deathsEl = document.getElementById('modalStatDeaths');
-      const kdEl = document.getElementById('modalKdRatio');
-
-      if (moneyEl) moneyEl.textContent = formatScore(pMoney, 'balance');
-      if (playEl) playEl.textContent = formatScore(pPlay, 'playtime');
-      if (killsEl) killsEl.textContent = Number(pKills).toLocaleString();
-      if (deathsEl) deathsEl.textContent = Number(pDeaths).toLocaleString();
+      document.getElementById('modalStatMoney').textContent = formatScore(pMoney, 'balance');
+      document.getElementById('modalStatPlaytime').textContent = formatScore(pPlay, 'playtime');
+      document.getElementById('modalStatKills').textContent = Number(pKills).toLocaleString();
+      document.getElementById('modalStatDeaths').textContent = Number(pDeaths).toLocaleString();
 
       const kd = pDeaths > 0 ? (pKills / pDeaths).toFixed(2) : Number(pKills).toFixed(2);
-      if (kdEl) kdEl.textContent = kd;
+      document.getElementById('modalKdRatio').textContent = kd;
 
-      let resolvedSkin = `https://minotar.net/skin/${encodeURIComponent(name)}`;
-      try {
-        const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${encodeURIComponent(name)}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data?.textures?.skin?.url) resolvedSkin = data.textures.skin.url;
-          else if (data?.uuid) resolvedSkin = `https://crafatar.com/skins/${data.uuid}`;
-        }
-      } catch (e) {}
-
-      if (lbSkinViewer) {
-        lbSkinViewer.loadSkin(resolvedSkin);
-        setLeaderboardAnim('walking');
-      }
-
-      const modal = document.getElementById('profileModal');
-      if (modal) modal.classList.add('active');
+      document.getElementById('profileModal').classList.add('active');
     }
 
     function closeProfileModal() {
-      const modal = document.getElementById('profileModal');
-      if (modal) modal.classList.remove('active');
+      document.getElementById('profileModal').classList.remove('active');
     }
 
     loadAllData();
