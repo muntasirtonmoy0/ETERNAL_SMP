@@ -219,6 +219,8 @@
     function initLeaderboardSkinViewer() {
       if (lbSkinViewer) return;
       const canvas = document.getElementById("lb_skin_container");
+      if (!canvas || typeof skinview3d === 'undefined') return;
+
       lbSkinViewer = new skinview3d.SkinViewer({
         canvas: canvas,
         width: 220,
@@ -264,66 +266,88 @@
 
     async function fetchBoard(type) {
       try {
-        const res = await fetch(`/api/leaderboard?type=${type}&limit=50&_=${Date.now()}`);
+        const res = await fetch(`/api/leaderboard?type=${type}&limit=15&_=${Date.now()}`);
         if (!res.ok) return [];
-        return await res.json();
-      } catch {
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.warn("Failed loading board:", type, err);
         return [];
       }
     }
 
     async function loadAllData() {
-      const [bal, play, kil, dth] = await Promise.all([
-        fetchBoard('balance'),
-        fetchBoard('playtime'),
-        fetchBoard('kills'),
-        fetchBoard('deaths')
-      ]);
+      try {
+        const [bal, play, kil, dth] = await Promise.all([
+          fetchBoard('balance'),
+          fetchBoard('playtime'),
+          fetchBoard('kills'),
+          fetchBoard('deaths')
+        ]);
 
-      cachedData.balance = bal;
-      cachedData.playtime = play;
-      cachedData.kills = kil;
-      cachedData.deaths = dth;
+        cachedData.balance = bal;
+        cachedData.playtime = play;
+        cachedData.kills = kil;
+        cachedData.deaths = dth;
 
-      setChampion('Playtime', play[0], 'playtime');
-      setChampion('Balance', bal[0], 'balance');
-      setChampion('Kills', kil[0], 'kills');
-      setChampion('Deaths', dth[0], 'deaths');
+        setChampion('Playtime', play[0], 'playtime');
+        setChampion('Balance', bal[0], 'balance');
+        setChampion('Kills', kil[0], 'kills');
+        setChampion('Deaths', dth[0], 'deaths');
 
-      renderTable();
+        renderTable();
+      } catch (err) {
+        console.error("Critical leaderboard load error:", err);
+        const tbody = document.getElementById('lbTableBody');
+        if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:var(--danger);">Error syncing server stats. Server may be restarting.</td></tr>`;
+      }
     }
 
     function setChampion(idKey, topPlayer, type) {
-      if (!topPlayer) return;
-      document.getElementById(`champName${idKey}`).textContent = topPlayer.name;
-      document.getElementById(`champVal${idKey}`).textContent = formatScore(topPlayer.value, type);
-
+      const nameEl = document.getElementById(`champName${idKey}`);
+      const valEl = document.getElementById(`champVal${idKey}`);
       const avatarImg = document.getElementById(`champImg${idKey}`);
-      avatarImg.src = `https://minotar.net/helm/${encodeURIComponent(topPlayer.name)}/128.png`;
-      avatarImg.onerror = () => { avatarImg.src = 'https://minotar.net/helm/steve/128.png'; };
+      const cardEl = document.getElementById(`champ-${type}`);
 
-      document.getElementById(`champ-${type}`).dataset.player = topPlayer.name;
+      if (!topPlayer) {
+        if (nameEl) nameEl.textContent = "None";
+        if (valEl) valEl.textContent = "--";
+        return;
+      }
+
+      if (nameEl) nameEl.textContent = topPlayer.name;
+      if (valEl) valEl.textContent = formatScore(topPlayer.value, type);
+
+      if (avatarImg) {
+        avatarImg.src = `https://minotar.net/helm/${encodeURIComponent(topPlayer.name)}/128.png`;
+        avatarImg.onerror = () => { avatarImg.src = 'https://minotar.net/helm/steve/128.png'; };
+      }
+
+      if (cardEl) cardEl.dataset.player = topPlayer.name;
     }
 
     function switchBoard(type, btn) {
       currentType = type;
       document.querySelectorAll('.lb-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
 
       const headers = { balance: 'Balance', playtime: 'Playtime', kills: 'Kills', deaths: 'Deaths' };
-      document.getElementById('tableScoreHeader').textContent = headers[type];
+      const tableHeader = document.getElementById('tableScoreHeader');
+      if (tableHeader) tableHeader.textContent = headers[type];
+      
       renderTable();
     }
 
     function renderTable() {
       const fullData = cachedData[currentType] || [];
       const tbody = document.getElementById('lbTableBody');
+      if (!tbody) return;
+
       if (fullData.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#9ca3af;">No player records found.</td></tr>`;
         return;
       }
 
-      // Render the Top 10 visually in the table
       const displayData = fullData.slice(0, 10);
 
       tbody.innerHTML = displayData.map((item, index) => {
@@ -355,7 +379,7 @@
     }
 
     async function openProfileByName(name) {
-      if (!name || name === 'Loading...') return;
+      if (!name || name === 'Loading...' || name === 'None') return;
 
       initLeaderboardSkinViewer();
 
@@ -364,22 +388,30 @@
       const pKills = cachedData.kills.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
       const pDeaths = cachedData.deaths.find(p => p.name?.toLowerCase() === name.toLowerCase())?.value || 0;
 
-      document.getElementById('modalPlayerName').textContent = name;
+      const nameEl = document.getElementById('modalPlayerName');
+      if (nameEl) nameEl.textContent = name;
 
       const role = getPlayerRole(name);
       const tagEl = document.getElementById('modalTag');
-      tagEl.textContent = role.toUpperCase();
-      tagEl.setAttribute('data-rank', role);
+      if (tagEl) {
+        tagEl.textContent = role.toUpperCase();
+        tagEl.setAttribute('data-rank', role);
+      }
 
-      document.getElementById('modalStatMoney').textContent = formatScore(pMoney, 'balance');
-      document.getElementById('modalStatPlaytime').textContent = formatScore(pPlay, 'playtime');
-      document.getElementById('modalStatKills').textContent = Number(pKills).toLocaleString();
-      document.getElementById('modalStatDeaths').textContent = Number(pDeaths).toLocaleString();
+      const moneyEl = document.getElementById('modalStatMoney');
+      const playEl = document.getElementById('modalStatPlaytime');
+      const killsEl = document.getElementById('modalStatKills');
+      const deathsEl = document.getElementById('modalStatDeaths');
+      const kdEl = document.getElementById('modalKdRatio');
+
+      if (moneyEl) moneyEl.textContent = formatScore(pMoney, 'balance');
+      if (playEl) playEl.textContent = formatScore(pPlay, 'playtime');
+      if (killsEl) killsEl.textContent = Number(pKills).toLocaleString();
+      if (deathsEl) deathsEl.textContent = Number(pDeaths).toLocaleString();
 
       const kd = pDeaths > 0 ? (pKills / pDeaths).toFixed(2) : Number(pKills).toFixed(2);
-      document.getElementById('modalKdRatio').textContent = kd;
+      if (kdEl) kdEl.textContent = kd;
 
-      // Resolve skin texture
       let resolvedSkin = `https://minotar.net/skin/${encodeURIComponent(name)}`;
       try {
         const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${encodeURIComponent(name)}`);
@@ -390,14 +422,18 @@
         }
       } catch (e) {}
 
-      lbSkinViewer.loadSkin(resolvedSkin);
-      setLeaderboardAnim('walking');
+      if (lbSkinViewer) {
+        lbSkinViewer.loadSkin(resolvedSkin);
+        setLeaderboardAnim('walking');
+      }
 
-      document.getElementById('profileModal').classList.add('active');
+      const modal = document.getElementById('profileModal');
+      if (modal) modal.classList.add('active');
     }
 
     function closeProfileModal() {
-      document.getElementById('profileModal').classList.remove('active');
+      const modal = document.getElementById('profileModal');
+      if (modal) modal.classList.remove('active');
     }
 
     loadAllData();
