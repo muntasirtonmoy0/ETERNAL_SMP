@@ -2132,7 +2132,6 @@ html, body {
    MOBILE RESPONSIVENESS OVERRIDES & COMPLETE SCREEN OVERFLOW FIX
    ========================================================================== */
 
-/* Universal text boundary prevention */
 .profile-hero-meta h1,
 .staff-modal-info h2,
 #modalPlayerName,
@@ -2152,7 +2151,6 @@ html, body {
     width: 100% !important;
   }
 
-  /* Compact Navbar */
   .navbar {
     padding: 10px 14px;
     gap: 8px;
@@ -2173,7 +2171,6 @@ html, body {
     font-size: 0.72rem;
   }
 
-  /* Hero Section */
   .hero-banner-container {
     padding: 35px 15px;
     border-radius: 14px;
@@ -2189,7 +2186,6 @@ html, body {
     padding: 0 8px;
   }
 
-  /* Strict modal & card width bounding on mobile */
   .staff-profile-modal-card,
   .profile-modal-card {
     width: 94vw !important;
@@ -2265,7 +2261,6 @@ html, body {
     justify-content: center !important;
   }
 
-  /* Leaderboard Table Adjustments */
   .leaderboard-table th, 
   .leaderboard-table td {
     padding: 10px 8px;
@@ -2285,7 +2280,6 @@ html, body {
     white-space: nowrap;
   }
 
-  /* All Multi-Column Grids Become 1-Column on Mobile */
   .store-nav-grid, 
   .store-categories-grid, 
   .store-grid, 
