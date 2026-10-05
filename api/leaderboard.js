@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const { type = 'balance', limit = 50 } = req.query;
+  const { type = 'balance', limit = 15 } = req.query;
   const SERVER_HOST = "http://160.25.5.205:4350";
 
   const boardMap = {
@@ -10,17 +10,26 @@ export default async function handler(req, res) {
   };
 
   const targetBoard = boardMap[type] || 'vault_eco_balance';
-  const fetchCount = Math.min(parseInt(limit, 10) || 50, 100);
+  const fetchCount = Math.min(Math.max(parseInt(limit, 10) || 15, 10), 20);
 
   try {
-    // Fetch ranked players directly from ajLb-REST in parallel
-    const requests = Array.from({ length: fetchCount }, (_, i) =>
-      fetch(`${SERVER_HOST}/${targetBoard}/alltime/${i + 1}`, {
-        headers: { "Accept": "application/json" }
+    const requests = Array.from({ length: fetchCount }, (_, i) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+      return fetch(`${SERVER_HOST}/${targetBoard}/alltime/${i + 1}`, {
+        headers: { "Accept": "application/json" },
+        signal: controller.signal
       })
-        .then(r => r.ok ? r.json() : null)
-        .catch(() => null)
-    );
+        .then(r => {
+          clearTimeout(timeoutId);
+          return r.ok ? r.json() : null;
+        })
+        .catch(() => {
+          clearTimeout(timeoutId);
+          return null;
+        });
+    });
 
     const responses = await Promise.all(requests);
 
@@ -40,10 +49,10 @@ export default async function handler(req, res) {
       });
 
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=30");
+    res.setHeader("Cache-Control", "s-maxage=30, stale-while-revalidate=15");
     return res.status(200).json(formatted);
 
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(200).json([]);
   }
 }
