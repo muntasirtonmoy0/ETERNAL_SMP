@@ -1,5 +1,5 @@
 // --- CONFIGURATION ---
-const SERVER_DOMAIN = "185.207.166.151:24983";
+const SERVER_DOMAIN = "play.eternal-smp.pro";
 const FALLBACK_ADDRESS = "185.207.166.151:24983";
 
 // Custom Rank Mappings
