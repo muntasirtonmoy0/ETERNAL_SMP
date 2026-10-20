@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const { type = 'balance' } = req.query;
-  const SERVER_HOST = "http://160.25.5.205:4350";
+  const SERVER_HOST = "http://185.207.166.151:12018";
 
   const boardMap = {
     balance: 'vault_eco_balance',
