@@ -1,6 +1,6 @@
 // --- CONFIGURATION ---
-const SERVER_DOMAIN = "play-eternal-smp.duckdns.org:5479";
-const FALLBACK_ADDRESS = "160.25.5.205:5479";
+const SERVER_DOMAIN = "185.207.166.151:24983";
+const FALLBACK_ADDRESS = "185.207.166.151:24983";
 
 // Custom Rank Mappings
 const PLAYER_RANKS = {
